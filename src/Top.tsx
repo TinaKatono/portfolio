@@ -302,7 +302,7 @@ function TrioAtRest() {
       >
         <img src={sample1Img} alt="" className="h-full w-full object-cover" />
       </div>
-      <div className="pointer-events-none absolute left-[max(1rem,5vw)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-center gap-2">
+      <div className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-center gap-2">
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
           DRIVEN BY
         </p>
@@ -312,7 +312,7 @@ function TrioAtRest() {
           </span>
         </SkewSerif>
       </div>
-      <div className="pointer-events-none absolute right-[max(1rem,5vw)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-end justify-end gap-2 text-right">
+      <div className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-end justify-end gap-2 text-right">
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
           DEFINED BY{" "}
         </p>
@@ -533,7 +533,7 @@ export default function Top() {
                   <img src={sample1Img} alt="" className="h-full w-full object-cover" />
                 </div>
                 <div
-                  className="pointer-events-none absolute left-[max(1rem,5vw)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-center gap-2"
+                  className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-center gap-2"
                   style={{
                     transform: `translateY(calc(-50% + ${phases.leftY}px))`,
                   }}
@@ -548,7 +548,7 @@ export default function Top() {
                   </SkewSerif>
                 </div>
                 <div
-                  className="pointer-events-none absolute right-[max(1rem,5vw)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-end justify-end gap-2 text-right"
+                  className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-end justify-end gap-2 text-right"
                   style={{
                     transform: `translateY(calc(-50% + ${phases.rightY}px))`,
                   }}
