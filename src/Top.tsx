@@ -5,9 +5,14 @@ import {
   useRef,
   useState,
   type CSSProperties,
-  type ReactNode,
+  type MouseEvent,
+  type RefObject,
 } from "react";
+import { Link } from "react-router-dom";
 import pfImg2 from "./assets/pf_2.webp";
+import { CtaArrow, SkewSerif } from "./components/brand";
+import { SiteHeader } from "./components/SiteHeader";
+import { hasWorkDetail } from "./data/workDetails";
 import { workItems, type WorkItem } from "./data/workItems";
 
 /** カーソル（またはフォーカス基準点）からツールチップ左上へのずらし — カーソルと文字が重ならないようにする */
@@ -46,22 +51,6 @@ const workBelowMarqueeBleedStyle = {
   transform: "translateY(-50%)",
 };
 
-function SkewSerif({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <span className={`inline-flex items-center justify-center ${className}`}>
-      <span className="inline-block origin-center scale-y-[0.98] -skew-x-[11deg] font-serif not-italic tracking-wide">
-        {children}
-      </span>
-    </span>
-  );
-}
-
 function MarqueeEllipse({ fill = "#F4511E" }: { fill?: string }) {
   return (
     <div
@@ -78,15 +67,16 @@ function MarqueeEllipse({ fill = "#F4511E" }: { fill?: string }) {
 }
 
 function WorkRoleRow({ item }: { item: WorkItem }) {
-  const rowRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLDivElement | HTMLAnchorElement>(null);
   const [tipPos, setTipPos] = useState({ x: 0, y: 0 });
   const [hover, setHover] = useState(false);
   const [focused, setFocused] = useState(false);
   /** 行に入るたびに増やしてツールチップを差し替え、入場アニメを毎回再生する */
   const [tipBurst, setTipBurst] = useState(0);
   const visible = hover || focused;
+  const hasDetailPage = hasWorkDetail(item.id);
 
-  const syncPosFromMouse = (e: React.MouseEvent<HTMLDivElement>) => {
+  const syncPosFromMouse = (e: MouseEvent<HTMLElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
     setTipPos({ x: e.clientX - r.left, y: e.clientY - r.top });
   };
@@ -98,99 +88,101 @@ function WorkRoleRow({ item }: { item: WorkItem }) {
     setTipPos({ x: width * 0.4, y: height / 2 });
   };
 
-  return (
+  const rowClassName =
+    "relative flex h-24 items-center justify-between gap-4 px-4 transition-colors duration-200 ease-out hover:bg-[#eceff1] focus-visible:bg-[#eceff1] focus-visible:outline-none motion-reduce:transition-none " +
+    (hasDetailPage ? "cursor-pointer" : "cursor-default");
+
+  const rowBody = (
     <>
-      <div className="h-px w-full bg-[#b0bec5]" />
+      <p className="min-w-0 flex-1 font-sans text-[16px] leading-[1.8] tracking-[0.08em] text-[#333]">
+        {item.title}
+      </p>
       <div
-        ref={rowRef}
-        className="relative flex h-24 cursor-default items-center justify-between gap-4 px-4 transition-colors duration-200 ease-out hover:bg-[#eceff1] focus-visible:bg-[#eceff1] motion-reduce:transition-none"
-        tabIndex={0}
-        aria-describedby={`work-role-${item.id}`}
-        onMouseEnter={(e) => {
-          setHover(true);
-          syncPosFromMouse(e);
-          setTipBurst((n) => n + 1);
+        className="pointer-events-none absolute left-0 top-0 z-10"
+        style={{
+          transform: `translate(${tipPos.x + WORK_ROLE_CURSOR_OFFSET.x}px, ${tipPos.y + WORK_ROLE_CURSOR_OFFSET.y}px)`,
         }}
-        onMouseMove={(e) => {
-          syncPosFromMouse(e);
-        }}
-        onMouseLeave={() => {
-          setHover(false);
-        }}
-        onFocus={() => {
-          setFocused(true);
-          placeTipCentered();
-          setTipBurst((n) => n + 1);
-        }}
-        onBlur={() => setFocused(false)}
       >
-        <p className="min-w-0 flex-1 font-sans text-[16px] leading-[1.8] tracking-[0.08em] text-[#333]">
-          {item.title}
-        </p>
         <div
-          className="pointer-events-none absolute left-0 top-0 z-10"
-          style={{
-            transform: `translate(${tipPos.x + WORK_ROLE_CURSOR_OFFSET.x}px, ${tipPos.y + WORK_ROLE_CURSOR_OFFSET.y}px)`,
-          }}
+          id={`work-role-${item.id}`}
+          key={tipBurst}
+          role="tooltip"
+          aria-hidden={!visible}
+          className={
+            visible
+              ? "max-w-[240px] origin-top-left rounded-[2px] border border-[#b0bec5] bg-white p-4 shadow-[0_8px_24px_rgba(51,51,51,0.08)] motion-reduce:animate-none animate-work-role-tip-in"
+              : "max-w-[240px] origin-top-left rounded-[2px] border border-transparent bg-transparent p-4 opacity-0 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none translate-y-1 scale-[0.94]"
+          }
         >
-          <div
-            id={`work-role-${item.id}`}
-            key={tipBurst}
-            role="tooltip"
-            aria-hidden={!visible}
-            className={
-              visible
-                ? "max-w-[240px] origin-top-left rounded-[2px] border border-[#b0bec5] bg-white p-4 shadow-[0_8px_24px_rgba(51,51,51,0.08)] motion-reduce:animate-none animate-work-role-tip-in"
-                : "max-w-[240px] origin-top-left rounded-[2px] border border-transparent bg-transparent p-4 opacity-0 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none translate-y-1 scale-[0.94]"
-            }
+          <p
+            className={`font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-[#333] ${
+              visible ? "motion-reduce:animate-none animate-work-role-text-in" : ""
+            }`}
           >
-            <p
-              className={`font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-[#333] ${
-                visible
-                  ? "motion-reduce:animate-none animate-work-role-text-in"
-                  : ""
-              }`}
-            >
-              {item.roles.join(", ")}
-            </p>
-          </div>
+            {item.roles.join(", ")}
+          </p>
         </div>
-        <div
-          className="aspect-video h-16 shrink-0 overflow-hidden bg-[#eceff1]"
-          aria-hidden="true"
-        >
-          <img
-            src={item.thumbSrc}
-            alt=""
-            className="h-full w-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
+      </div>
+      <div
+        className="aspect-video h-16 shrink-0 overflow-hidden bg-[#eceff1]"
+        aria-hidden="true"
+      >
+        <img
+          src={item.thumbSrc}
+          alt=""
+          className="h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
     </>
   );
-}
 
-function CtaArrow() {
+  const interactionHandlers = {
+    onMouseEnter: (e: MouseEvent<HTMLElement>) => {
+      setHover(true);
+      syncPosFromMouse(e);
+      setTipBurst((n) => n + 1);
+    },
+    onMouseMove: (e: MouseEvent<HTMLElement>) => {
+      syncPosFromMouse(e);
+    },
+    onMouseLeave: () => {
+      setHover(false);
+    },
+    onFocus: () => {
+      setFocused(true);
+      placeTipCentered();
+      setTipBurst((n) => n + 1);
+    },
+    onBlur: () => setFocused(false),
+  };
+
   return (
-    <svg
-      width="18"
-      height="8"
-      viewBox="0 0 18 8"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="block"
-      aria-hidden="true"
-    >
-      <path
-        d="M1 7L17 1M17 1H8M17 1V6"
-        stroke="currentColor"
-        strokeWidth="0.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <>
+      <div className="h-px w-full bg-[#b0bec5]" />
+      {hasDetailPage ? (
+        <Link
+          ref={rowRef as RefObject<HTMLAnchorElement>}
+          to={`/works/${item.id}`}
+          className={rowClassName}
+          aria-describedby={`work-role-${item.id}`}
+          {...interactionHandlers}
+        >
+          {rowBody}
+        </Link>
+      ) : (
+        <div
+          ref={rowRef as RefObject<HTMLDivElement>}
+          className={rowClassName}
+          tabIndex={0}
+          aria-describedby={`work-role-${item.id}`}
+          {...interactionHandlers}
+        >
+          {rowBody}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -440,7 +432,7 @@ function AboutGrid() {
           </SkewSerif>
         </div>
       </div>
-      <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-40 md:col-span-6 md:col-start-7">
+      <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-16 md:col-span-6 md:col-start-7">
         <div className="aspect-[160/90] w-full overflow-hidden bg-[#eceff1]" aria-hidden="true">
           <img src={pfImg2} alt="" className="h-full w-full object-cover" />
         </div>
@@ -580,30 +572,7 @@ export default function Top() {
         <HeroTitleBlock shrink={persistentTitleShrink} />
       </div>
 
-      <header className="fixed right-0 top-0 z-50 flex h-20 w-full items-center justify-end overflow-hidden px-6">
-        <div className="flex w-max max-w-full items-center justify-end rounded-lg p-6">
-          <nav className="flex items-end justify-end gap-4 text-[16px] leading-none text-[#333]">
-            <a href="#about" className="flex items-start">
-              <span className="font-sans">ABOUT</span>
-              <SkewSerif className="pl-1">
-                <span className="text-[16px]">ME</span>
-              </SkewSerif>
-            </a>
-            <a href="#work" className="flex items-start">
-              <span className="font-sans">RECENT</span>
-              <SkewSerif className="pl-1">
-                <span className="text-[16px]">WORKS</span>
-              </SkewSerif>
-            </a>
-            <a href="#contact" className="flex items-start">
-              <span className="font-sans">GET IN</span>
-              <SkewSerif className="pl-1">
-                <span className="text-[16px]">TOUCH</span>
-              </SkewSerif>
-            </a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <section
         ref={heroScrollRef}
