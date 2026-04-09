@@ -7,8 +7,11 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import sample1Img from "./assets/sample_1.jpg";
-import { workItems } from "./data/workItems";
+import pfImg2 from "./assets/pf_2.webp";
+import { workItems, type WorkItem } from "./data/workItems";
+
+/** カーソル（またはフォーカス基準点）からツールチップ左上へのずらし — カーソルと文字が重ならないようにする */
+const WORK_ROLE_CURSOR_OFFSET = { x: 14, y: 14 };
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -74,6 +77,101 @@ function MarqueeEllipse({ fill = "#F4511E" }: { fill?: string }) {
   );
 }
 
+function WorkRoleRow({ item }: { item: WorkItem }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [tipPos, setTipPos] = useState({ x: 0, y: 0 });
+  const [hover, setHover] = useState(false);
+  const [focused, setFocused] = useState(false);
+  /** 行に入るたびに増やしてツールチップを差し替え、入場アニメを毎回再生する */
+  const [tipBurst, setTipBurst] = useState(0);
+  const visible = hover || focused;
+
+  const syncPosFromMouse = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    setTipPos({ x: e.clientX - r.left, y: e.clientY - r.top });
+  };
+
+  const placeTipCentered = () => {
+    const el = rowRef.current;
+    if (!el) return;
+    const { width, height } = el.getBoundingClientRect();
+    setTipPos({ x: width * 0.4, y: height / 2 });
+  };
+
+  return (
+    <>
+      <div className="h-px w-full bg-[#b0bec5]" />
+      <div
+        ref={rowRef}
+        className="relative flex h-24 cursor-default items-center justify-between gap-4 px-4 transition-colors duration-200 ease-out hover:bg-[#eceff1] focus-visible:bg-[#eceff1] motion-reduce:transition-none"
+        tabIndex={0}
+        aria-describedby={`work-role-${item.id}`}
+        onMouseEnter={(e) => {
+          setHover(true);
+          syncPosFromMouse(e);
+          setTipBurst((n) => n + 1);
+        }}
+        onMouseMove={(e) => {
+          syncPosFromMouse(e);
+        }}
+        onMouseLeave={() => {
+          setHover(false);
+        }}
+        onFocus={() => {
+          setFocused(true);
+          placeTipCentered();
+          setTipBurst((n) => n + 1);
+        }}
+        onBlur={() => setFocused(false)}
+      >
+        <p className="min-w-0 flex-1 font-sans text-[16px] leading-[1.8] tracking-[0.08em] text-[#333]">
+          {item.title}
+        </p>
+        <div
+          className="pointer-events-none absolute left-0 top-0 z-10"
+          style={{
+            transform: `translate(${tipPos.x + WORK_ROLE_CURSOR_OFFSET.x}px, ${tipPos.y + WORK_ROLE_CURSOR_OFFSET.y}px)`,
+          }}
+        >
+          <div
+            id={`work-role-${item.id}`}
+            key={tipBurst}
+            role="tooltip"
+            aria-hidden={!visible}
+            className={
+              visible
+                ? "max-w-[240px] origin-top-left rounded-[2px] border border-[#b0bec5] bg-white p-4 shadow-[0_8px_24px_rgba(51,51,51,0.08)] motion-reduce:animate-none animate-work-role-tip-in"
+                : "max-w-[240px] origin-top-left rounded-[2px] border border-transparent bg-transparent p-4 opacity-0 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none translate-y-1 scale-[0.94]"
+            }
+          >
+            <p
+              className={`font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-[#333] ${
+                visible
+                  ? "motion-reduce:animate-none animate-work-role-text-in"
+                  : ""
+              }`}
+            >
+              {item.roles.join(", ")}
+            </p>
+          </div>
+        </div>
+        <div
+          className="aspect-video h-16 shrink-0 overflow-hidden bg-[#eceff1]"
+          aria-hidden="true"
+        >
+          <img
+            src={item.thumbSrc}
+            alt=""
+            className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </>
+  );
+}
+
 function CtaArrow() {
   return (
     <svg
@@ -120,20 +218,20 @@ function HeroTitleBlock({ shrink }: { shrink: number }) {
   );
 }
 
-/** WORK 直下：Figma 相当のポートレート枠＋二重画像 */
+/** marquee 用ポートレート枠＋二重画像 */
 function WorkBelowPortraitBlock() {
   return (
     <div className="h-[min(598px,70vh)] w-full overflow-hidden bg-[#eceff1]">
       <div className="relative h-full w-full">
         <img
           alt=""
-          src={sample1Img}
+          src={pfImg2}
           className="pointer-events-none absolute left-1/2 top-0 h-full w-[min(896px,220%)] max-w-none -translate-x-1/2 object-cover"
           decoding="async"
         />
         <img
           alt=""
-          src={sample1Img}
+          src={pfImg2}
           className="pointer-events-none absolute left-1/2 top-0 h-full w-[min(798px,195%)] max-w-none -translate-x-1/2 object-cover opacity-80"
           decoding="async"
         />
@@ -300,7 +398,7 @@ function TrioAtRest() {
         style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
         aria-hidden="true"
       >
-        <img src={sample1Img} alt="" className="h-full w-full object-cover" />
+        <img src={pfImg2} alt="" className="h-full w-full object-cover" />
       </div>
       <div className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-center gap-2">
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
@@ -344,7 +442,7 @@ function AboutGrid() {
       </div>
       <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-40 md:col-span-6 md:col-start-7">
         <div className="aspect-[160/90] w-full overflow-hidden bg-[#eceff1]" aria-hidden="true">
-          <img src={sample1Img} alt="" className="h-full w-full object-cover" />
+          <img src={pfImg2} alt="" className="h-full w-full object-cover" />
         </div>
         <div className="flex flex-col gap-6 text-[#333]">
           <p className="w-full font-jp text-[16px] font-medium leading-[1.8] tracking-[0.08em]">
@@ -356,10 +454,6 @@ function AboutGrid() {
             believe that a good digital experience comes from a thoughtful structure—not just how
             it looks, but how it is built. I enjoy looking at a project as a whole, finding a
             simple and honest way to connect design with the data underneath.
-            <br />XXXXXXXXXXXXXXXXXXXXX<br />
-            XXXXXXXXXXXXXXXXXXXX<br />
-            XXXXXXXXXXXXXXXXXXXX<br />
-            XXXXXXXXXXXXXXXXXXXX
 
           </p>
         </div>
@@ -530,7 +624,7 @@ export default function Top() {
                   }}
                   aria-hidden="true"
                 >
-                  <img src={sample1Img} alt="" className="h-full w-full object-cover" />
+                  <img src={pfImg2} alt="" className="h-full w-full object-cover" />
                 </div>
                 <div
                   className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-center gap-2"
@@ -623,24 +717,7 @@ export default function Top() {
               <ul className="flex flex-col">
                 {workItems.map((item) => (
                   <li key={item.id}>
-                    <div className="h-px w-full bg-[#b0bec5]" />
-                    <div className="flex h-24 items-center justify-between gap-4 px-4">
-                      <p className="min-w-0 flex-1 font-sans text-[16px] leading-[1.8] tracking-[0.08em] text-[#333]">
-                        {item.title}
-                      </p>
-                      <div
-                        className="aspect-video h-16 shrink-0 overflow-hidden bg-[#eceff1]"
-                        aria-hidden="true"
-                      >
-                        <img
-                          src={item.thumbSrc}
-                          alt=""
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </div>
-                    </div>
+                    <WorkRoleRow item={item} />
                   </li>
                 ))}
                 <li className="h-px w-full bg-[#b0bec5]" />
