@@ -771,8 +771,10 @@ export default function Top() {
         </div>
       </section>
 
-      <footer className="relative z-10 flex w-full flex-col items-start overflow-hidden bg-[#f5f7f8] px-10 pb-10">
-        <div className="flex w-full items-start gap-40 border-t border-[#cfd8dc] pt-10">
+      <footer className="relative z-10 flex w-full flex-col items-start overflow-hidden bg-[#f5f7f8] pb-10">
+      <div className="flex w-full items-start gap-40 border-t border-[#cfd8dc] pt-10">
+        <div className="w-full px-10 flex items-start">
+        
           <div className="flex h-10 w-full items-start">
             <div className="flex flex-col items-start gap-60">
               <div className="flex items-center gap-2">
@@ -792,6 +794,7 @@ export default function Top() {
             © 2026 Tina Katono
             </p>
           </div>
+        </div>
         </div>
       </footer>
     </div>
