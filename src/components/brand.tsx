@@ -3,13 +3,22 @@ import type { ReactNode } from "react";
 export function SkewSerif({
   children,
   className = "",
+  /** false にすると skew を外し、mix-blend などと合成しやすくする */
+  skew = true,
 }: {
   children: ReactNode;
   className?: string;
+  skew?: boolean;
 }) {
   return (
     <span className={`inline-flex items-center justify-center ${className}`}>
-      <span className="inline-block origin-center scale-y-[0.98] -skew-x-[11deg] font-serif not-italic tracking-wide">
+      <span
+        className={
+          skew
+            ? "inline-block origin-center scale-y-[0.98] -skew-x-[11deg] font-serif not-italic tracking-wide"
+            : "inline-block font-serif not-italic tracking-wide"
+        }
+      >
         {children}
       </span>
     </span>

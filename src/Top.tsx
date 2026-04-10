@@ -202,9 +202,9 @@ function HeroTitleBlock({ shrink }: { shrink: number }) {
         <p className="whitespace-nowrap text-center font-sans leading-none tracking-[-0.03em] pr-4 text-[#333]">
           TINA
         </p>
-        <span className="whitespace-nowrap font-serif not-italic leading-none tracking-[0.02em] text-[#333]">
-          KATONO
-        </span>
+        <SkewSerif>
+          <span className="whitespace-nowrap leading-none tracking-[0.02em] text-[#333]">KATONO</span>
+        </SkewSerif>
       </div>
     </div>
   );

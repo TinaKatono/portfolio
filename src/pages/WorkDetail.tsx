@@ -5,12 +5,11 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { CtaArrow, SkewSerif } from "../components/brand";
+import { Navigate, useParams } from "react-router-dom";
+import { SkewSerif } from "../components/brand";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
 import { SiteHeader } from "../components/SiteHeader";
-import { workDetails } from "../data/workDetails";
-
-const detail = workDetails["kiviaq-pharmacy"];
+import { hasWorkDetail, workDetails } from "../data/workDetails";
 
 /** bottom のみの sticky は Flex 内で効かないことが多いので、top を「下端固定」相当に計算する */
 function OverviewSticky({ children }: { children: ReactNode }) {
@@ -45,7 +44,13 @@ function OverviewSticky({ children }: { children: ReactNode }) {
   );
 }
 
-export default function WorkKiviaq() {
+export default function WorkDetail() {
+  const { id } = useParams<{ id: string }>();
+  if (!id || !hasWorkDetail(id)) {
+    return <Navigate to="/" replace />;
+  }
+  const detail = workDetails[id];
+
   return (
     <div className="relative mx-auto flex min-h-screen w-full flex-col items-start bg-[#f5f7f8]">
       <SiteCenterBrand />
@@ -65,21 +70,21 @@ export default function WorkKiviaq() {
 
                 <div className="flex flex-col gap-2.5">
                   <h2 className="font-sans text-[16px] leading-none text-[#333]">ROLE</h2>
-                  <p className="font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black bg-white max-w-full w-fit">
+                  <p className="w-fit max-w-full bg-white font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black">
                     {detail.roles.join(", ")}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2.5">
                   <h2 className="font-sans text-[16px] leading-none text-[#333]">YEAR / DURATION</h2>
-                  <p className="font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black bg-white max-w-full w-fit">
+                  <p className="w-fit max-w-full bg-white font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black">
                     {detail.yearDuration}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-2.5">
                   <h2 className="font-sans text-[16px] leading-none text-[#333]">Tools</h2>
-                  <p className="font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black bg-white max-w-full w-fit">
+                  <p className="w-fit max-w-full bg-white font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black">
                     {detail.tools.join(", ")}
                   </p>
                 </div>
@@ -103,7 +108,7 @@ export default function WorkKiviaq() {
         </div>
       </main>
 
-      <section
+      {/* <section
         id="contact"
         className="relative z-10 flex w-full items-start justify-between overflow-hidden bg-[#f5f7f8] px-10"
       >
@@ -129,7 +134,7 @@ export default function WorkKiviaq() {
             <CtaArrow />
           </button>
         </div>
-      </section>
+      </section> */}
 
       <footer className="relative z-10 flex w-full flex-col items-start overflow-hidden bg-[#f5f7f8] pb-10">
         <div className="flex w-full items-start gap-40 border-t border-[#cfd8dc] pt-10">

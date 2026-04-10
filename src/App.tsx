@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Top from "./Top";
-import WorkKiviaq from "./pages/WorkKiviaq";
+import WorkDetail from "./pages/WorkDetail";
 
 function ScrollToTopOnRoute() {
   const { pathname } = useLocation();
@@ -17,7 +17,7 @@ export default function App() {
       <ScrollToTopOnRoute />
       <Routes>
         <Route path="/" element={<Top />} />
-        <Route path="/works/kiviaq-pharmacy" element={<WorkKiviaq />} />
+        <Route path="/works/:id" element={<WorkDetail />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

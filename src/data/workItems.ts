@@ -1,4 +1,4 @@
-import sample1Img from "../assets/sample_1.jpg";
+import sample1Img from "../assets/pf_2.webp";
 
 export type WorkItem = {
   id: string;
