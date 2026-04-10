@@ -5,7 +5,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Poppins", "system-ui", "sans-serif"],
-        serif: ["Antic Didone", "Georgia", "serif"],
+        serif: ["Cardo", "Georgia", "serif"],
         jp: ["Noto Sans JP", "sans-serif"],
       },
       keyframes: {

@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { SkewSerif } from "../components/brand";
+import { BrandSerif } from "../components/brand";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
 import { SiteHeader } from "../components/SiteHeader";
 import { hasWorkDetail, workDetails } from "../data/workDetails";
@@ -36,7 +36,7 @@ function OverviewSticky({ children }: { children: ReactNode }) {
   return (
     <div
       ref={ref}
-      className="w-full max-w-xl pb-2 lg:sticky lg:z-10 lg:self-start"
+      className="w-full max-w-xl pb-2 md:sticky md:z-10 md:self-start"
       style={stickyTop}
     >
       {children}
@@ -57,8 +57,8 @@ export default function WorkDetail() {
       <SiteHeader />
 
       <main className="w-full shrink-0 border-t border-[#b0bec5] px-10 pb-20 pt-[120px]">
-        <div className="flex w-full flex-col gap-16 lg:flex-row lg:items-stretch lg:gap-20">
-          <aside className="flex min-w-0 flex-1 flex-col lg:min-h-0">
+        <div className="grid w-full grid-cols-12 gap-x-6 gap-y-10 md:gap-x-10">
+          <aside className="col-span-12 flex min-w-0 flex-col md:col-span-4 md:min-h-0">
             <OverviewSticky>
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col gap-2.5">
@@ -92,7 +92,7 @@ export default function WorkDetail() {
             </OverviewSticky>
           </aside>
 
-          <div className="flex w-full shrink-0 flex-col gap-10 lg:max-w-[668px]">
+          <div className="col-span-12 flex min-w-0 flex-col gap-10 md:col-span-6 md:col-start-7">
             {detail.sections.map((section, i) => (
               <div key={i} className="flex flex-col gap-6">
                 <div className="aspect-video w-full shrink-0 bg-[#eceff1]" aria-hidden />
@@ -120,11 +120,11 @@ export default function WorkDetail() {
             <p className="whitespace-nowrap pr-4 text-center font-sans text-[128px] leading-none tracking-[-0.03em] text-[#333]">
               IN
             </p>
-            <SkewSerif>
+            <BrandSerif>
               <span className="whitespace-nowrap text-[128px] leading-none tracking-[0.02em] text-[#333]">
                 TOUCH
               </span>
-            </SkewSerif>
+            </BrandSerif>
           </div>
           <button
             type="button"
@@ -145,9 +145,9 @@ export default function WorkDetail() {
                   <span className="whitespace-nowrap text-center font-sans text-[40px] leading-none tracking-[-0.03em] text-[#333]">
                     TINA
                   </span>
-                  <SkewSerif>
+                  <BrandSerif>
                     <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">KATONO</span>
-                  </SkewSerif>
+                  </BrandSerif>
                 </div>
               </div>
             </div>

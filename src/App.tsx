@@ -1,6 +1,7 @@
 import { useLayoutEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Top from "./Top";
+import Contact from "./pages/Contact";
 import WorkDetail from "./pages/WorkDetail";
 
 /** Vite の `base`（例: GitHub Pages の `/portfolio/`）と React Router を揃える */
@@ -48,6 +49,7 @@ export default function App() {
       <RouteScrollEffects />
       <Routes>
         <Route path="/" element={<Top />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/works/:id" element={<WorkDetail />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

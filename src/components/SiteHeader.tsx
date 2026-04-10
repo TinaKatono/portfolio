@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { SkewSerif } from "./brand";
+import { BrandSerif } from "./brand";
 
 /**
  * ナビのみの横幅・ビューポート右端寄せ。中央のブランド表示と重ならないよう、ヘッダー自体は全幅にしない。
@@ -14,21 +14,21 @@ export function SiteHeader() {
       <nav className="pointer-events-auto flex w-max max-w-[min(100vw-1.5rem,100%)] flex-wrap items-end justify-end gap-4 rounded-lg p-6 text-[16px] leading-none text-[#333] supports-[mix-blend-mode:difference]:text-white">
         <Link to="/#about" className="flex items-start">
           <span className="font-sans">ABOUT</span>
-          <SkewSerif className="pl-1">
+          <BrandSerif className="pl-1">
             <span className="text-[16px]">ME</span>
-          </SkewSerif>
+          </BrandSerif>
         </Link>
         <Link to="/#work" className="flex items-start">
           <span className="font-sans">RECENT</span>
-          <SkewSerif className="pl-1">
+          <BrandSerif className="pl-1">
             <span className="text-[16px]">WORKS</span>
-          </SkewSerif>
+          </BrandSerif>
         </Link>
-        <Link to="/#contact" className="flex items-start">
+        <Link to="/contact" className="flex items-start">
           <span className="font-sans">GET IN</span>
-          <SkewSerif className="pl-1">
+          <BrandSerif className="pl-1">
             <span className="text-[16px]">TOUCH</span>
-          </SkewSerif>
+          </BrandSerif>
         </Link>
       </nav>
     </header>

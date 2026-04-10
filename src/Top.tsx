@@ -10,7 +10,7 @@ import {
 } from "react";
 import { Link } from "react-router-dom";
 import pfImg2 from "./assets/pf_2.webp";
-import { CtaArrow, SkewSerif } from "./components/brand";
+import { BrandSerif, CtaArrow } from "./components/brand";
 import { SiteHeader } from "./components/SiteHeader";
 import { hasWorkDetail } from "./data/workDetails";
 import { workItems, type WorkItem } from "./data/workItems";
@@ -202,9 +202,9 @@ function HeroTitleBlock({ shrink }: { shrink: number }) {
         <p className="whitespace-nowrap text-center font-sans leading-none tracking-[-0.03em] pr-4 text-[#333]">
           TINA
         </p>
-        <SkewSerif>
+        <BrandSerif>
           <span className="whitespace-nowrap leading-none tracking-[0.02em] text-[#333]">KATONO</span>
-        </SkewSerif>
+        </BrandSerif>
       </div>
     </div>
   );
@@ -248,7 +248,7 @@ function WorkBelowMarqueeStrip({
   ariaHidden?: boolean;
 }) {
   const sans = `whitespace-nowrap font-sans leading-none tracking-[-0.03em] ${phraseColorClass} ${textClass} ${toneClass}`.trim();
-  const serifSkew =
+  const serifPhrase =
     `whitespace-nowrap font-serif not-italic leading-none tracking-[0.02em] ${phraseColorClass} ${textClass} ${toneClass}`.trim();
 
   return (
@@ -258,30 +258,30 @@ function WorkBelowMarqueeStrip({
     >
       <p className={sans}>DRIVEN BY </p>
       <div className="flex items-center justify-center pl-2 pr-2">
-        <SkewSerif>
-          <span className={serifSkew}>LOGIC,</span>
-        </SkewSerif>
+        <BrandSerif>
+          <span className={serifPhrase}>LOGIC,</span>
+        </BrandSerif>
       </div>
       {/* <MarqueeEllipse fill={ellipseFill} /> */}
       <p className={sans}>DEFINED BY </p>
       <div className="flex items-center justify-center pl-2">
-        <SkewSerif>
-          <span className={serifSkew}>DESIGN.</span>
-        </SkewSerif>
+        <BrandSerif>
+          <span className={serifPhrase}>DESIGN.</span>
+        </BrandSerif>
       </div>
       <MarqueeEllipse fill={ellipseFill} />
       <p className={sans}>DRIVEN BY </p>
       <div className="flex items-center justify-center pl-2 pr-2">
-        <SkewSerif>
-          <span className={serifSkew}>LOGIC,</span>
-        </SkewSerif>
+        <BrandSerif>
+          <span className={serifPhrase}>LOGIC,</span>
+        </BrandSerif>
       </div>
       {/* <MarqueeEllipse fill={ellipseFill} /> */}
       <p className={sans}>DEFINED BY </p>
       <div className="flex items-center justify-center pl-2">
-        <SkewSerif>
-          <span className={serifSkew}>DESIGN.</span>
-        </SkewSerif>
+        <BrandSerif>
+          <span className={serifPhrase}>DESIGN.</span>
+        </BrandSerif>
       </div>
       <MarqueeEllipse fill={ellipseFill} />
     </div>
@@ -396,21 +396,21 @@ function TrioAtRest() {
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
           DRIVEN BY
         </p>
-        <SkewSerif>
+        <BrandSerif>
           <span className="whitespace-nowrap text-[clamp(24px,4vw,40px)] leading-none text-[#333]">
             LOGIC,{" "}
           </span>
-        </SkewSerif>
+        </BrandSerif>
       </div>
       <div className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-end justify-end gap-2 text-right">
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
           DEFINED BY{" "}
         </p>
-        <SkewSerif>
+        <BrandSerif>
           <span className="whitespace-nowrap text-[clamp(24px,4vw,40px)] leading-none text-[#333]">
             DESIGN.
           </span>
-        </SkewSerif>
+        </BrandSerif>
       </div>
     </div>
   );
@@ -427,9 +427,9 @@ function AboutGrid() {
               ABOUT
             </span>
           </div>
-          <SkewSerif>
+          <BrandSerif>
             <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">ME</span>
-          </SkewSerif>
+          </BrandSerif>
         </div>
       </div>
       <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-16 md:col-span-6 md:col-start-7">
@@ -602,11 +602,11 @@ export default function Top() {
                   <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
                     DRIVEN BY
                   </p>
-                  <SkewSerif>
+                  <BrandSerif>
                     <span className="whitespace-nowrap text-[clamp(24px,4vw,40px)] leading-none text-[#333]">
                       LOGIC,{" "}
                     </span>
-                  </SkewSerif>
+                  </BrandSerif>
                 </div>
                 <div
                   className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-end justify-end gap-2 text-right"
@@ -617,11 +617,11 @@ export default function Top() {
                   <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
                     DEFINED BY{" "}
                   </p>
-                  <SkewSerif>
+                  <BrandSerif>
                     <span className="whitespace-nowrap text-[clamp(24px,4vw,40px)] leading-none text-[#333]">
                       DESIGN.
                     </span>
-                  </SkewSerif>
+                  </BrandSerif>
                 </div>
               </div>
             </div>
@@ -675,9 +675,9 @@ export default function Top() {
                     RECENT
                   </span>
                 </div>
-                <SkewSerif>
+                <BrandSerif>
                   <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">WORK</span>
-                </SkewSerif>
+                </BrandSerif>
               </div>
             </div>
             <div className="col-span-12 min-w-0 md:col-span-6 md:col-start-7">
@@ -714,28 +714,28 @@ export default function Top() {
         id="contact"
         className="relative z-10 flex w-full items-start justify-between overflow-hidden bg-[#f5f7f8] px-10"
       >
-        <div className="flex w-full flex-wrap items-center gap-16 py-24 md:flex-nowrap">
+        <Link
+          to="/contact"
+          className="group flex w-full flex-wrap items-center gap-16 py-24 motion-reduce:transition-none md:flex-nowrap"
+          aria-label="お問い合わせフォームへ"
+        >
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-          <p className="whitespace-nowrap text-center font-sans text-[128px] leading-none tracking-[-0.03em] text-[#333] pr-4">
+            <p className="whitespace-nowrap pr-4 text-center font-sans text-[128px] leading-none tracking-[-0.03em] text-[#333]">
               GET
             </p>
-            <p className="whitespace-nowrap text-center font-sans text-[128px] leading-none tracking-[-0.03em] text-[#333] pr-4">
+            <p className="whitespace-nowrap pr-4 text-center font-sans text-[128px] leading-none tracking-[-0.03em] text-[#333]">
               IN
             </p>
-            <SkewSerif>
+            <BrandSerif>
               <span className="whitespace-nowrap text-[128px] leading-none tracking-[0.02em] text-[#333]">
                 TOUCH
               </span>
-            </SkewSerif>
+            </BrandSerif>
           </div>
-          <button
-            type="button"
-            className="flex size-[240px] shrink-0 items-center justify-center rounded-full border border-black text-[#333]"
-            aria-label="お問い合わせ"
-          >
+          <span className="flex size-[240px] shrink-0 items-center justify-center rounded-full border border-black text-[#333] transition-colors duration-200 ease-out group-hover:bg-[#333] group-hover:text-white motion-reduce:transition-none">
             <CtaArrow />
-          </button>
-        </div>
+          </span>
+        </Link>
       </section>
 
       <footer className="relative z-10 flex w-full flex-col items-start overflow-hidden bg-[#f5f7f8] pb-10">
@@ -748,11 +748,11 @@ export default function Top() {
                 <span className="whitespace-nowrap text-center font-sans text-[40px] leading-none tracking-[-0.03em] text-[#333]">
                   TINA
                 </span>
-                <SkewSerif>
+                <BrandSerif>
                   <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">
                     KATONO
                   </span>
-                </SkewSerif>
+                </BrandSerif>
               </div>
             </div>
           </div>

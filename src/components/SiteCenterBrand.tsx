@@ -1,4 +1,4 @@
-import { SkewSerif } from "./brand";
+import { BrandSerif } from "./brand";
 
 /** ヒーロー縮小後相当（HeroTitleBlock shrink=1）と同じ見た目で中央固定（サブページ用） */
 export function SiteCenterBrand() {
@@ -13,9 +13,9 @@ export function SiteCenterBrand() {
         <p className="whitespace-nowrap pr-4 text-center font-sans leading-none tracking-[-0.03em]">
           TINA
         </p>
-        <SkewSerif>
+        <BrandSerif>
           <span className="whitespace-nowrap leading-none tracking-[0.02em]">KATONO</span>
-        </SkewSerif>
+        </BrandSerif>
       </div>
     </div>
   );
