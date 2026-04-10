@@ -8,8 +8,8 @@ export function BrandSerif({
   className?: string;
 }) {
   return (
-    <span className={`inline-flex items-center justify-center ${className}`}>
-      <span className="inline-block font-serif not-italic tracking-wide">
+    <span className={`inline-flex items-baseline ${className}`}>
+      <span className="inline-block translate-y-[0.055em] font-serif not-italic tracking-wide">
         {children}
       </span>
     </span>

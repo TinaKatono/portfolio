@@ -33,13 +33,13 @@ export default function Contact() {
       <main className="w-full shrink-0 border-t border-[#b0bec5] px-10 pb-20 pt-[120px]">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-12">
           <header className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-start gap-2">
+            <div className="flex flex-wrap items-baseline gap-2">
               <span className="whitespace-nowrap font-sans text-[40px] leading-none text-[#333]">GET IN</span>
               <BrandSerif>
                 <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">TOUCH</span>
               </BrandSerif>
             </div>
-            <div className="flex flex-col gap-6 text-[#333]">
+            {/* <div className="flex flex-col gap-6 text-[#333]">
               <p className="font-jp text-[16px] font-medium leading-[1.8] tracking-[0.08em]">
                 ご依頼やご質問があれば、以下のフォームからお送りください。送信ボタンを押すと、あなたのメールアプリが開き、内容が転記されます。
               </p>
@@ -47,7 +47,7 @@ export default function Contact() {
                 For project inquiries or questions, use the form below. Submitting opens your mail app with the
                 message pre-filled.
               </p>
-            </div>
+            </div> */}
           </header>
 
           <form onSubmit={onSubmit} className="flex flex-col gap-8" noValidate>
@@ -108,12 +108,12 @@ export default function Contact() {
               >
                 Send
               </button>
-              <Link
+              {/* <Link
                 to="/"
                 className="font-sans text-[14px] leading-none tracking-[0.08em] text-[#333] underline underline-offset-4 transition-opacity hover:opacity-70"
               >
                 Back to top
-              </Link>
+              </Link> */}
             </div>
           </form>
         </div>
@@ -124,7 +124,7 @@ export default function Contact() {
           <div className="flex w-full items-start px-10">
             <div className="flex h-10 w-full items-start">
               <div className="flex flex-col items-start gap-60">
-                <div className="flex items-center gap-2">
+                <div className="flex items-baseline gap-2">
                   <span className="whitespace-nowrap text-center font-sans text-[40px] leading-none tracking-[-0.03em] text-[#333]">
                     TINA
                   </span>

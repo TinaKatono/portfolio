@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -6,9 +7,11 @@ import {
   useState,
   type CSSProperties,
   type MouseEvent,
+  type ReactNode,
   type RefObject,
 } from "react";
 import { Link } from "react-router-dom";
+import pfImg1 from "./assets/pf_1.webp";
 import pfImg2 from "./assets/pf_2.webp";
 import { BrandSerif, CtaArrow } from "./components/brand";
 import { SiteHeader } from "./components/SiteHeader";
@@ -17,6 +20,31 @@ import { workItems, type WorkItem } from "./data/workItems";
 
 /** カーソル（またはフォーカス基準点）からツールチップ左上へのずらし — カーソルと文字が重ならないようにする */
 const WORK_ROLE_CURSOR_OFFSET = { x: 14, y: 14 };
+
+function GetInTouchHeadlineWord({
+  children,
+  textClassName,
+  wrapperClassName = "",
+}: {
+  children: ReactNode;
+  textClassName: string;
+  wrapperClassName?: string;
+}) {
+  const rail =
+    "block transition-transform duration-[700ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-1/2 group-focus-within:-translate-y-1/2 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-within:translate-y-0";
+  return (
+    <span
+      className={`inline-block h-[1em] overflow-hidden align-baseline text-[#333] ${textClassName} ${wrapperClassName}`}
+    >
+      <span className={rail}>
+        <span className="block leading-none">{children}</span>
+        <span className="block leading-none" aria-hidden>
+          {children}
+        </span>
+      </span>
+    </span>
+  );
+}
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -41,6 +69,19 @@ const P_TRIO_DONE = 0.58;
 /** 0〜1 でヒーロー見出しが大→小＆上へ。終端は P_TRIO_DONE より手前に置く */
 const P_TITLE_SHRINK_END = 0.48;
 
+/** ファーストビュー：名前の一文字ずつ出現（delay の間隔・語間） */
+const HERO_INTRO_CHAR_STAGGER_MS = 68;
+const HERO_INTRO_WORD_GAP_MS = 180;
+/** ヒーロー内でこれ以上スクロールしたら scroll 誘導を消す（ヒーロー先頭からの距離） */
+const HERO_SCROLL_HINT_MAX_OFFSET = 480;
+
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
 /** WORK 直下マルquee：黒／白の2層で同一の基準に置く（translateX(-50%) と 100vw の相性でズレやすいため margin 方式） */
 const workBelowMarqueeBleedStyle = {
   position: "absolute" as const,
@@ -50,21 +91,6 @@ const workBelowMarqueeBleedStyle = {
   width: "100vw",
   transform: "translateY(-50%)",
 };
-
-function MarqueeEllipse({ fill = "#F4511E" }: { fill?: string }) {
-  return (
-    <div
-      className="flex size-[85px] shrink-0 items-center justify-center"
-      aria-hidden="true"
-    >
-      <div className="-rotate-45">
-        <svg width="72" height="48" viewBox="0 0 72 48" className="block">
-          <ellipse cx="36" cy="24" rx="34" ry="20" fill={fill} />
-        </svg>
-      </div>
-    </div>
-  );
-}
 
 function WorkRoleRow({ item }: { item: WorkItem }) {
   const rowRef = useRef<HTMLDivElement | HTMLAnchorElement>(null);
@@ -186,9 +212,55 @@ function WorkRoleRow({ item }: { item: WorkItem }) {
   );
 }
 
-function HeroTitleBlock({ shrink }: { shrink: number }) {
+function HeroTitleBlock({
+  shrink,
+  reduceMotion,
+  onTitleIntroComplete,
+}: {
+  shrink: number;
+  reduceMotion: boolean;
+  onTitleIntroComplete?: () => void;
+}) {
   const topPx = 80 * (1 - shrink) + 28 * shrink;
   const fontPx = 32 + (160 - 32) * (1 - shrink);
+  const lastCharRef = useRef<HTMLSpanElement | null>(null);
+  const introDoneRef = useRef(false);
+
+  const tina = "TINA";
+  const katono = "KATONO";
+  const katonoBaseMs = tina.length * HERO_INTRO_CHAR_STAGGER_MS + HERO_INTRO_WORD_GAP_MS;
+
+  useEffect(() => {
+    if (introDoneRef.current) return;
+    if (reduceMotion) {
+      introDoneRef.current = true;
+      onTitleIntroComplete?.();
+      return;
+    }
+    const el = lastCharRef.current;
+    if (!el) {
+      introDoneRef.current = true;
+      onTitleIntroComplete?.();
+      return;
+    }
+    const finish = () => {
+      if (introDoneRef.current) return;
+      introDoneRef.current = true;
+      onTitleIntroComplete?.();
+    };
+    el.addEventListener("animationend", finish, { once: true });
+    const fallbackMs =
+      katonoBaseMs + (katono.length - 1) * HERO_INTRO_CHAR_STAGGER_MS + 700;
+    const t = window.setTimeout(finish, fallbackMs);
+    return () => {
+      clearTimeout(t);
+      el.removeEventListener("animationend", finish);
+    };
+  }, [reduceMotion, onTitleIntroComplete, katono.length, katonoBaseMs]);
+
+  const charClass = reduceMotion
+    ? "inline-block"
+    : "inline-block animate-hero-char-in motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:blur-none";
 
   return (
     <div
@@ -196,14 +268,43 @@ function HeroTitleBlock({ shrink }: { shrink: number }) {
       style={{ paddingTop: `${topPx}px` }}
     >
       <div
-        className="inline-flex max-w-full flex-wrap items-center justify-center gap-4"
+        className="inline-flex max-w-full flex-wrap items-baseline justify-center gap-4"
         style={{ fontSize: `${fontPx}px`, lineHeight: 1 }}
       >
         <p className="whitespace-nowrap text-center font-sans leading-none tracking-[-0.03em] pr-4 text-[#333]">
-          TINA
+          {tina.split("").map((ch, i) => (
+            <span
+              key={`tina-${i}`}
+              className={charClass}
+              style={
+                reduceMotion
+                  ? undefined
+                  : { animationDelay: `${i * HERO_INTRO_CHAR_STAGGER_MS}ms` }
+              }
+            >
+              {ch}
+            </span>
+          ))}
         </p>
         <BrandSerif>
-          <span className="whitespace-nowrap leading-none tracking-[0.02em] text-[#333]">KATONO</span>
+          <span className="whitespace-nowrap leading-none tracking-[0.02em] text-[#333]">
+            {katono.split("").map((ch, i) => (
+              <span
+                key={`katono-${i}`}
+                ref={i === katono.length - 1 ? lastCharRef : undefined}
+                className={charClass}
+                style={
+                  reduceMotion
+                    ? undefined
+                    : {
+                        animationDelay: `${katonoBaseMs + i * HERO_INTRO_CHAR_STAGGER_MS}ms`,
+                      }
+                }
+              >
+                {ch}
+              </span>
+            ))}
+          </span>
         </BrandSerif>
       </div>
     </div>
@@ -236,13 +337,11 @@ function WorkBelowPortraitBlock() {
 function WorkBelowMarqueeStrip({
   textClass = "text-[clamp(28px,5.5vw,64px)]",
   phraseColorClass = "text-[#333]",
-  ellipseFill = "#F4511E",
   toneClass = "",
   ariaHidden = false,
 }: {
   textClass?: string;
   phraseColorClass?: string;
-  ellipseFill?: string;
   /** 写真上レイヤー用 text-shadow（filter はレイヤーごとにずれやすい） */
   toneClass?: string;
   ariaHidden?: boolean;
@@ -253,7 +352,7 @@ function WorkBelowMarqueeStrip({
 
   return (
     <div
-      className="flex shrink-0 flex-nowrap items-center pr-12 md:pr-0"
+      className="flex shrink-0 flex-nowrap items-baseline pr-12 md:pr-0"
       aria-hidden={ariaHidden || undefined}
     >
       <p className={sans}>DRIVEN BY </p>
@@ -262,28 +361,24 @@ function WorkBelowMarqueeStrip({
           <span className={serifPhrase}>LOGIC,</span>
         </BrandSerif>
       </div>
-      {/* <MarqueeEllipse fill={ellipseFill} /> */}
       <p className={sans}>DEFINED BY </p>
       <div className="flex items-center justify-center pl-2">
         <BrandSerif>
           <span className={serifPhrase}>DESIGN.</span>
         </BrandSerif>
       </div>
-      <MarqueeEllipse fill={ellipseFill} />
       <p className={sans}>DRIVEN BY </p>
       <div className="flex items-center justify-center pl-2 pr-2">
         <BrandSerif>
           <span className={serifPhrase}>LOGIC,</span>
         </BrandSerif>
       </div>
-      {/* <MarqueeEllipse fill={ellipseFill} /> */}
       <p className={sans}>DEFINED BY </p>
       <div className="flex items-center justify-center pl-2">
         <BrandSerif>
           <span className={serifPhrase}>DESIGN.</span>
         </BrandSerif>
       </div>
-      <MarqueeEllipse fill={ellipseFill} />
     </div>
   );
 }
@@ -342,12 +437,10 @@ function WorkBelowStatementMarquee({
   const darkProps = {
     textClass,
     phraseColorClass: "text-[#333]" as const,
-    ellipseFill: "#F4511E",
   };
   const lightProps = {
     textClass,
     phraseColorClass: "text-white" as const,
-    ellipseFill: "#ffffff",
     toneClass: "[text-shadow:0_1px_2px_rgba(0,0,0,0.45)]",
   };
 
@@ -382,17 +475,92 @@ function WorkBelowStatementMarquee({
   );
 }
 
-function TrioAtRest() {
+/** 写真枠内の下中央：下方向スクロールを示す矢印（白＋影で写真上でも視認できる） */
+function HeroScrollHint({
+  visible,
+  reduceMotion,
+}: {
+  visible: boolean;
+  reduceMotion: boolean;
+}) {
+  const animate =
+    visible && !reduceMotion
+      ? "motion-reduce:animate-none animate-scroll-hint-bounce"
+      : "motion-reduce:animate-none";
+
+  return (
+    <div
+      className={`pointer-events-none absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center transition-opacity duration-500 ease-out motion-reduce:transition-none ${
+        visible ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
+      aria-hidden={!visible}
+    >
+      {visible ? (
+        <span className="sr-only">下へスクロールして続きを表示</span>
+      ) : null}
+      <div
+        className={`flex flex-col items-center text-white [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.55))] ${animate}`}
+      >
+        <svg width="24" height="12" viewBox="0 0 24 12" className="block" aria-hidden="true">
+          <path
+            d="M3 3 L12 9 L21 3"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.35"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <svg
+          width="24"
+          height="12"
+          viewBox="0 0 24 12"
+          className="-mt-1 block opacity-70"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 3 L12 9 L21 3"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.35"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function TrioAtRest({
+  photoRevealed,
+  scrollHintVisible,
+  reduceMotion,
+}: {
+  photoRevealed: boolean;
+  scrollHintVisible: boolean;
+  reduceMotion: boolean;
+}) {
   return (
     <div className="relative z-[3] flex min-h-0 w-full flex-1 items-center justify-center">
       <div
-        className="pointer-events-none absolute z-[2] h-[min(598px,70vh)] w-[min(448px,90vw)] overflow-hidden bg-[#eceff1]"
+        className="pointer-events-none absolute z-[2] flex flex-col items-center"
         style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
-        aria-hidden="true"
       >
-        <img src={pfImg2} alt="" className="h-full w-full object-cover" />
+        <div
+          className={`relative h-[min(598px,70vh)] w-[min(448px,90vw)] overflow-hidden bg-[#eceff1] transition-opacity duration-[520ms] ease-out motion-reduce:transition-none ${
+            photoRevealed ? "opacity-100" : "opacity-0"
+          }`}
+          aria-hidden="true"
+        >
+          <img src={pfImg2} alt="" className="h-full w-full object-cover" />
+          <HeroScrollHint
+            visible={photoRevealed && scrollHintVisible}
+            reduceMotion={reduceMotion}
+          />
+        </div>
       </div>
-      <div className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-center gap-2">
+      <div className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-baseline gap-2">
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
           DRIVEN BY
         </p>
@@ -402,7 +570,7 @@ function TrioAtRest() {
           </span>
         </BrandSerif>
       </div>
-      <div className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-end justify-end gap-2 text-right">
+      <div className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-baseline justify-end gap-2 text-right">
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
           DEFINED BY{" "}
         </p>
@@ -421,7 +589,7 @@ function AboutGrid() {
   return (
     <>
       <div className="col-span-12 sticky top-24 z-10 self-start md:col-span-4">
-        <div className="flex items-start pb-2">
+        <div className="flex items-baseline pb-2">
           <div className="flex flex-col gap-0.5">
             <span className="whitespace-nowrap font-sans text-[40px] leading-none text-[#333]">
               ABOUT
@@ -434,7 +602,7 @@ function AboutGrid() {
       </div>
       <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-16 md:col-span-6 md:col-start-7">
         <div className="aspect-[160/90] w-full overflow-hidden bg-[#eceff1]" aria-hidden="true">
-          <img src={pfImg2} alt="" className="h-full w-full object-cover" />
+          <img src={pfImg1} alt="" className="h-full w-full object-cover" />
         </div>
         <div className="flex flex-col gap-6 text-[#333]">
           <p className="w-full font-jp text-[16px] font-medium leading-[1.8] tracking-[0.08em]">
@@ -464,12 +632,44 @@ export default function Top() {
   );
   const workRef = useRef<HTMLElement | null>(null);
   const [workReveal, setWorkReveal] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(prefersReducedMotion);
+  const [fvReveal, setFvReveal] = useState(() => ({
+    photo: prefersReducedMotion(),
+    header: prefersReducedMotion(),
+  }));
+  const titleIntroDoneRef = useRef(false);
+
+  const onTitleIntroComplete = useCallback(() => {
+    if (titleIntroDoneRef.current) return;
+    titleIntroDoneRef.current = true;
+    setFvReveal((v) => (v.photo ? v : { ...v, photo: true }));
+  }, []);
 
   useEffect(() => {
     const onResize = () => setVh(window.innerHeight);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => {
+      const r = mq.matches;
+      setReduceMotion(r);
+      if (r) setFvReveal({ photo: true, header: true });
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  /** 名前の入場のあと写真→少し遅れてヘッダー */
+  useEffect(() => {
+    if (!fvReveal.photo || fvReveal.header) return;
+    const t = window.setTimeout(() => {
+      setFvReveal((v) => ({ ...v, header: true }));
+    }, 520);
+    return () => clearTimeout(t);
+  }, [fvReveal.photo, fvReveal.header]);
 
   const measureHero = () => {
     const el = heroScrollRef.current;
@@ -562,6 +762,14 @@ export default function Top() {
   const showFixedHeroLayer = progress >= P_TRIO_DONE && !scrolledPastHero;
   const showAnimatedSticky = progress < P_TRIO_DONE;
 
+  const showHeroScrollHint = useMemo(() => {
+    if (!fvReveal.photo || scrolledPastHero) return false;
+    if (heroBox.h <= 0) return true;
+    const yInHero = scrollY - heroBox.top;
+    const threshold = Math.min(vh * 0.55, HERO_SCROLL_HINT_MAX_OFFSET);
+    return yInHero < threshold;
+  }, [fvReveal.photo, scrolledPastHero, heroBox.h, heroBox.top, scrollY, vh]);
+
   return (
     <div
       className="relative mx-auto flex min-h-screen w-full flex-col items-start bg-[#f5f7f8]"
@@ -569,7 +777,11 @@ export default function Top() {
       style={overlapStyle}
     >
       <div className="pointer-events-none fixed inset-0 z-[40] [&_*]:pointer-events-none">
-        <HeroTitleBlock shrink={persistentTitleShrink} />
+        <HeroTitleBlock
+          shrink={persistentTitleShrink}
+          reduceMotion={reduceMotion}
+          onTitleIntroComplete={onTitleIntroComplete}
+        />
       </div>
 
       <section
@@ -583,18 +795,28 @@ export default function Top() {
             <div className="relative flex min-h-0 flex-1 flex-col p-10 pt-24">
               <div className="relative z-20 flex min-h-0 w-full flex-1 items-center justify-center">
                 <div
-                  className="pointer-events-none absolute z-[22] h-[min(598px,70vh)] w-[min(448px,90vw)] overflow-hidden bg-[#eceff1]"
+                  className="pointer-events-none absolute z-[22] flex flex-col items-center"
                   style={{
                     left: "50%",
                     top: "50%",
                     transform: `translate(-50%, -50%) translateY(${phases.imageY}px)`,
                   }}
-                  aria-hidden="true"
                 >
-                  <img src={pfImg2} alt="" className="h-full w-full object-cover" />
+                  <div
+                    className={`relative h-[min(598px,70vh)] w-[min(448px,90vw)] overflow-hidden bg-[#eceff1] transition-opacity duration-[520ms] ease-out motion-reduce:transition-none ${
+                      fvReveal.photo ? "opacity-100" : "opacity-0"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <img src={pfImg2} alt="" className="h-full w-full object-cover" />
+                    <HeroScrollHint
+                      visible={showHeroScrollHint}
+                      reduceMotion={reduceMotion}
+                    />
+                  </div>
                 </div>
                 <div
-                  className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-center gap-2"
+                  className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-baseline gap-2"
                   style={{
                     transform: `translateY(calc(-50% + ${phases.leftY}px))`,
                   }}
@@ -609,7 +831,7 @@ export default function Top() {
                   </BrandSerif>
                 </div>
                 <div
-                  className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-end justify-end gap-2 text-right"
+                  className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-baseline justify-end gap-2 text-right"
                   style={{
                     transform: `translateY(calc(-50% + ${phases.rightY}px))`,
                   }}
@@ -631,7 +853,11 @@ export default function Top() {
         {showFixedHeroLayer && (
           <div className="pointer-events-none fixed inset-0 z-[1] flex h-screen w-full flex-col overflow-hidden bg-[#f5f7f8]">
             <div className="relative flex min-h-0 flex-1 flex-col p-10 pt-24">
-              <TrioAtRest />
+              <TrioAtRest
+                photoRevealed={fvReveal.photo}
+                scrollHintVisible={showHeroScrollHint}
+                reduceMotion={reduceMotion}
+              />
             </div>
           </div>
         )}
@@ -669,7 +895,7 @@ export default function Top() {
             }`}
           >
             <div className="col-span-12 sticky top-24 z-10 self-start md:col-span-4">
-              <div className="flex items-start pb-2">
+              <div className="flex items-baseline pb-2">
                 <div className="flex flex-col gap-0.5">
                   <span className="whitespace-nowrap font-sans text-[40px] leading-none text-[#333]">
                     RECENT
@@ -694,12 +920,11 @@ export default function Top() {
         </section>
       </div>
 
-      {/* Statement: ピン長は class の min(45vh,28rem) を変更 */}
       <section
-        className="relative z-10 h-[calc(100vh+min(45vh,28rem))] w-full shrink-0 bg-[#f5f7f8]"
+        className="relative z-10 w-full shrink-0 bg-[#f5f7f8]"
         aria-label="Statement"
       >
-        <div className="sticky top-0 flex h-screen w-full flex-col items-center justify-center bg-[#f5f7f8] py-20">
+        <div className="flex w-full flex-col items-center justify-center py-20">
           <div className="relative mx-auto w-[min(448px,90vw)]">
             <WorkBelowPortraitBlock />
             <WorkBelowStatementMarquee
@@ -714,28 +939,37 @@ export default function Top() {
         id="contact"
         className="relative z-10 flex w-full items-start justify-between overflow-hidden bg-[#f5f7f8] px-10"
       >
-        <Link
-          to="/contact"
-          className="group flex w-full flex-wrap items-center gap-16 py-24 motion-reduce:transition-none md:flex-nowrap"
-          aria-label="お問い合わせフォームへ"
-        >
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-            <p className="whitespace-nowrap pr-4 text-center font-sans text-[128px] leading-none tracking-[-0.03em] text-[#333]">
-              GET
-            </p>
-            <p className="whitespace-nowrap pr-4 text-center font-sans text-[128px] leading-none tracking-[-0.03em] text-[#333]">
-              IN
-            </p>
-            <BrandSerif>
-              <span className="whitespace-nowrap text-[128px] leading-none tracking-[0.02em] text-[#333]">
-                TOUCH
-              </span>
-            </BrandSerif>
-          </div>
-          <span className="flex size-[240px] shrink-0 items-center justify-center rounded-full border border-black text-[#333] transition-colors duration-200 ease-out group-hover:bg-[#333] group-hover:text-white motion-reduce:transition-none">
-            <CtaArrow />
-          </span>
-        </Link>
+        <div className="w-full py-24">
+          <Link
+            to="/contact"
+            className="group flex w-full flex-wrap items-center gap-16 motion-reduce:transition-none md:flex-nowrap"
+            aria-label="お問い合わせフォームへ"
+          >
+            <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-2">
+              <p className="m-0 inline whitespace-nowrap pr-4 text-center">
+                <GetInTouchHeadlineWord textClassName="font-sans text-[128px] leading-none tracking-[-0.03em]">
+                  GET
+                </GetInTouchHeadlineWord>
+              </p>
+              <p className="m-0 inline whitespace-nowrap pr-4 text-center">
+                <GetInTouchHeadlineWord textClassName="font-sans text-[128px] leading-none tracking-[-0.03em]">
+                  IN
+                </GetInTouchHeadlineWord>
+              </p>
+              <BrandSerif>
+                <GetInTouchHeadlineWord
+                  wrapperClassName="whitespace-nowrap"
+                  textClassName="text-[128px] leading-none tracking-[0.02em]"
+                >
+                  TOUCH
+                </GetInTouchHeadlineWord>
+              </BrandSerif>
+            </div>
+            <span className="flex size-[240px] shrink-0 items-center justify-center rounded-full border border-black text-[#333] transition-colors duration-200 ease-out group-hover:bg-[#333] group-hover:text-white motion-reduce:transition-none">
+              <CtaArrow />
+            </span>
+          </Link>
+        </div>
       </section>
 
       <footer className="relative z-10 flex w-full flex-col items-start overflow-hidden bg-[#f5f7f8] pb-10">
@@ -744,7 +978,7 @@ export default function Top() {
         
           <div className="flex h-10 w-full items-start">
             <div className="flex flex-col items-start gap-60">
-              <div className="flex items-center gap-2">
+              <div className="flex items-baseline gap-2">
                 <span className="whitespace-nowrap text-center font-sans text-[40px] leading-none tracking-[-0.03em] text-[#333]">
                   TINA
                 </span>
@@ -765,7 +999,7 @@ export default function Top() {
         </div>
       </footer>
 
-      <SiteHeader />
+      <SiteHeader revealNav={fvReveal.header} />
     </div>
   );
 }

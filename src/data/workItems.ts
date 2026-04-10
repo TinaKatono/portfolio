@@ -1,5 +1,10 @@
 import sample1Img from "../assets/pf_2.webp";
-import { hasWorkDetail } from "./workDetails";
+import { workDetails } from "./workDetails";
+
+import kiviaqImg_2 from "../assets/works/kiviaq/kiviaq_2.webp";
+import saikaiImg_1 from "../assets/works/works_3/works_3_1.webp";
+
+import recprImg from "../assets/works/works_2/works_2_1.webp";
 
 export type WorkItem = {
   id: string;
@@ -10,46 +15,24 @@ export type WorkItem = {
   roles: string[];
 };
 
-/**
- * RECENT WORK 一覧のデータ。画像は thumbSrc を差し替えるだけで入れ替え可能。
- */
-export const workItems: WorkItem[] = [
-  {
-    id: "kiviaq-pharmacy",
-    title: "kiviaq pharmacy",
-    thumbSrc: sample1Img,
-    roles: ["UI Design", "UX Design", "Information Architecture"],
-  },
-  {
-    id: "saikai-matsunaga",
-    title: "SAIKAI MATSUNAGA",
-    thumbSrc: sample1Img,
-    roles: ["UI Design", "Writing", "Frontend Dev(Cursor)"],
-  },
-  {
-    id: "fadila-oil",
-    title: "FADILA OIL",
-    thumbSrc: sample1Img,
-    roles: ["UI Design", "UX Design", "Frontend Dev(Cursor)"],
-  },
-  {
-    id: "recpr",
-    title: "RECPR",
-    thumbSrc: sample1Img,
-    roles: ["UI Design", "UX Design", "Information Architecture"],
-  },
-  {
-    id: "task-holdings",
-    title: "TASK HOLDINGS",
-    thumbSrc: sample1Img,
-    roles: ["UX Design", "No-code Dev(Studio)"],
-  },
+/** 一覧に出す順序とサムネのみ。タイトル・roles は workDetails から同期 */
+const workItemThumbs: { id: string; thumbSrc: string }[] = [
+  { id: "kiviaq-pharmacy", thumbSrc: kiviaqImg_2 },
+  { id: "saikai-matsunaga", thumbSrc: saikaiImg_1 },
+  // { id: "fadila-oil", thumbSrc: sample1Img },
+  { id: "recpr", thumbSrc: recprImg },
+  // { id: "task-holdings", thumbSrc: sample1Img },
 ];
 
-if (import.meta.env.DEV) {
-  for (const item of workItems) {
-    if (!hasWorkDetail(item.id)) {
-      console.warn(`[workItems] workDetails に id がありません（一覧から詳細へリンクできません）: ${item.id}`);
-    }
+export const workItems: WorkItem[] = workItemThumbs.map(({ id, thumbSrc }) => {
+  const detail = workDetails[id];
+  if (!detail) {
+    throw new Error(`[workItems] workDetails に id がありません: ${id}`);
   }
-}
+  return {
+    id,
+    thumbSrc,
+    title: detail.title,
+    roles: [...detail.roles],
+  };
+});

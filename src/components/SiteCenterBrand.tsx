@@ -8,7 +8,7 @@ export function SiteCenterBrand() {
       aria-hidden
     >
       <div
-        className="inline-flex max-w-full flex-wrap items-center justify-center gap-4 text-[32px] leading-none text-[#333]"
+        className="inline-flex max-w-full flex-wrap items-baseline justify-center gap-4 text-[32px] leading-none text-[#333]"
       >
         <p className="whitespace-nowrap pr-4 text-center font-sans leading-none tracking-[-0.03em]">
           TINA
