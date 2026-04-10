@@ -572,8 +572,6 @@ export default function Top() {
         <HeroTitleBlock shrink={persistentTitleShrink} />
       </div>
 
-      <SiteHeader />
-
       <section
         ref={heroScrollRef}
         id="top"
@@ -766,6 +764,8 @@ export default function Top() {
         </div>
         </div>
       </footer>
+
+      <SiteHeader />
     </div>
   );
 }

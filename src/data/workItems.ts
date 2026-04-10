@@ -1,4 +1,5 @@
 import sample1Img from "../assets/pf_2.webp";
+import { hasWorkDetail } from "./workDetails";
 
 export type WorkItem = {
   id: string;
@@ -44,3 +45,11 @@ export const workItems: WorkItem[] = [
     roles: ["UX Design", "No-code Dev(Studio)"],
   },
 ];
+
+if (import.meta.env.DEV) {
+  for (const item of workItems) {
+    if (!hasWorkDetail(item.id)) {
+      console.warn(`[workItems] workDetails に id がありません（一覧から詳細へリンクできません）: ${item.id}`);
+    }
+  }
+}

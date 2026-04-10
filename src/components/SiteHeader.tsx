@@ -8,7 +8,7 @@ import { SkewSerif } from "./brand";
 export function SiteHeader() {
   return (
     <header
-      className="pointer-events-none fixed right-0 top-0 z-50 flex h-20 items-center pr-6 supports-[mix-blend-mode:difference]:mix-blend-difference"
+      className="pointer-events-none fixed right-0 top-0 z-[60] isolate flex h-20 items-center pr-6 supports-[mix-blend-mode:difference]:mix-blend-difference"
       aria-label="サイト内ナビゲーション"
     >
       <nav className="pointer-events-auto flex w-max max-w-[min(100vw-1.5rem,100%)] flex-wrap items-end justify-end gap-4 rounded-lg p-6 text-[16px] leading-none text-[#333] supports-[mix-blend-mode:difference]:text-white">
