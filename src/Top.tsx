@@ -244,8 +244,10 @@ function HeroTitleBlock({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  /** 縮小完了時の上端オフセット（従来 paddingTop 終端に相当） */
+  /** 縮小完了時の上端オフセット（SP の translate 終端に相当） */
   const topMin = mdUp ? 28 : 20;
+  /** PC は従来どおり paddingTop のみ（中央寄せしない） */
+  const topPxPc = 80 * (1 - shrink) + 28 * shrink;
   const fontPx =
     (mdUp ? 32 : 22) +
     ((mdUp ? 160 : 54) - (mdUp ? 32 : 22)) * (1 - shrink);
@@ -335,13 +337,18 @@ function HeroTitleBlock({
   }, [sizedFontPx, fitScale, mdUp]);
 
   const rowHeight = rowH > 0 ? rowH : sizedFontPx;
-  /** shrink=0 で縦中央、shrink=1 で上寄せ（topMin 基準） */
-  const shiftY = shrink * (topMin + rowHeight / 2 - vh / 2);
+  /** SP のみ: shrink=0 で縦中央、shrink=1 で上寄せ（topMin 基準）。PC は 0（translate しない） */
+  const shiftY = mdUp ? 0 : shrink * (topMin + rowHeight / 2 - vh / 2);
 
   return (
     <div
       ref={containerRef}
-      className="pointer-events-none absolute inset-0 z-[2] flex min-h-0 w-full flex-col items-center justify-center px-5 sm:px-6 md:px-8"
+      className={
+        mdUp
+          ? "pointer-events-none absolute inset-x-0 top-0 z-[2] flex w-full min-w-0 justify-center px-5 sm:px-6 md:px-8"
+          : "pointer-events-none absolute inset-0 z-[2] flex min-h-0 w-full flex-col items-center justify-center px-5 sm:px-6 md:px-8"
+      }
+      style={mdUp ? { paddingTop: `${topPxPc}px` } : undefined}
     >
       <div
         ref={rowRef}
@@ -349,7 +356,7 @@ function HeroTitleBlock({
         style={{
           fontSize: `${sizedFontPx}px`,
           lineHeight: 1,
-          transform: `translateY(${shiftY}px)`,
+          transform: mdUp ? undefined : `translateY(${shiftY}px)`,
         }}
       >
         <p className="whitespace-nowrap text-center font-sans leading-none tracking-[-0.03em] pr-4 text-[#333]">
