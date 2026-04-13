@@ -1,4 +1,3 @@
-import sample1Img from "../assets/pf_2.webp";
 import { workDetails } from "./workDetails";
 
 import kiviaqImg_2 from "../assets/works/kiviaq/kiviaq_2.webp";
