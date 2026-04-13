@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { BrandSerif } from "../components/brand";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
+import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { CONTACT_EMAIL } from "../data/contact";
 
@@ -118,27 +119,7 @@ export default function Contact() {
         </div>
       </main>
 
-      <footer className="relative z-10 mt-auto flex w-full flex-col items-start overflow-hidden bg-[#f5f7f8] pb-10">
-        <div className="flex w-full items-start gap-40 border-t border-[#cfd8dc] pt-10">
-          <div className="flex w-full items-start px-10">
-            <div className="flex h-10 w-full items-start">
-              <div className="flex flex-col items-start gap-60">
-                <div className="flex items-baseline gap-2">
-                  <span className="whitespace-nowrap text-center font-sans text-[40px] leading-none tracking-[-0.03em] text-[#333]">
-                    TINA
-                  </span>
-                  <BrandSerif>
-                    <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">KATONO</span>
-                  </BrandSerif>
-                </div>
-              </div>
-            </div>
-            <div className="flex w-full flex-col items-end justify-end">
-              <p className="whitespace-nowrap font-jp text-xl leading-[1.6] text-[#333]">© 2026 Tina Katono</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter className="mt-auto" />
     </div>
   );
 }

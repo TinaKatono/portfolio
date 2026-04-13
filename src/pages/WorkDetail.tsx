@@ -6,8 +6,8 @@ import {
   type ReactNode,
 } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { BrandSerif } from "../components/brand";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
+import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { hasWorkDetail, workDetails } from "../data/workDetails";
 
@@ -58,7 +58,7 @@ export default function WorkDetail() {
       <SiteCenterBrand />
       <SiteHeader />
 
-      <main className="w-full shrink-0 border-t border-[#b0bec5] px-10 pb-20 pt-[120px]">
+      <main className="w-full shrink-0 border-t border-[#b0bec5] px-6 md:px-10 pb-20 pt-[120px]">
         <div className="grid w-full grid-cols-12 gap-x-6 gap-y-10 md:gap-x-10">
           <aside className="col-span-12 flex min-w-0 flex-col md:col-span-4 md:min-h-0">
             <OverviewSticky>
@@ -113,10 +113,10 @@ export default function WorkDetail() {
                   )
                 )}
                 <div className="flex flex-col gap-6 text-[#333]">
-                  <p className="whitespace-pre-line font-jp text-[16px] font-medium leading-[1.8] tracking-[0.08em]">
+                  <p className="whitespace-pre-line font-jp md:text-[16px] text-[14px] font-medium md:leading-[1.8] leading-[2] tracking-[0.08em]">
                     {section.ja}
                   </p>
-                  <p className="whitespace-pre-line font-sans text-[14px] leading-[1.5] tracking-[0.08em]">
+                  <p className="whitespace-pre-line font-sans text-[14px] md:leading-[1.5] leading-[1.8] tracking-[0.08em]">
                     {section.en}
                   </p>
                 </div>
@@ -165,29 +165,7 @@ export default function WorkDetail() {
         </div>
       </section> */}
 
-      <footer className="relative z-10 flex w-full flex-col items-start overflow-hidden bg-[#f5f7f8] pb-10">
-        <div className="flex w-full items-start gap-40 border-t border-[#cfd8dc] pt-10">
-          <div className="flex w-full items-start px-10">
-            <div className="flex h-10 w-full items-start">
-              <div className="flex flex-col items-start gap-60">
-                <div className="flex items-baseline gap-2">
-                  <span className="whitespace-nowrap text-center font-sans text-[40px] leading-none tracking-[-0.03em] text-[#333]">
-                    TINA
-                  </span>
-                  <BrandSerif>
-                    <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">KATONO</span>
-                  </BrandSerif>
-                </div>
-              </div>
-            </div>
-            <div className="flex w-full flex-col items-end justify-end">
-              <p className="whitespace-nowrap font-jp text-xl leading-[1.6] text-[#333]">
-                © 2026 Tina Katono
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import pfImg1 from "./assets/pf_1.webp";
 import pfImg2 from "./assets/pf_2.webp";
 import { BrandSerif, CtaArrow } from "./components/brand";
+import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
 import { hasWorkDetail } from "./data/workDetails";
 import { workItems, type WorkItem } from "./data/workItems";
@@ -115,12 +116,12 @@ function WorkRoleRow({ item }: { item: WorkItem }) {
   };
 
   const rowClassName =
-    "relative flex h-24 items-center justify-between gap-4 px-4 transition-colors duration-200 ease-out hover:bg-[#eceff1] focus-visible:bg-[#eceff1] focus-visible:outline-none motion-reduce:transition-none " +
+    "relative flex h-24 md:h-24 items-center justify-between gap-4 px-4 transition-colors duration-200 ease-out hover:bg-[#eceff1] focus-visible:bg-[#eceff1] focus-visible:outline-none motion-reduce:transition-none " +
     (hasDetailPage ? "cursor-pointer" : "cursor-default");
 
   const rowBody = (
     <>
-      <p className="min-w-0 flex-1 font-sans text-[16px] leading-[1.8] tracking-[0.08em] text-[#333]">
+      <p className="min-w-0 flex-1 font-sans md:text-[16px] text-[12px] leading-[1.8] tracking-[0.08em] text-[#333]">
         {item.title}
       </p>
       <div
@@ -221,8 +222,36 @@ function HeroTitleBlock({
   reduceMotion: boolean;
   onTitleIntroComplete?: () => void;
 }) {
-  const topPx = 80 * (1 - shrink) + 28 * shrink;
-  const fontPx = 32 + (160 - 32) * (1 - shrink);
+  const [mdUp, setMdUp] = useState(
+    () =>
+      typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setMdUp(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  const [vh, setVh] = useState(
+    () => (typeof window !== "undefined" ? window.innerHeight : 800),
+  );
+  const [rowH, setRowH] = useState(0);
+  useEffect(() => {
+    const onResize = () => setVh(window.innerHeight);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  /** 縮小完了時の上端オフセット（従来 paddingTop 終端に相当） */
+  const topMin = mdUp ? 28 : 20;
+  const fontPx =
+    (mdUp ? 32 : 22) +
+    ((mdUp ? 160 : 54) - (mdUp ? 32 : 22)) * (1 - shrink);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const rowRef = useRef<HTMLDivElement | null>(null);
+  const [fitScale, setFitScale] = useState(1);
   const lastCharRef = useRef<HTMLSpanElement | null>(null);
   const introDoneRef = useRef(false);
 
@@ -258,18 +287,70 @@ function HeroTitleBlock({
     };
   }, [reduceMotion, onTitleIntroComplete, katono.length, katonoBaseMs]);
 
+  useLayoutEffect(() => {
+    const measure = () => {
+      const wrap = containerRef.current;
+      const row = rowRef.current;
+      if (!wrap || !row) return;
+      const cs = getComputedStyle(wrap);
+      const pl = parseFloat(cs.paddingLeft) || 0;
+      const pr = parseFloat(cs.paddingRight) || 0;
+      const maxW = wrap.clientWidth - pl - pr;
+      const w = row.scrollWidth;
+      if (maxW <= 0 || w <= 0) {
+        setFitScale(1);
+        return;
+      }
+      setFitScale(w > maxW ? maxW / w : 1);
+    };
+    measure();
+    const wrap = containerRef.current;
+    if (typeof ResizeObserver === "undefined" || !wrap) {
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }
+    const ro = new ResizeObserver(measure);
+    ro.observe(wrap);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, [fontPx, shrink, mdUp]);
+
   const charClass = reduceMotion
     ? "inline-block"
     : "inline-block animate-hero-char-in motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:blur-none";
 
+  const sizedFontPx = fontPx * fitScale;
+
+  useLayoutEffect(() => {
+    const el = rowRef.current;
+    if (!el) return;
+    const measure = () => setRowH(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [sizedFontPx, fitScale, mdUp]);
+
+  const rowHeight = rowH > 0 ? rowH : sizedFontPx;
+  /** shrink=0 で縦中央、shrink=1 で上寄せ（topMin 基準） */
+  const shiftY = shrink * (topMin + rowHeight / 2 - vh / 2);
+
   return (
     <div
-      className="pointer-events-none absolute inset-x-0 top-0 z-[2] flex w-full justify-center px-4"
-      style={{ paddingTop: `${topPx}px` }}
+      ref={containerRef}
+      className="pointer-events-none absolute inset-0 z-[2] flex min-h-0 w-full flex-col items-center justify-center px-5 sm:px-6 md:px-8"
     >
       <div
-        className="inline-flex max-w-full flex-wrap items-baseline justify-center gap-4"
-        style={{ fontSize: `${fontPx}px`, lineHeight: 1 }}
+        ref={rowRef}
+        className="inline-flex max-w-full min-w-0 flex-nowrap items-baseline justify-center gap-4 whitespace-nowrap"
+        style={{
+          fontSize: `${sizedFontPx}px`,
+          lineHeight: 1,
+          transform: `translateY(${shiftY}px)`,
+        }}
       >
         <p className="whitespace-nowrap text-center font-sans leading-none tracking-[-0.03em] pr-4 text-[#333]">
           {tina.split("").map((ch, i) => (
@@ -314,7 +395,7 @@ function HeroTitleBlock({
 /** marquee 用ポートレート枠＋二重画像 */
 function WorkBelowPortraitBlock() {
   return (
-    <div className="h-[min(598px,70vh)] w-full overflow-hidden bg-[#eceff1]">
+    <div className="hidden h-[min(598px,70vh)] w-full overflow-hidden bg-[#eceff1] md:block">
       <div className="relative h-full w-full">
         <img
           alt=""
@@ -475,22 +556,29 @@ function WorkBelowStatementMarquee({
   );
 }
 
-/** 写真枠内の下中央：下方向スクロールを示す矢印（白＋影で写真上でも視認できる） */
+/** 写真枠内の下中央：下方向スクロールを示す矢印（白＋影で写真上でも視認できる）。onPaper は SP 等・背景が明るいとき用 */
 function HeroScrollHint({
   visible,
   reduceMotion,
+  variant = "onPhoto",
 }: {
   visible: boolean;
   reduceMotion: boolean;
+  variant?: "onPhoto" | "onPaper";
 }) {
   const animate =
     visible && !reduceMotion
       ? "motion-reduce:animate-none animate-scroll-hint-bounce"
       : "motion-reduce:animate-none";
 
+  const toneClass =
+    variant === "onPhoto"
+      ? "text-white [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.55))]"
+      : "text-[#546e7a] [filter:drop-shadow(0_1px_0_rgba(255,255,255,0.6))]";
+
   return (
     <div
-      className={`pointer-events-none absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center transition-opacity duration-500 ease-out motion-reduce:transition-none ${
+      className={`pointer-events-none flex flex-col items-center transition-opacity duration-500 ease-out motion-reduce:transition-none ${
         visible ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       aria-hidden={!visible}
@@ -498,9 +586,7 @@ function HeroScrollHint({
       {visible ? (
         <span className="sr-only">下へスクロールして続きを表示</span>
       ) : null}
-      <div
-        className={`flex flex-col items-center text-white [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.55))] ${animate}`}
-      >
+      <div className={`flex flex-col items-center ${toneClass} ${animate}`}>
         <svg width="24" height="12" viewBox="0 0 24 12" className="block" aria-hidden="true">
           <path
             d="M3 3 L12 9 L21 3"
@@ -544,7 +630,7 @@ function TrioAtRest({
   return (
     <div className="relative z-[3] flex min-h-0 w-full flex-1 items-center justify-center">
       <div
-        className="pointer-events-none absolute z-[2] flex flex-col items-center"
+        className="pointer-events-none absolute z-[2] hidden flex-col items-center md:flex"
         style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
       >
         <div
@@ -554,13 +640,23 @@ function TrioAtRest({
           aria-hidden="true"
         >
           <img src={pfImg2} alt="" className="h-full w-full object-cover" />
-          <HeroScrollHint
-            visible={photoRevealed && scrollHintVisible}
-            reduceMotion={reduceMotion}
-          />
+          <div className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2">
+            <HeroScrollHint
+              visible={photoRevealed && scrollHintVisible}
+              reduceMotion={reduceMotion}
+              variant="onPhoto"
+            />
+          </div>
         </div>
       </div>
-      <div className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-baseline gap-2">
+      <div className="pointer-events-none absolute inset-x-0 bottom-10 z-[25] flex justify-center md:hidden">
+        <HeroScrollHint
+          visible={photoRevealed && scrollHintVisible}
+          reduceMotion={reduceMotion}
+          variant="onPaper"
+        />
+      </div>
+      <div className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-baseline gap-2 max-md:top-[calc(50%-1.25rem)]">
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
           DRIVEN BY
         </p>
@@ -570,7 +666,7 @@ function TrioAtRest({
           </span>
         </BrandSerif>
       </div>
-      <div className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-baseline justify-end gap-2 text-right">
+      <div className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[3] flex max-w-[min(100%,28rem)] -translate-y-1/2 flex-wrap items-baseline justify-end gap-2 text-right max-md:top-[calc(50%+1.25rem)]">
         <p className="whitespace-nowrap font-sans text-[clamp(24px,4vw,40px)] leading-none tracking-[-0.03em] text-[#333]">
           DEFINED BY{" "}
         </p>
@@ -584,11 +680,11 @@ function TrioAtRest({
   );
 }
 
-/** 左見出しのみ sticky。外側を sticky で包まない（包むと親高＝本文高になり下まで届かない） */
+/** 左見出しのみ sticky（SP では追従しない）。外側を sticky で包まない（包むと親高＝本文高になり下まで届かない） */
 function AboutGrid() {
   return (
     <>
-      <div className="col-span-12 sticky top-24 z-10 self-start md:col-span-4">
+      <div className="col-span-12 self-start md:sticky md:top-24 z-10 md:col-span-4">
         <div className="flex items-baseline pb-2">
           <div className="flex flex-col gap-0.5">
             <span className="whitespace-nowrap font-sans text-[40px] leading-none text-[#333]">
@@ -600,15 +696,15 @@ function AboutGrid() {
           </BrandSerif>
         </div>
       </div>
-      <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-16 md:col-span-6 md:col-start-7">
+      <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-0 md:pb-16 md:col-span-6 md:col-start-7">
         <div className="aspect-[160/90] w-full overflow-hidden bg-[#eceff1]" aria-hidden="true">
           <img src={pfImg1} alt="" className="h-full w-full object-cover" />
         </div>
         <div className="flex flex-col gap-6 text-[#333]">
-          <p className="w-full font-jp text-[16px] font-medium leading-[1.8] tracking-[0.08em]">
+          <p className="w-full font-jp md:text-[16px] text-[14px] font-medium md:leading-[1.8] leading-[2] tracking-[0.08em]">
             東京を拠点にするウェブデザイナーです。エンジニア主体の開発会社で仕事をしながら、ビジュアルを描くことと、その手前の要件を整えること、その両方を自然に行き来するようなプロセスを大切にしています。良いデジタル体験は、見た目だけでなく「どう作られているか」という思慮深い構造から生まれると考えています。プロジェクトを俯瞰して捉え、デザインとその裏側にあるデータを、シンプルで誠実な方法でつなぐプロセスを大切にしています。
           </p>
-          <p className="w-full font-sans text-[14px] leading-[1.5] tracking-[0.08em]">
+          <p className="w-full font-sans text-[14px] leading-[1.8] md:leading-[1.5] tracking-[0.08em]">
             I am a web designer based in Tokyo. Working within an engineer-driven environment, I
             naturally move between visual craft and organizing the requirements behind it. I
             believe that a good digital experience comes from a thoughtful structure—not just how
@@ -795,7 +891,7 @@ export default function Top() {
             <div className="relative flex min-h-0 flex-1 flex-col p-10 pt-24">
               <div className="relative z-20 flex min-h-0 w-full flex-1 items-center justify-center">
                 <div
-                  className="pointer-events-none absolute z-[22] flex flex-col items-center"
+                  className="pointer-events-none absolute z-[22] hidden flex-col items-center md:flex"
                   style={{
                     left: "50%",
                     top: "50%",
@@ -809,14 +905,24 @@ export default function Top() {
                     aria-hidden="true"
                   >
                     <img src={pfImg2} alt="" className="h-full w-full object-cover" />
-                    <HeroScrollHint
-                      visible={showHeroScrollHint}
-                      reduceMotion={reduceMotion}
-                    />
+                    <div className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2">
+                      <HeroScrollHint
+                        visible={showHeroScrollHint}
+                        reduceMotion={reduceMotion}
+                        variant="onPhoto"
+                      />
+                    </div>
                   </div>
                 </div>
+                <div className="pointer-events-none absolute inset-x-0 bottom-10 z-[24] flex justify-center md:hidden">
+                  <HeroScrollHint
+                    visible={showHeroScrollHint}
+                    reduceMotion={reduceMotion}
+                    variant="onPaper"
+                  />
+                </div>
                 <div
-                  className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-baseline gap-2"
+                  className="pointer-events-none absolute left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-baseline gap-2 max-md:top-[calc(50%-1.25rem)]"
                   style={{
                     transform: `translateY(calc(-50% + ${phases.leftY}px))`,
                   }}
@@ -831,7 +937,7 @@ export default function Top() {
                   </BrandSerif>
                 </div>
                 <div
-                  className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-baseline justify-end gap-2 text-right"
+                  className="pointer-events-none absolute right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] top-1/2 z-[23] flex max-w-[min(100%,28rem)] flex-wrap items-baseline justify-end gap-2 text-right max-md:top-[calc(50%+1.25rem)]"
                   style={{
                     transform: `translateY(calc(-50% + ${phases.rightY}px))`,
                   }}
@@ -877,7 +983,7 @@ export default function Top() {
           className="relative z-[1] w-full shrink-0 border-t border-[#b0bec5] bg-[#f5f7f8]"
           aria-label="About"
         >
-          <div className="px-10 pb-20 pt-[120px]">
+          <div className="px-6 pb-10 pt-16 md:px-10 md:pb-20 md:pt-[120px]">
             <div className="grid w-full grid-cols-12 gap-x-6 gap-y-10 md:gap-x-10">
               <AboutGrid />
             </div>
@@ -887,14 +993,14 @@ export default function Top() {
         <section
           ref={workRef}
           id="work"
-          className="relative z-[2] w-full shrink-0 border-t border-[#b0bec5] bg-[#f5f7f8] px-10 pb-20 pt-[120px]"
+          className="relative z-[2] w-full shrink-0 border-t border-[#b0bec5] bg-[#f5f7f8] px-6 pt-16 pb-10 md:px-10 md:pb-20 md:pt-[120px]"
         >
           <div
             className={`grid w-full grid-cols-12 gap-x-6 gap-y-10 transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none motion-reduce:translate-y-0 motion-reduce:opacity-100 md:gap-x-10 ${
               workReveal ? "translate-y-0 opacity-100" : "translate-y-14 opacity-0"
             }`}
           >
-            <div className="col-span-12 sticky top-24 z-10 self-start md:col-span-4">
+            <div className="col-span-12 self-start md:sticky md:top-24 z-10 md:col-span-4">
               <div className="flex items-baseline pb-2">
                 <div className="flex flex-col gap-0.5">
                   <span className="whitespace-nowrap font-sans text-[40px] leading-none text-[#333]">
@@ -937,67 +1043,42 @@ export default function Top() {
 
       <section
         id="contact"
-        className="relative z-10 flex w-full items-start justify-between overflow-hidden bg-[#f5f7f8] px-10"
+        className="relative z-10 flex w-full items-start justify-between overflow-hidden bg-[#f5f7f8] px-6 md:px-10"
       >
-        <div className="w-full py-24">
+        <div className="w-full py-16 md:py-24">
           <Link
             to="/contact"
-            className="group flex w-full flex-wrap items-center gap-16 motion-reduce:transition-none md:flex-nowrap"
+            className="group flex w-full flex-wrap items-center gap-8 motion-reduce:transition-none md:gap-16 md:flex-nowrap"
             aria-label="お問い合わせフォームへ"
           >
             <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-2">
               <p className="m-0 inline whitespace-nowrap pr-4 text-center">
-                <GetInTouchHeadlineWord textClassName="font-sans text-[128px] leading-none tracking-[-0.03em]">
+                <GetInTouchHeadlineWord textClassName="font-sans text-[clamp(40px,11vw,128px)] leading-none tracking-[-0.03em] md:text-[128px]">
                   GET
                 </GetInTouchHeadlineWord>
               </p>
               <p className="m-0 inline whitespace-nowrap pr-4 text-center">
-                <GetInTouchHeadlineWord textClassName="font-sans text-[128px] leading-none tracking-[-0.03em]">
+                <GetInTouchHeadlineWord textClassName="font-sans text-[clamp(40px,11vw,128px)] leading-none tracking-[-0.03em] md:text-[128px]">
                   IN
                 </GetInTouchHeadlineWord>
               </p>
               <BrandSerif>
                 <GetInTouchHeadlineWord
                   wrapperClassName="whitespace-nowrap"
-                  textClassName="text-[128px] leading-none tracking-[0.02em]"
+                  textClassName="text-[clamp(40px,11vw,128px)] leading-none tracking-[0.02em] md:text-[128px]"
                 >
                   TOUCH
                 </GetInTouchHeadlineWord>
               </BrandSerif>
             </div>
-            <span className="flex size-[240px] shrink-0 items-center justify-center rounded-full border border-black text-[#333] transition-colors duration-200 ease-out group-hover:bg-[#333] group-hover:text-white motion-reduce:transition-none">
+            <span className="flex size-[min(240px,72vw)] shrink-0 items-center justify-center rounded-full border border-black text-[#333] transition-colors duration-200 ease-out group-hover:bg-[#333] group-hover:text-white motion-reduce:transition-none md:size-[240px]">
               <CtaArrow />
             </span>
           </Link>
         </div>
       </section>
 
-      <footer className="relative z-10 flex w-full flex-col items-start overflow-hidden bg-[#f5f7f8] pb-10">
-      <div className="flex w-full items-start gap-40 border-t border-[#cfd8dc] pt-10">
-        <div className="w-full px-10 flex items-start">
-        
-          <div className="flex h-10 w-full items-start">
-            <div className="flex flex-col items-start gap-60">
-              <div className="flex items-baseline gap-2">
-                <span className="whitespace-nowrap text-center font-sans text-[40px] leading-none tracking-[-0.03em] text-[#333]">
-                  TINA
-                </span>
-                <BrandSerif>
-                  <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">
-                    KATONO
-                  </span>
-                </BrandSerif>
-              </div>
-            </div>
-          </div>
-          <div className="flex w-full flex-col items-end justify-end">
-            <p className="whitespace-nowrap font-jp text-xl leading-[1.6] text-[#333]">
-            © 2026 Tina Katono
-            </p>
-          </div>
-        </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <SiteHeader revealNav={fvReveal.header} />
     </div>
