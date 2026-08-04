@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { BrandSerif } from "../components/brand";
+import { BRAND_GAP, BRAND_TEXT, InlineMark, MARK_IMAGES } from "../components/brand";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -33,11 +33,15 @@ export default function Contact() {
       <main className="w-full shrink-0 border-t border-[#b0bec5] px-10 pb-20 pt-[120px]">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-12">
           <header className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-baseline gap-2">
-              <span className="whitespace-nowrap font-sans text-[40px] leading-none text-[#333]">GET IN</span>
-              <BrandSerif>
-                <span className="whitespace-nowrap text-[40px] leading-none text-[#333]">TOUCH</span>
-              </BrandSerif>
+            <div
+              className="flex flex-nowrap items-baseline text-[40px] leading-none"
+              style={{ gap: BRAND_GAP }}
+            >
+              <span className={BRAND_TEXT}>GET</span>
+              <InlineMark src={MARK_IMAGES[0]} />
+              <span className={BRAND_TEXT}>IN</span>
+              <InlineMark src={MARK_IMAGES[1]} />
+              <span className={BRAND_TEXT}>TOUCH</span>
             </div>
             {/* <div className="flex flex-col gap-6 text-[#333]">
               <p className="font-jp text-[16px] font-medium leading-[1.8] tracking-[0.08em]">

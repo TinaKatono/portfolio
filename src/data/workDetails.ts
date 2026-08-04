@@ -3,6 +3,11 @@ import kiviaqGallery1 from "../assets/works/kiviaq/kiviaq_1.webp";
 import recprGallery1 from "../assets/works/works_2/works_2_1.webp";
 
 import saikaiGallery1 from "../assets/works/works_3/works_3_1.webp";
+
+import campaiGallery1 from "../assets/works/campai/campai_1.webp";
+import campaiGallery2 from "../assets/works/campai/campai_2.webp";
+import campaiGallery3 from "../assets/works/campai/campai_3.webp";
+import campaiGallery4 from "../assets/works/campai/campai_4.webp";
 import saikaiGallery2 from "../assets/works/works_3/works_3_2.webp";
 import saikaiGallery3 from "../assets/works/works_3/works_3_3.webp";
 
@@ -98,6 +103,29 @@ export const workDetails: Record<string, WorkDetail> = {
       //   ja: "コンテンツ量の変動に耐えられるモジュール型レイアウトを提案し、運用チームが更新しやすいガイドラインを簡易版でまとめました。（仮）",
       //   en: "Placeholder: modular layout and lightweight guidelines for editors. Edit in data file when content is ready.",
       // },
+    ],
+  },
+
+  campai: {
+    title: "Internal Event Management App",
+    titleJa: "社内イベント管理アプリ campai の企画・個人開発",
+    roles: ["Planning", "UI Design", "UX Design", "Full-stack Dev(Claude Code)"],
+    yearDuration: "2026/04 - 2026/05",
+    tools: ["Next.js", "Prisma", "SQLite", "Slack Webhook", "Claude Code"],
+    galleryImages: [campaiGallery1, campaiGallery2, campaiGallery3, campaiGallery4],
+    sections: [
+      {
+        ja: "社内の飲み会・歓送迎会の出欠管理を Slack のやりとりから置き換える社内向け Web アプリを、企画から実装まで個人で制作しました。きっかけは幹事業務の属人化です。締切前の未回答者への声かけ、食の制限の個別確認、当日の人数把握といった細かな調整がすべて幹事に集中し、本来注力すべき企画や場選びに時間を割けない状態が続いていました。\n\nリマインドの自動化と参加者情報の一元管理によって、幹事が「調整」ではなく「企画」に集中できる状態をつくることを出発点に設計しています。",
+        en: "I planned and built this internal web app on my own, end to end, to replace the Slack-based workflow for managing attendance at company parties and welcome/farewell gatherings. The trigger was how much of the work fell on a single organizer: chasing unanswered RSVPs before the deadline, confirming dietary restrictions one person at a time, and tracking head counts on the day. This coordination overhead consistently crowded out the work that actually matters—planning the event and choosing the venue.\n\nI designed the product around one goal: automate the reminders and centralize participant information so that the organizer can spend their time planning rather than chasing logistics.",
+      },
+      {
+        ja: "設計上もっとも重視したのは、外国籍社員の増加にともなって多様化した食の制限への対応です。ハラール・ビーガン・アレルギーなどを社員ごとのプロフィールとして登録し、幹事が一覧で把握できるようにしました。情報が共有されないまま会場やコースが決まると、参加しづらさを感じる社員が生まれてしまう。これを運用ではなく仕組みで防ぐことを狙っています。あわせて食の好き嫌いやアルコール耐性、店の雰囲気の好みも登録できるようにし、イベント作成画面で統計として表示することで、店選びの判断材料が自然と手元に揃う構成にしました。\n\n出欠回答には締切カウントダウンと自動リマインドを、終了後には5段階評価と自由コメントによるフィードバック収集を実装。アンケートは複数設問と匿名モードに対応させています。「お酒が飲めないけれど言いづらい」「正直あの店は苦手だった」といった声が埋もれるとイベントは形骸化していくため、匿名で本音を出せる経路を意図的に用意しました。通知は Slack Webhook 連携、カレンダー登録は ICS ダウンロード、移動中の確認を見込んで PWA 対応も入れています。",
+        en: "The design priority was handling the dietary needs that had grown far more varied as the number of non-Japanese employees increased. Halal, vegan, and allergy information is registered on each employee's profile and surfaced to the organizer as a single list. When a venue or course menu is decided without that information being shared, some employees simply end up feeling they cannot join—and I wanted the structure of the product, not individual diligence, to prevent that. Employees can also register food preferences, alcohol tolerance, and the kind of atmosphere they like, which the event-creation screen aggregates into statistics so the organizer has the basis for a venue decision already in hand.\n\nRSVPs come with a deadline countdown and automatic reminders, and each event closes with a five-point rating plus free-text feedback. Surveys support multiple questions and an anonymous mode. Comments like \"I don't drink but it's awkward to say so\" or \"honestly, that place wasn't for me\" tend to go unsaid, and once they do the event loses its point—so I deliberately built a route for people to be candid without attribution. Notifications go through a Slack webhook, calendar entries are offered as ICS downloads, and the app is PWA-enabled for checking on the move.",
+      },
+      {
+        ja: "管理ダッシュボードには参加率の可視化と満足度推移を実装し、あわせて AI 分析インサイトの領域と、イベント作成画面にメンバーの食の趣向統計をもとにした店選び提案の UI を組み込んでいます。実際の AI 連携はコストの都合で見送りましたが、レイアウトと UX は実運用を前提に検討したうえで静的に実装済みです。\n\nメンバーの詳細なプロフィールと AI を掛け合わせられれば、店の選定やイベントの方向性の検討そのものを効率化でき、幹事の負担とストレスはさらに軽くできると考えています。全員が参加しやすく意見を言いやすい運営を続けられることが、結果としてチームの心理的安全性と、イベントの満足度・参加率の向上につながる。そこまでを見据えた設計にしました。",
+        en: "The admin dashboard visualizes participation rates and satisfaction trends, and includes a space for AI-driven insights alongside a venue-suggestion UI on the event-creation screen that draws on the aggregated taste profiles of the members. The actual AI integration was left out for cost reasons; the layouts and interactions are implemented statically, but they were designed against a real operational scenario rather than as decoration.\n\nCombining detailed member profiles with AI would streamline venue selection and the shaping of an event itself, cutting the organizer's workload and stress further still. Sustaining an operation where everyone can take part easily and speak up honestly is, in the end, what builds psychological safety on a team and lifts both satisfaction and turnout—and that is the outcome I designed toward.",
+      },
     ],
   },
 

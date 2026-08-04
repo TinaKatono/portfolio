@@ -1,31 +1,28 @@
 import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
-import { BrandSerif } from "./brand";
-
 const navLinkClass =
-  "flex items-baseline rounded-sm outline-none ring-offset-2 transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-current";
+  "flex items-baseline gap-1 font-sans font-bold tracking-[-0.02em] rounded-sm outline-none ring-offset-2 transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-current";
 
+/**
+ * ナビはロゴ・見出しと同じ太ゴシックに揃えている。
+ * ただし 16px と小さいため、単語間の図形（InlineMark）はここには入れていない。
+ * この大きさだと図形が潰れて識別できず、項目間の区切りも曖昧になる。
+ */
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
       <Link to="/#about" className={navLinkClass} onClick={onNavigate}>
-        <span className="font-sans">ABOUT</span>
-        <BrandSerif className="pl-1">
-          <span className="text-[16px]">ME</span>
-        </BrandSerif>
+        <span>ABOUT</span>
+        <span>ME</span>
       </Link>
       <Link to="/#work" className={navLinkClass} onClick={onNavigate}>
-        <span className="font-sans">RECENT</span>
-        <BrandSerif className="pl-1">
-          <span className="text-[16px]">WORKS</span>
-        </BrandSerif>
+        <span>RECENT</span>
+        <span>WORKS</span>
       </Link>
       <Link to="/contact" className={navLinkClass} onClick={onNavigate}>
-        <span className="font-sans">GET IN</span>
-        <BrandSerif className="pl-1">
-          <span className="text-[16px]">TOUCH</span>
-        </BrandSerif>
+        <span>GET IN</span>
+        <span>TOUCH</span>
       </Link>
     </>
   );
