@@ -22,6 +22,7 @@ import {
   MARK_EYES_OVERLAY,
   MARK_IMAGE_EYES,
   MARK_IMAGES,
+  SCROLL_HINT_MARK,
 } from "./components/brand";
 import { RoleList } from "./components/RoleList";
 import { SiteFooter } from "./components/SiteFooter";
@@ -279,7 +280,7 @@ function WorkRoleRow({ item }: { item: WorkItem }) {
 
   const rowBody = (
     <>
-      <p className="min-w-0 flex-1 font-sans md:text-[16px] text-[12px] leading-[1.8] tracking-[0.08em] text-[#333]">
+      <p className="min-w-0 flex-1 font-sans md:text-[16px] text-[15px] leading-[1.8] tracking-[0.08em] text-[#333]">
         {item.title}
       </p>
       <div
@@ -697,25 +698,35 @@ function WorkBelowStatementMarquee({
   );
 }
 
-/** 写真枠内の下中央：下方向スクロールを示す矢印（白＋影で写真上でも視認できる）。onPaper は SP 等・背景が明るいとき用 */
+/**
+ * スクロール誘導の矢印の幅（高さは絵柄の比率で追従する）。
+ * md 以上で大きくするのは、静止時のロゴが 160px あって 44px では負けてしまうため。
+ */
+const SCROLL_HINT_WIDTH_CLASS = "w-11 md:w-16";
+/**
+ * 2 枚目を上に詰める量。fv_5.svg は正方形の viewBox の下寄りに絵柄があり、
+ * 上に幅の約 3 割の余白を持っているため、素直に縦に並べると離れて見える。
+ * 幅を変えたらここも比例させること（幅の 1/4 強が目安）。
+ */
+const SCROLL_HINT_STACK_CLASS = "-mt-2.5 md:-mt-3.5";
+
+/**
+ * ヒーロー下中央：下方向スクロールを示す矢印。図形はブランドの素材（fv_5.svg）を使う。
+ * 縦に 2 枚重ねて下方向を強めている（2 枚目は薄くして奥行きを出す）。
+ * 以前は細い山形 2 つの自前 SVG で、明るい背景でも見えるよう色と影を出し分けていたが、
+ * ベタ塗りのピンクになったのでどちらも要らなくなった。
+ */
 function HeroScrollHint({
   visible,
   reduceMotion,
-  variant = "onPhoto",
 }: {
   visible: boolean;
   reduceMotion: boolean;
-  variant?: "onPhoto" | "onPaper";
 }) {
   const animate =
     visible && !reduceMotion
       ? "motion-reduce:animate-none animate-scroll-hint-bounce"
       : "motion-reduce:animate-none";
-
-  const toneClass =
-    variant === "onPhoto"
-      ? "text-white [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.55))]"
-      : "text-[#546e7a] [filter:drop-shadow(0_1px_0_rgba(255,255,255,0.6))]";
 
   return (
     <div
@@ -727,33 +738,20 @@ function HeroScrollHint({
       {visible ? (
         <span className="sr-only">下へスクロールして続きを表示</span>
       ) : null}
-      <div className={`flex flex-col items-center ${toneClass} ${animate}`}>
-        <svg width="24" height="12" viewBox="0 0 24 12" className="block" aria-hidden="true">
-          <path
-            d="M3 3 L12 9 L21 3"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.35"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        <svg
-          width="24"
-          height="12"
-          viewBox="0 0 24 12"
-          className="-mt-1 block opacity-70"
+      {/* バウンスは 2 枚まとめて掛ける（別々に掛けると 2 枚の間隔が伸び縮みする） */}
+      <div className={`flex flex-col items-center ${animate}`}>
+        <img
+          src={SCROLL_HINT_MARK}
+          alt=""
           aria-hidden="true"
-        >
-          <path
-            d="M3 3 L12 9 L21 3"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.35"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+          className={`block h-auto ${SCROLL_HINT_WIDTH_CLASS}`}
+        />
+        <img
+          src={SCROLL_HINT_MARK}
+          alt=""
+          aria-hidden="true"
+          className={`block h-auto opacity-70 ${SCROLL_HINT_WIDTH_CLASS} ${SCROLL_HINT_STACK_CLASS}`}
+        />
       </div>
     </div>
   );
@@ -861,7 +859,6 @@ function TrioAtRest({
         <HeroScrollHint
           visible={scrollHintVisible}
           reduceMotion={reduceMotion}
-          variant="onPaper"
         />
       </div>
       {/* 静止状態なので settle は 1（ぼかしなし） */}
@@ -1083,7 +1080,6 @@ export default function Top() {
                   <HeroScrollHint
                     visible={showHeroScrollHint}
                     reduceMotion={reduceMotion}
-                    variant="onPaper"
                   />
                 </div>
                 <FvHeadline

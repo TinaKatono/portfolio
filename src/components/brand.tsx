@@ -5,6 +5,7 @@ import mark3 from "../assets/fv/fv_3.svg";
 import mark4 from "../assets/fv/fv_4.svg";
 import mark4Eyes from "../assets/fv/fv_4_eyes.svg";
 import eyesOverlay from "../assets/fv/eyes_under.svg";
+import scrollHint from "../assets/fv/fv_5.svg";
 
 /**
  * ロゴ・見出し・キャッチの単語間に挟むカラフルな図形。
@@ -26,6 +27,14 @@ export const MARK_IMAGE_EYES = mark4Eyes;
  * InlineMark の overlaySrc に渡す。
  */
 export const MARK_EYES_OVERLAY = eyesOverlay;
+
+/**
+ * FV のスクロール誘導に使う下向きの矢印。塗りは BRAND_COLORS.pink と同じ値。
+ * **単語間に挟む図形ではないので MARK_IMAGES には入れない**
+ * （入れるとロゴや見出しの語間にも回ってきてしまう）。
+ * 正方形の viewBox の下寄りに絵柄があるので、上に 3 割ほど余白を持っている。
+ */
+export const SCROLL_HINT_MARK = scrollHint;
 
 /**
  * 図形に使っている色。SVG 内の fill と同じ値なので、図形以外（CTA の丸など）で
