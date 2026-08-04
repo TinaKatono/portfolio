@@ -103,28 +103,43 @@ const HERO_INTRO_WORD_GAP_MS = 180;
 /** ヒーロー内でこれ以上スクロールしたら scroll 誘導を消す（ヒーロー先頭からの距離） */
 const HERO_SCROLL_HINT_MAX_OFFSET = 480;
 /**
- * SP でキャッチ（DRIVEN 〜 DESIGN.）を画面中央からどれだけ上へ寄せるか。
- * ロゴではなくキャッチ側を上げる。値は FvHeadline の top 計算が読む CSS 変数で渡す。
- * Tailwind は生成前のソース文字列を走査するので、**値をここに直接書く**こと
- * （変数を埋め込むとクラスが生成されない）。md 以上では 0 に戻す。
- */
-const FV_SP_LIFT_CLASS = "[--fv-lift:12vh] md:[--fv-lift:0px]";
-
-/**
- * FV 見出しの文字サイズ。行は折り返さず横一列に伸ばし、各行が画面幅の 7〜8 割を占めるようにする。
- * 画像もこのサイズ基準（em）で決まるので、ここを変えれば文字と画像がまとめて追従する。
+ * FV 見出しの文字サイズ。画像もこのサイズ基準（em）で決まるので、ここを変えれば
+ * 文字と画像がまとめて追従する。
  *
- * 8vw が主役。画面幅に比例させることで、どの幅でも占有率がほぼ一定（右行で約 78%）になる。
- * min(..., 22vh) は縦が浅いウィンドウ（横長・低い画面）で 2 行が縦にはみ出すのを防ぐ保険。
- * 148px の上限は超ワイドディスプレイで文字が破綻するほど大きくならないための頭打ち。
+ * md 以上（--fv-size 未設定）は 8vw が主役。画面幅に比例させることで、どの幅でも
+ * 占有率がほぼ一定（右行で約 78%）になる。min(..., 22vh) は縦が浅いウィンドウで
+ * 2 行がはみ出すのを防ぐ保険、148px は超ワイドでの頭打ち。
+ * SP は下の FV_SP_CLASS が --fv-size を上書きして一段大きくする（塊で改行するので入る）。
  */
-const FV_FONT_SIZE = "clamp(26px, min(8vw, 22vh), 148px)";
+const FV_FONT_SIZE = "clamp(26px, var(--fv-size, min(8vw, 22vh)), 148px)";
 /**
- * FV の 2 行を画面中央からどれだけ上下にずらすか。
- * 行の高さが約 1.5em なので、0.7em で 2 行がわずかに離れて並ぶ。
- * em はコンテナの FV_FONT_SIZE 基準なので、文字サイズを変えても間隔比が保たれる。
+ * SP だけ効かせる 3 つの上書き。
+ * - --fv-size: 塊ごとに改行するぶん文字を大きくできる。72px の頭打ちは md 直下
+ *   （767px 付近）で 13vw が md の 8vw を大きく上回り、ブレークポイントで
+ *   サイズが跳ねるのを抑えるため
+ * - --fv-lift: キャッチ全体を画面中央から持ち上げる量（ロゴは中央のまま）
+ * - --fv-gap: 2 つの塊のあいだの余白。SP は 2 行 × 2 塊で 4 行になり、
+ *   狭いと 1 つの段落に見えるので md より広く取る
+ *
+ * Tailwind は生成前のソース文字列を走査するので、**値はここに直接書く**こと
+ * （変数を埋め込むとクラスが生成されない）。md 以上は initial に戻し、
+ * --fv-size と --fv-gap は参照側の fallback、--fv-lift は 0 として扱われる。
  */
-const FV_LINE_OFFSET = "0.7em";
+const FV_SP_CLASS =
+  "[--fv-size:min(13vw,72px)] [--fv-lift:2vh] [--fv-gap:0.3em] md:[--fv-size:initial] md:[--fv-lift:0px] md:[--fv-gap:initial]";
+/**
+ * 2 つの塊を画面中央からどれだけ離すか（md 以上の既定値。SP は --fv-gap が上書きする）。
+ * 左の塊は下端が「中央 − これ」、右の塊は上端が「中央 ＋ これ」に来る。
+ * 上下を bottom / top で対称に取るので、SP で塊が複数行になっても行数の計算が要らない。
+ */
+const FV_LINE_GAP = "var(--fv-gap, 0.06em)";
+/**
+ * SP でどの単語の**直後**で改行するか（0 起点。図形は単語の後ろに付く）。
+ * `[0]` = `DRIVEN●` / `by●LOGIC,` の 2 行。`by` は繋ぎ語なので後続の語と同じ行に置く。
+ * `[0, 1]` にすると図形ごとに切れて 3 行になるが、`by` だけの行ができて文が等分に割れる。
+ * md 以上では常に 1 行なので影響しない。
+ */
+const FV_SP_ROW_BREAK_AFTER = [0];
 /**
  * FV：定位置へ寄ってくる間のぼかし量（px）。ヒーロー名の heroCharIn と同じ「ぼけ→くっきり」の演出を、
  * こちらはスクロール進捗に連動させている。大きくしすぎるとスクロール中の再描画が重くなる。
@@ -769,6 +784,15 @@ function FvHeadline({
   const t = clamp(settle, 0, 1);
   const blurPx = (1 - t) * FV_SETTLE_BLUR_PX;
   const { words, marks } = FV_LINES[isLeft ? 0 : 1];
+  /**
+   * SP の行分け。単語インデックスの配列の配列。
+   * md 以上ではコンテナが flex-row になるので、この塊がそのまま横に並んで 1 行に戻る。
+   */
+  const spRows = words.reduce<number[][]>((rows, _w, i) => {
+    rows[rows.length - 1].push(i);
+    if (FV_SP_ROW_BREAK_AFTER.includes(i) && i < words.length - 1) rows.push([]);
+    return rows;
+  }, [[]]);
 
   return (
     // 文字サイズはこのコンテナに置く。InlineMark が em で自分のサイズを決めるため、
@@ -777,36 +801,48 @@ function FvHeadline({
     // そのまま反対側へ伸びて画面中央を越える。溢れは祖先の overflow-hidden が受け止める。
     <div
       /*
-        --fv-lift は SP だけ効かせる中央からの持ち上げ量。top の計算に入れるので、
-        スクロール連動の transform とは干渉しない。
+        SP は塊を縦に積み、左の塊は左寄せ・右の塊は右寄せ。md 以上は flex-row に戻して
+        塊が横に並ぶので、見た目は従来どおりの 1 行になる（gap は語間と同じ値）。
+        縦位置は左が bottom・右が top で中央から対称に取るため、行数が増えても計算が要らない。
+        --fv-lift / --fv-size は SP だけの上書き（FV_SP_CLASS）。
       */
-      className={`pointer-events-none absolute flex flex-nowrap items-baseline ${FV_SP_LIFT_CLASS} ${zClass} ${
+      className={`pointer-events-none absolute flex flex-col md:flex-row md:flex-nowrap md:items-baseline ${FV_SP_CLASS} ${zClass} ${
         isLeft
-          ? "left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)]"
-          : "right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] justify-end text-right"
+          ? "left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] items-start"
+          : "right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] items-end justify-end text-right"
       }`}
       style={{
         fontSize: FV_FONT_SIZE,
         gap: BRAND_GAP,
-        top: `calc(50% - var(--fv-lift, 0px) ${isLeft ? "-" : "+"} ${FV_LINE_OFFSET})`,
+        [isLeft ? "bottom" : "top"]: `calc(50% ${
+          isLeft ? "+" : "-"
+        } var(--fv-lift, 0px) + ${FV_LINE_GAP})`,
         transform,
         filter: blurPx > 0.05 ? `blur(${blurPx.toFixed(2)}px)` : undefined,
         opacity: t < 1 ? 0.25 + 0.75 * t : undefined,
       }}
     >
       {/* 単語 → 図形 → 単語 → 図形 → 単語。すべての単語間に 1 枚入る */}
-      {words.map((w, i) => (
-        <Fragment key={w}>
-          <p className={`m-0 ${BRAND_TEXT}`}>{w}</p>
-          {marks[i] ? (
-            <InlineMark
-              src={marks[i]}
-              spin={marks[i] === SPINNING_MARK}
-              // 青いギザギザ丸だけ、FV では目玉を重ねる（目玉は回らず土台だけ回る）
-              overlaySrc={marks[i] === SPINNING_MARK ? MARK_EYES_OVERLAY : undefined}
-            />
-          ) : null}
-        </Fragment>
+      {spRows.map((row) => (
+        <div
+          key={row.join("-")}
+          className="flex flex-nowrap items-baseline"
+          style={{ gap: BRAND_GAP }}
+        >
+          {row.map((i) => (
+            <Fragment key={words[i]}>
+              <p className={`m-0 ${BRAND_TEXT}`}>{words[i]}</p>
+              {marks[i] ? (
+                <InlineMark
+                  src={marks[i]}
+                  spin={marks[i] === SPINNING_MARK}
+                  // 青いギザギザ丸だけ、FV では目玉を重ねる（目玉は回らず土台だけ回る）
+                  overlaySrc={marks[i] === SPINNING_MARK ? MARK_EYES_OVERLAY : undefined}
+                />
+              ) : null}
+            </Fragment>
+          ))}
+        </div>
       ))}
     </div>
   );
@@ -1194,7 +1230,7 @@ export default function Top() {
                 style={{
                   width: CTA_DOT_RATIO,
                   aspectRatio: "1 / 1",
-                  backgroundColor: BRAND_COLORS.green,
+                  backgroundColor: BRAND_COLORS.pink,
                 }}
                 aria-hidden="true"
               />
