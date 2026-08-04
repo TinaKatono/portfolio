@@ -1,8 +1,10 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import mark1 from "../assets/fv/fv_1.svg";
 import mark2 from "../assets/fv/fv_2.svg";
 import mark3 from "../assets/fv/fv_3.svg";
 import mark4 from "../assets/fv/fv_4.svg";
+import mark4Eyes from "../assets/fv/fv_4_eyes.svg";
+import eyesOverlay from "../assets/fv/eyes_under.svg";
 
 /**
  * ロゴ・見出し・キャッチの単語間に挟むカラフルな図形。
@@ -10,6 +12,32 @@ import mark4 from "../assets/fv/fv_4.svg";
  * 0=ピンクの角丸 / 1=青の星型 / 2=緑の扇形 / 3=黄色の四つ葉
  */
 export const MARK_IMAGES = [mark1, mark2, mark3, mark4];
+
+/**
+ * 黄色の図形の「目玉あり」版。**FV のキャッチでのみ使う。**
+ * 見出し・ロゴ・マルキーなど他の装飾では目玉なしの MARK_IMAGES[3] を使うこと
+ * （小さく並ぶ場所で目玉が入ると、図形としての形が読み取りにくくなるため）。
+ */
+export const MARK_IMAGE_EYES = mark4Eyes;
+
+/**
+ * 目玉だけの透過画像。他の図形と同じ寸法なので、そのまま重ねれば位置が合う。
+ * 青いギザギザ丸（MARK_IMAGES[1]）の上に重ね、**土台だけ回して目玉は回さない**用途。
+ * InlineMark の overlaySrc に渡す。
+ */
+export const MARK_EYES_OVERLAY = eyesOverlay;
+
+/**
+ * 図形に使っている色。SVG 内の fill と同じ値なので、図形以外（CTA の丸など）で
+ * 色を使うときはここから取れば全体のパレットからずれない。
+ * 図形を追加・差し替えたときはここも合わせて更新する。
+ */
+export const BRAND_COLORS = {
+  pink: "#FC81BF",
+  blue: "#42A5F5",
+  green: "#48B86E",
+  yellow: "#FFC107",
+} as const;
 
 /** 図形のサイズ（文字サイズ基準）とベースライン補正 */
 const MARK_SIZE = "1.05em";
@@ -22,45 +50,138 @@ const MARK_NUDGE_Y = "0.14em";
  */
 export function InlineMark({
   src,
+  overlaySrc,
   className = "",
   nudgeY = MARK_NUDGE_Y,
   spin = false,
+  hoverRotate = false,
 }: {
   src: string;
+  /**
+   * src の上に重ねる透過画像。**回転しない**ので、土台だけを回して
+   * 上の絵柄は正位置に保ちたいとき（青いギザギザ丸＋目玉）に使う。
+   */
+  overlaySrc?: string;
   className?: string;
-  /** ベースライン補正の上書き。包み要素があってベースラインがずれる箇所で使う（例: ヒーローのロゴ） */
+  /**
+   * ベースライン補正の上書き。通常は既定値のままでよい。
+   * 位置を測って調整する場合は、周囲の入場アニメーションを finish() させた状態で測ること
+   * （アニメの 0% キーフレームが transform に乗っていると数値がずれる）。
+   */
   nudgeY?: string;
   /** ゆっくり回し続ける */
   spin?: boolean;
+  /**
+   * 祖先の `group` がホバーされたら 90 度傾く。
+   * 角度は CSS 変数で受け渡す。transform をクラスで上書きすると
+   * インラインの位置補正（translateY）が消えてしまうため。
+   */
+  hoverRotate?: boolean;
 }) {
+  const hoverRotateClass = hoverRotate
+    ? "transition-transform duration-[700ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:[--mark-rot:90deg] group-focus-within:[--mark-rot:90deg] motion-reduce:transition-none"
+    : "";
+  const spinClass = spin ? "animate-mark-spin motion-reduce:animate-none" : "";
+  const boxStyle: CSSProperties = {
+    width: MARK_SIZE,
+    height: MARK_SIZE,
+    // 回転しないときはこの transform が効く。spin するときは markSpin が
+    // --mark-nudge-y を読んで同じ補正を合成する（animation が transform を上書きするため）。
+    transform: `translateY(${nudgeY}) rotate(var(--mark-rot, 0deg))`,
+    ["--mark-nudge-y" as string]: nudgeY,
+  };
+
+  if (!overlaySrc) {
+    return (
+      <img
+        src={src}
+        alt=""
+        aria-hidden="true"
+        className={`inline-block shrink-0 object-contain ${spinClass} ${hoverRotateClass} ${className}`}
+        style={boxStyle}
+      />
+    );
+  }
+
+  /*
+    2 枚重ね。外側の span が位置補正とホバー回転を持ち、回し続ける spin は
+    土台の img だけに掛ける。こうすると上に重ねた絵柄は回らない。
+    土台側の --mark-nudge-y は 0 にする。外側で既に補正済みなので、
+    markSpin のキーフレームが再度 translateY を足すと二重にずれる。
+    inline-flex の包み要素はベースラインを変えない（実測で確認済み）。
+  */
   return (
-    <img
-      src={src}
-      alt=""
+    <span
+      className={`relative inline-flex shrink-0 ${hoverRotateClass} ${className}`}
+      style={boxStyle}
       aria-hidden="true"
-      className={`inline-block shrink-0 object-contain ${
-        spin ? "animate-mark-spin motion-reduce:animate-none" : ""
-      } ${className}`}
-      style={{
-        width: MARK_SIZE,
-        height: MARK_SIZE,
-        // 回転しないときはこの transform が効く。回転するときは markSpin が
-        // --mark-nudge-y を読んで同じ補正を合成する（animation が transform を上書きするため）。
-        transform: `translateY(${nudgeY})`,
-        ["--mark-nudge-y" as string]: nudgeY,
-      }}
-    />
+    >
+      <img
+        src={src}
+        alt=""
+        className={`absolute inset-0 h-full w-full object-contain ${spinClass}`}
+        style={{ ["--mark-nudge-y" as string]: "0px" }}
+      />
+      <img
+        src={overlaySrc}
+        alt=""
+        className="absolute inset-0 h-full w-full object-contain"
+      />
+    </span>
   );
 }
 
 /**
- * ロゴ・見出しの標準スタイル。サイト全体を太めのゴシックで統一している。
+ * ロゴ・見出しの標準スタイル（折り返す見出し用）。サイト全体を太めのゴシックで統一している。
  * 文字サイズは呼び出し側で指定する。
  */
-export const BRAND_TEXT = "whitespace-nowrap font-sans font-bold leading-none tracking-[-0.03em] text-[#333]";
+export const BRAND_TEXT_WRAP =
+  "font-sans font-bold leading-none tracking-[-0.03em] text-[#333]";
+
+/** 1 行で収める見出し用。折り返す見出しには BRAND_TEXT_WRAP を使う */
+export const BRAND_TEXT = `whitespace-nowrap ${BRAND_TEXT_WRAP}`;
 
 /** 単語と図形のあいだの余白（文字サイズ基準） */
 export const BRAND_GAP = "0.1em";
+
+/**
+ * ホバー（およびキーボードフォーカス）で、下から同じ語がせり上がってくる見出し。
+ * 高さ 1em の枠で 2 枚重ねをクリップし、レール全体を半分ずらすことで入れ替える。
+ *
+ * **呼び出し側の親要素に `group` クラスが必要**（`group-hover` / `group-focus-within` で駆動するため）。
+ * 2 枚目の見た目は revealClassName / revealStyle で渡す。文字サイズや配色は
+ * 置き場所によって変わる（CTA は 128px、ヘッダーは 16px）ため、ここでは決めない。
+ */
+export function HoverRevealWord({
+  children,
+  textClassName,
+  wrapperClassName = "",
+  revealClassName = "",
+  revealStyle,
+  motionClassName = "duration-[700ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+}: {
+  children: ReactNode;
+  textClassName: string;
+  wrapperClassName?: string;
+  revealClassName?: string;
+  revealStyle?: CSSProperties;
+  /** せり上がりの速さ・カーブ。置き場所で変える（大見出しはゆったり、ナビは機敏に） */
+  motionClassName?: string;
+}) {
+  const rail = `block transition-transform ${motionClassName} group-hover:-translate-y-1/2 group-focus-within:-translate-y-1/2 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-within:translate-y-0`;
+  return (
+    <span
+      className={`inline-block h-[1em] overflow-hidden align-baseline ${textClassName} ${wrapperClassName}`}
+    >
+      <span className={rail}>
+        <span className="block leading-none">{children}</span>
+        <span className={`block leading-none ${revealClassName}`} style={revealStyle} aria-hidden>
+          {children}
+        </span>
+      </span>
+    </span>
+  );
+}
 
 export function CtaArrow() {
   return (

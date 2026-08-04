@@ -33,14 +33,23 @@ export default function Contact() {
       <main className="w-full shrink-0 border-t border-[#b0bec5] px-10 pb-20 pt-[120px]">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-12">
           <header className="flex flex-col gap-6">
+            {/*
+              SP 幅では 1 行に収まらないので「GET ● IN ●」と「TOUCH」を別の塊にして、
+              図形 2 つの直後で折り返す。塊の中は nowrap なので折り返し位置は常にここ。
+            */}
             <div
-              className="flex flex-nowrap items-baseline text-[40px] leading-none"
-              style={{ gap: BRAND_GAP }}
+              className="flex flex-wrap items-baseline text-[40px] leading-none"
+              style={{ columnGap: BRAND_GAP, rowGap: "0.12em" }}
             >
-              <span className={BRAND_TEXT}>GET</span>
-              <InlineMark src={MARK_IMAGES[0]} />
-              <span className={BRAND_TEXT}>IN</span>
-              <InlineMark src={MARK_IMAGES[1]} />
+              <span
+                className="inline-flex flex-nowrap items-baseline"
+                style={{ gap: BRAND_GAP }}
+              >
+                <span className={BRAND_TEXT}>GET</span>
+                <InlineMark src={MARK_IMAGES[0]} />
+                <span className={BRAND_TEXT}>IN</span>
+                <InlineMark src={MARK_IMAGES[1]} />
+              </span>
               <span className={BRAND_TEXT}>TOUCH</span>
             </div>
             {/* <div className="flex flex-col gap-6 text-[#333]">

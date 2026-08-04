@@ -11,14 +11,19 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import {
+  BRAND_COLORS,
   BRAND_GAP,
   BRAND_TEXT,
-  CtaArrow,
+  HoverRevealWord,
   InlineMark,
+  MARK_EYES_OVERLAY,
+  MARK_IMAGE_EYES,
   MARK_IMAGES,
 } from "./components/brand";
+import { RoleList } from "./components/RoleList";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
 import { hasWorkDetail } from "./data/workDetails";
@@ -27,28 +32,35 @@ import { workItems, type WorkItem } from "./data/workItems";
 /** カーソル（またはフォーカス基準点）からツールチップ左上へのずらし — カーソルと文字が重ならないようにする */
 const WORK_ROLE_CURSOR_OFFSET = { x: 14, y: 14 };
 
+/**
+ * GET IN TOUCH のホバーで出てくる白抜き文字の縁取り幅。
+ * -webkit-text-stroke は既定では文字の輪郭中心に描かれるため、太くするほど字面が痩せる。
+ * 128px の太ゴシックに対して 1px はかなり細いので、輪郭を強めたいならここを上げる。
+ */
+const CTA_TEXT_STROKE_WIDTH = "1.5px";
+/** CTA の大きな丸の中に置く小さな丸の直径（丸の幅に対する割合） */
+const CTA_DOT_RATIO = "12%";
+
+/** ROLE ツールチップを画面端からどれだけ内側で止めるか */
+const WORK_ROLE_VIEWPORT_MARGIN = 12;
+
+/** CTA の見出し 1 語。ホバーで白抜き＋縁取りの同じ語がせり上がる */
 function GetInTouchHeadlineWord({
   children,
   textClassName,
-  wrapperClassName = "",
 }: {
   children: ReactNode;
   textClassName: string;
-  wrapperClassName?: string;
 }) {
-  const rail =
-    "block transition-transform duration-[700ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:-translate-y-1/2 group-focus-within:-translate-y-1/2 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-within:translate-y-0";
   return (
-    <span
-      className={`inline-block h-[1em] overflow-hidden align-baseline text-[#333] ${textClassName} ${wrapperClassName}`}
+    <HoverRevealWord
+      textClassName={textClassName}
+      // 色は inline style で当てる。Tailwind の text-[#333] と text-white は
+      // どちらも同じ詳細度の color ユーティリティで、生成 CSS の順序次第で負けることがあるため。
+      revealStyle={{ color: "#fff", WebkitTextStroke: `${CTA_TEXT_STROKE_WIDTH} #333` }}
     >
-      <span className={rail}>
-        <span className="block leading-none">{children}</span>
-        <span className="block leading-none" aria-hidden>
-          {children}
-        </span>
-      </span>
-    </span>
+      {children}
+    </HoverRevealWord>
   );
 }
 
@@ -65,13 +77,23 @@ function smoothstep(t: number) {
   return c * c * (3 - 2 * c);
 }
 
+/**
+ * smoothstep より両端が平ら・中央が急な曲線（6t^5-15t^4+10t^3）。
+ * スクロール連動のままでも「ゆっくり動き出す → 一気に寄る → すっと止まる」と
+ * 緩急がつき、等速に近い smoothstep より表情が出る。
+ */
+function smootherstep(t: number) {
+  const c = clamp(t, 0, 1);
+  return c * c * c * (c * (c * 6 - 15) + 10);
+}
+
 /** セクション間の重なり量（ヒーロー←ABOUT、ABOUT←WORK で共通。1 箇所で調整） */
 const overlapStyle = {
   ["--section-overlap" as string]: "min(100svh, 56rem)",
 } as CSSProperties;
 
-/** 右コピー完了 ≒ 3要素が横並びに揃ったタイミング */
-const P_TRIO_DONE = 0.58;
+/** 右コピー完了 ≒ 2 行が定位置に揃ったタイミング（phases の右行終端と一致させること） */
+const P_TRIO_DONE = 0.7;
 /** 0〜1 でヒーロー見出しが大→小＆上へ。終端は P_TRIO_DONE より手前に置く */
 const P_TITLE_SHRINK_END = 0.48;
 
@@ -81,10 +103,12 @@ const HERO_INTRO_WORD_GAP_MS = 180;
 /** ヒーロー内でこれ以上スクロールしたら scroll 誘導を消す（ヒーロー先頭からの距離） */
 const HERO_SCROLL_HINT_MAX_OFFSET = 480;
 /**
- * ヒーローのロゴだけ、図形をアニメーション用の span で包む分ベースラインが 0.12em 下がる。
- * その差を引いた補正値。他の見出し（InlineMark を直接置いている箇所）の既定は 0.14em。
+ * SP でキャッチ（DRIVEN 〜 DESIGN.）を画面中央からどれだけ上へ寄せるか。
+ * ロゴではなくキャッチ側を上げる。値は FvHeadline の top 計算が読む CSS 変数で渡す。
+ * Tailwind は生成前のソース文字列を走査するので、**値をここに直接書く**こと
+ * （変数を埋め込むとクラスが生成されない）。md 以上では 0 に戻す。
  */
-const HERO_MARK_NUDGE_Y = "0.02em";
+const FV_SP_LIFT_CLASS = "[--fv-lift:12vh] md:[--fv-lift:0px]";
 
 /**
  * FV 見出しの文字サイズ。行は折り返さず横一列に伸ばし、各行が画面幅の 7〜8 割を占めるようにする。
@@ -116,7 +140,8 @@ const FV_SETTLE_BLUR_PX = 42;
  */
 const FV_LINES = [
   { words: ["DRIVEN", "by", "LOGIC,"], marks: [MARK_IMAGES[0], MARK_IMAGES[1]] },
-  { words: ["DEFINED", "by", "DESIGN."], marks: [MARK_IMAGES[2], MARK_IMAGES[3]] },
+  // 黄色だけ FV では目玉あり版を使う。見出しやマルキーでは目玉なしの MARK_IMAGES[3]
+  { words: ["DEFINED", "by", "DESIGN."], marks: [MARK_IMAGES[2], MARK_IMAGE_EYES] },
 ];
 /**
  * ゆっくり回し続ける図形。ロゴの図形と同じ fv_2.svg（青い星型）を回す。
@@ -124,6 +149,52 @@ const FV_LINES = [
  * FV のキャッチでは「左行の 2 つ目」がこれに当たる。
  */
 const SPINNING_MARK = MARK_IMAGES[1];
+
+/**
+ * 一度だけ「画面に入った」ことを検知する。ABOUT / WORK の出現アニメーションの起点。
+ * IntersectionObserver は交差の *変化* しか通知しないため、初期表示ですでに
+ * 見えている場合を先に拾っておく（リロード位置によっては永久に出てこなくなる）。
+ */
+function useRevealOnce<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  const [revealed, setRevealed] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el || typeof window === "undefined") return;
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight && r.bottom > 0) {
+      setRevealed(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setRevealed(true);
+      },
+      { threshold: 0.06 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return [ref, revealed] as const;
+}
+
+/** 下からすっと上がってくる出現。reduced-motion では最終状態のまま出す */
+const REVEAL_TRANSITION =
+  "transition-[opacity,transform] duration-[800ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none motion-reduce:translate-y-0 motion-reduce:opacity-100";
+
+function revealClass(revealed: boolean) {
+  return `${REVEAL_TRANSITION} ${revealed ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`;
+}
+
+/** 順番に少しずつ遅らせる。1 項目あたりの間隔 */
+const REVEAL_STAGGER_MS = 90;
+
+function revealDelay(index: number, revealed: boolean): CSSProperties {
+  // 消えるときまで遅延すると閉じ際がもたつくので、出るときだけ遅らせる
+  return { transitionDelay: revealed ? `${index * REVEAL_STAGGER_MS}ms` : "0ms" };
+}
 
 function prefersReducedMotion(): boolean {
   return (
@@ -134,7 +205,10 @@ function prefersReducedMotion(): boolean {
 
 function WorkRoleRow({ item }: { item: WorkItem }) {
   const rowRef = useRef<HTMLDivElement | HTMLAnchorElement>(null);
+  const tipRef = useRef<HTMLDivElement>(null);
+  /** ビューポート基準の座標（ツールチップを body 直下に fixed で出すため） */
   const [tipPos, setTipPos] = useState({ x: 0, y: 0 });
+  const [tipSize, setTipSize] = useState({ w: 240, h: 120 });
   const [hover, setHover] = useState(false);
   const [focused, setFocused] = useState(false);
   /** 行に入るたびに増やしてツールチップを差し替え、入場アニメを毎回再生する */
@@ -142,17 +216,47 @@ function WorkRoleRow({ item }: { item: WorkItem }) {
   const visible = hover || focused;
   const hasDetailPage = hasWorkDetail(item.id);
 
+  /**
+   * 画面端でツールチップがはみ出さないよう寸法を持っておく。
+   * 表示に切り替わった時だけ測る（マウス移動のたびに測るとレイアウトが毎回走って重い）。
+   * 入場アニメに scale が含まれるので、transform の影響を受けない offset* を使う。
+   */
+  useLayoutEffect(() => {
+    if (!visible) return;
+    const el = tipRef.current;
+    if (!el) return;
+    setTipSize({ w: el.offsetWidth, h: el.offsetHeight });
+  }, [visible, tipBurst]);
+
   const syncPosFromMouse = (e: MouseEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    setTipPos({ x: e.clientX - r.left, y: e.clientY - r.top });
+    setTipPos({ x: e.clientX, y: e.clientY });
   };
 
+  /** キーボードフォーカス時はカーソルが無いので、行の中ほどを基準にする */
   const placeTipCentered = () => {
     const el = rowRef.current;
     if (!el) return;
-    const { width, height } = el.getBoundingClientRect();
-    setTipPos({ x: width * 0.4, y: height / 2 });
+    const r = el.getBoundingClientRect();
+    setTipPos({ x: r.left + r.width * 0.4, y: r.top + r.height / 2 });
   };
+
+  /** カーソル位置から実際の表示位置へ。画面内に収まるよう端で止める */
+  const tipLeft = clamp(
+    tipPos.x + WORK_ROLE_CURSOR_OFFSET.x,
+    WORK_ROLE_VIEWPORT_MARGIN,
+    Math.max(
+      WORK_ROLE_VIEWPORT_MARGIN,
+      window.innerWidth - tipSize.w - WORK_ROLE_VIEWPORT_MARGIN,
+    ),
+  );
+  const tipTop = clamp(
+    tipPos.y + WORK_ROLE_CURSOR_OFFSET.y,
+    WORK_ROLE_VIEWPORT_MARGIN,
+    Math.max(
+      WORK_ROLE_VIEWPORT_MARGIN,
+      window.innerHeight - tipSize.h - WORK_ROLE_VIEWPORT_MARGIN,
+    ),
+  );
 
   const rowClassName =
     "relative flex h-24 md:h-24 items-center justify-between gap-4 px-4 transition-colors duration-200 ease-out hover:bg-[#eceff1] focus-visible:bg-[#eceff1] focus-visible:outline-none motion-reduce:transition-none " +
@@ -163,32 +267,6 @@ function WorkRoleRow({ item }: { item: WorkItem }) {
       <p className="min-w-0 flex-1 font-sans md:text-[16px] text-[12px] leading-[1.8] tracking-[0.08em] text-[#333]">
         {item.title}
       </p>
-      <div
-        className="pointer-events-none absolute left-0 top-0 z-10"
-        style={{
-          transform: `translate(${tipPos.x + WORK_ROLE_CURSOR_OFFSET.x}px, ${tipPos.y + WORK_ROLE_CURSOR_OFFSET.y}px)`,
-        }}
-      >
-        <div
-          id={`work-role-${item.id}`}
-          key={tipBurst}
-          role="tooltip"
-          aria-hidden={!visible}
-          className={
-            visible
-              ? "max-w-[240px] origin-top-left rounded-[2px] border border-[#b0bec5] bg-white p-4 shadow-[0_8px_24px_rgba(51,51,51,0.08)] motion-reduce:animate-none animate-work-role-tip-in"
-              : "max-w-[240px] origin-top-left rounded-[2px] border border-transparent bg-transparent p-4 opacity-0 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none translate-y-1 scale-[0.94]"
-          }
-        >
-          <p
-            className={`font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-[#333] ${
-              visible ? "motion-reduce:animate-none animate-work-role-text-in" : ""
-            }`}
-          >
-            {item.roles.join(", ")}
-          </p>
-        </div>
-      </div>
       <div
         className="aspect-video h-16 shrink-0 overflow-hidden bg-[#eceff1]"
         aria-hidden="true"
@@ -204,6 +282,41 @@ function WorkRoleRow({ item }: { item: WorkItem }) {
         )}
       </div>
     </>
+  );
+
+  /**
+   * ツールチップは body 直下に fixed で出す。
+   * 行の中に置くと、祖先の `about-work-stack`（isolation: isolate）が作る
+   * スタッキングコンテキストから出られず、後続の Statement / contact セクション
+   * （同じ z-10・不透明背景）に上から塗り潰されて、セクション外にはみ出した部分が消える。
+   * body 直下なら祖先の重なり順にも overflow にも影響されない。
+   */
+  const tooltip = createPortal(
+    <div
+      className="pointer-events-none fixed left-0 top-0 z-[60]"
+      style={{ transform: `translate(${tipLeft}px, ${tipTop}px)` }}
+    >
+      <div
+        ref={tipRef}
+        id={`work-role-${item.id}`}
+        key={tipBurst}
+        role="tooltip"
+        aria-hidden={!visible}
+        className={
+          visible
+            ? "max-w-[240px] origin-top-left rounded-[2px] border border-[#b0bec5] bg-white p-4 shadow-[0_8px_24px_rgba(51,51,51,0.08)] motion-reduce:animate-none animate-work-role-tip-in"
+            : "max-w-[240px] origin-top-left rounded-[2px] border border-transparent bg-transparent p-4 opacity-0 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none translate-y-1 scale-[0.94]"
+        }
+      >
+        <RoleList
+          roles={item.roles}
+          className={`font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-[#333] ${
+            visible ? "motion-reduce:animate-none animate-work-role-text-in" : ""
+          }`}
+        />
+      </div>
+    </div>,
+    document.body,
   );
 
   const interactionHandlers = {
@@ -250,6 +363,7 @@ function WorkRoleRow({ item }: { item: WorkItem }) {
           {rowBody}
         </div>
       )}
+      {tooltip}
     </>
   );
 }
@@ -285,11 +399,14 @@ function HeroTitleBlock({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  /** 縮小完了時の上端オフセット（translate の終端） */
-  const topMin = mdUp ? 28 : 20;
-  const fontPx =
-    (mdUp ? 32 : 22) +
-    ((mdUp ? 160 : 54) - (mdUp ? 32 : 22)) * (1 - shrink);
+  /**
+   * 縮小完了時の上端オフセットと文字サイズ。**幅にかかわらず SiteCenterBrand と同じ値**
+   * にしておくこと。ここがずれると、トップの縮小後ロゴだけがヘッダーのナビ・
+   * ハンバーガーと縦位置が合わなくなる（サブページは SiteCenterBrand なので合う）。
+   */
+  const topMin = 28;
+  const shrunkFontPx = 32;
+  const fontPx = shrunkFontPx + ((mdUp ? 160 : 54) - shrunkFontPx) * (1 - shrink);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rowRef = useRef<HTMLDivElement | null>(null);
   const [fitScale, setFitScale] = useState(1);
@@ -383,8 +500,8 @@ function HeroTitleBlock({
 
   const rowHeight = rowH > 0 ? rowH : sizedFontPx;
   /**
-   * shrink=0 で画面の縦中央、shrink=1 で上寄せ（行の上端が topMin）。
-   * 中央写真を廃止して FV の中央が空いたため、PC でも SP と同じく中央から始めて上へ集約させる。
+   * shrink=0 で画面中央、shrink=1 で上寄せ（行の上端が topMin）。その間を線形に補間する。
+   * SP でもロゴは中央から始める（上へ寄せるのはキャッチ側 = FV_SP_LIFT）。
    */
   const shiftY = shrink * (topMin + rowHeight / 2 - vh / 2);
 
@@ -427,7 +544,14 @@ function HeroTitleBlock({
               : { animationDelay: `${tina.length * HERO_INTRO_CHAR_STAGGER_MS}ms` }
           }
         >
-          <InlineMark src={MARK_IMAGES[1]} nudgeY={HERO_MARK_NUDGE_Y} spin />
+          {/*
+            ベースライン補正は既定値（InlineMark の 0.14em）のままでよい。包み要素を
+            inline-flex にした時点で他の見出しと揃っている。
+            注意: 入場アニメ heroCharIn の 0% は translateY(0.12em) なので、アニメが
+            止まった状態で位置を測ると 0.12em 低く見える。補正値を足し引きする前に
+            アニメを finish() させてから測ること。
+          */}
+          <InlineMark src={MARK_IMAGES[1]} spin />
         </span>
         <span className={BRAND_TEXT}>
           {katono.split("").map((ch, i) => (
@@ -652,7 +776,11 @@ function FvHeadline({
     // max-w は付けない。片側だけを固定した absolute なので、折り返さない 1 行が
     // そのまま反対側へ伸びて画面中央を越える。溢れは祖先の overflow-hidden が受け止める。
     <div
-      className={`pointer-events-none absolute flex flex-nowrap items-baseline ${zClass} ${
+      /*
+        --fv-lift は SP だけ効かせる中央からの持ち上げ量。top の計算に入れるので、
+        スクロール連動の transform とは干渉しない。
+      */
+      className={`pointer-events-none absolute flex flex-nowrap items-baseline ${FV_SP_LIFT_CLASS} ${zClass} ${
         isLeft
           ? "left-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)]"
           : "right-[calc(clamp(1rem,5vw,2.5rem)-2.5rem)] justify-end text-right"
@@ -660,7 +788,7 @@ function FvHeadline({
       style={{
         fontSize: FV_FONT_SIZE,
         gap: BRAND_GAP,
-        top: `calc(50% ${isLeft ? "-" : "+"} ${FV_LINE_OFFSET})`,
+        top: `calc(50% - var(--fv-lift, 0px) ${isLeft ? "-" : "+"} ${FV_LINE_OFFSET})`,
         transform,
         filter: blurPx > 0.05 ? `blur(${blurPx.toFixed(2)}px)` : undefined,
         opacity: t < 1 ? 0.25 + 0.75 * t : undefined,
@@ -671,7 +799,12 @@ function FvHeadline({
         <Fragment key={w}>
           <p className={`m-0 ${BRAND_TEXT}`}>{w}</p>
           {marks[i] ? (
-            <InlineMark src={marks[i]} spin={marks[i] === SPINNING_MARK} />
+            <InlineMark
+              src={marks[i]}
+              spin={marks[i] === SPINNING_MARK}
+              // 青いギザギザ丸だけ、FV では目玉を重ねる（目玉は回らず土台だけ回る）
+              overlaySrc={marks[i] === SPINNING_MARK ? MARK_EYES_OVERLAY : undefined}
+            />
           ) : null}
         </Fragment>
       ))}
@@ -704,12 +837,18 @@ function TrioAtRest({
 
 /** 左見出しのみ sticky（SP では追従しない）。外側を sticky で包まない（包むと親高＝本文高になり下まで届かない） */
 function AboutGrid() {
+  // 見出しと本文は横並びなので、片方の交差を両方の起点にする
+  const [revealRef, revealed] = useRevealOnce<HTMLDivElement>();
+
   return (
     <>
-      <div className="col-span-12 self-start md:sticky md:top-24 z-10 md:col-span-4">
+      <div
+        ref={revealRef}
+        className="col-span-12 self-start md:sticky md:top-24 z-10 md:col-span-4"
+      >
         <div
-          className="flex flex-nowrap items-baseline pb-2 text-[40px] leading-none"
-          style={{ gap: BRAND_GAP }}
+          className={`flex flex-nowrap items-baseline pb-2 text-[40px] leading-none ${revealClass(revealed)}`}
+          style={{ gap: BRAND_GAP, ...revealDelay(0, revealed) }}
         >
           <span className={BRAND_TEXT}>ABOUT</span>
           <InlineMark src={MARK_IMAGES[2]} />
@@ -718,10 +857,16 @@ function AboutGrid() {
       </div>
       <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-0 md:pb-16 md:col-span-6 md:col-start-7">
         <div className="flex flex-col gap-6 text-[#333]">
-          <p className="w-full font-jp md:text-[16px] text-[14px] font-medium md:leading-[1.8] leading-[2] tracking-[0.08em]">
+          <p
+            className={`w-full font-jp md:text-[16px] text-[14px] font-medium md:leading-[1.8] leading-[2] tracking-[0.08em] ${revealClass(revealed)}`}
+            style={revealDelay(1, revealed)}
+          >
             東京を拠点にするウェブデザイナーです。エンジニア主体の開発会社で仕事をしながら、ビジュアルを描くことと、その手前の要件を整えること、その両方を自然に行き来するようなプロセスを大切にしています。良いデジタル体験は、見た目だけでなく「どう作られているか」という思慮深い構造から生まれると考えています。プロジェクトを俯瞰して捉え、デザインとその裏側にあるデータを、シンプルで誠実な方法でつなぐプロセスを大切にしています。
           </p>
-          <p className="w-full font-sans text-[14px] leading-[1.8] md:leading-[1.5] tracking-[0.08em]">
+          <p
+            className={`w-full font-sans text-[14px] leading-[1.8] md:leading-[1.5] tracking-[0.08em] ${revealClass(revealed)}`}
+            style={revealDelay(2, revealed)}
+          >
             I am a web designer based in Tokyo. Working within an engineer-driven environment, I
             naturally move between visual craft and organizing the requirements behind it. I
             believe that a good digital experience comes from a thoughtful structure—not just how
@@ -743,8 +888,7 @@ export default function Top() {
   const [vh, setVh] = useState(() =>
     typeof window !== "undefined" ? window.innerHeight : 800,
   );
-  const workRef = useRef<HTMLElement | null>(null);
-  const [workReveal, setWorkReveal] = useState(false);
+  const [workRef, workReveal] = useRevealOnce<HTMLElement>();
   const [reduceMotion, setReduceMotion] = useState(prefersReducedMotion);
   /**
    * `photo` は中央写真を廃止した後も「名前の入場アニメが終わったか」のフラグとして残している。
@@ -798,27 +942,6 @@ export default function Top() {
     measureHero();
   }, []);
 
-  /** ABOUT の下に WORK が続く前提で、ビューポートに入ったタイミングで「せり上がり」表示 */
-  useLayoutEffect(() => {
-    const el = workRef.current;
-    if (!el || typeof window === "undefined") return;
-    const revealIfVisible = () => {
-      const r = el.getBoundingClientRect();
-      if (r.top < window.innerHeight && r.bottom > 0) setWorkReveal(true);
-    };
-    revealIfVisible();
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) setWorkReveal(true);
-        }
-      },
-      { threshold: 0.06 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
@@ -852,14 +975,21 @@ export default function Top() {
    * 中央写真を廃止したので、左行→右行の 2 段だけ。
    * 旧 P_IMG_END(0.18) 分の助走をそのまま左行の開始位置として残している。
    */
+  /**
+   * 各行が動く区間。以前は 0.2 ずつの短い区間を左→右と順番に消化していたため、
+   * 少しスクロールしただけで一気に終わってしまい味気なかった。
+   * 区間を広げてゆっくりにし、さらに左右を重ねて（0.34〜0.46 が重複）
+   * 「左が着く前に右が動き出す」流れにしている。
+   * 右行の終わりが P_TRIO_DONE と一致していないと、静止レイヤーに切り替わる瞬間に飛ぶ。
+   */
   const phases = useMemo(() => {
-    const P_LEFT_START = 0.18;
-    const P_LEFT_END = 0.38;
-    const P_RIGHT_START = 0.38;
-    const P_RIGHT_END = 0.58;
+    const P_LEFT_START = 0.12;
+    const P_LEFT_END = 0.46;
+    const P_RIGHT_START = 0.34;
+    const P_RIGHT_END = P_TRIO_DONE;
 
-    const leftT = smoothstep(invLerp(P_LEFT_START, P_LEFT_END, progress));
-    const rightT = smoothstep(invLerp(P_RIGHT_START, P_RIGHT_END, progress));
+    const leftT = smootherstep(invLerp(P_LEFT_START, P_LEFT_END, progress));
+    const rightT = smootherstep(invLerp(P_RIGHT_START, P_RIGHT_END, progress));
 
     const leftY = (1 - leftT) * -vh;
     const rightY = (1 - rightT) * vh;
@@ -975,15 +1105,15 @@ export default function Top() {
           id="work"
           className="relative z-[2] w-full shrink-0 border-t border-[#b0bec5] bg-[#f5f7f8] px-6 pt-16 pb-10 md:px-10 md:pb-20 md:pt-[120px]"
         >
-          <div
-            className={`grid w-full grid-cols-12 gap-x-6 gap-y-10 transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none motion-reduce:translate-y-0 motion-reduce:opacity-100 md:gap-x-10 ${
-              workReveal ? "translate-y-0 opacity-100" : "translate-y-14 opacity-0"
-            }`}
-          >
+          {/*
+            以前はこのグリッド全体を一括で動かしていたが、見出しと行が同時に動くと
+            ただ塊がずれるだけで表情が出ない。見出し → 各行の順に少しずつ遅らせる。
+          */}
+          <div className="grid w-full grid-cols-12 gap-x-6 gap-y-10 md:gap-x-10">
             <div className="col-span-12 self-start md:sticky md:top-24 z-10 md:col-span-4">
               <div
-                className="flex flex-nowrap items-baseline pb-2 text-[40px] leading-none"
-                style={{ gap: BRAND_GAP }}
+                className={`flex flex-nowrap items-baseline pb-2 text-[40px] leading-none ${revealClass(workReveal)}`}
+                style={{ gap: BRAND_GAP, ...revealDelay(0, workReveal) }}
               >
                 <span className={BRAND_TEXT}>RECENT</span>
                 <InlineMark src={MARK_IMAGES[3]} />
@@ -992,12 +1122,19 @@ export default function Top() {
             </div>
             <div className="col-span-12 min-w-0 md:col-span-6 md:col-start-7">
               <ul className="flex flex-col">
-                {workItems.map((item) => (
-                  <li key={item.id}>
+                {workItems.map((item, i) => (
+                  <li
+                    key={item.id}
+                    className={revealClass(workReveal)}
+                    style={revealDelay(i + 1, workReveal)}
+                  >
                     <WorkRoleRow item={item} />
                   </li>
                 ))}
-                <li className="h-px w-full bg-[#b0bec5]" />
+                <li
+                  className={`h-px w-full bg-[#b0bec5] ${revealClass(workReveal)}`}
+                  style={revealDelay(workItems.length + 1, workReveal)}
+                />
               </ul>
             </div>
           </div>
@@ -1024,30 +1161,43 @@ export default function Top() {
         <div className="w-full py-16 md:py-24">
           <Link
             to="/contact"
-            className="group flex w-full flex-wrap items-center gap-8 motion-reduce:transition-none md:gap-16 md:flex-nowrap"
+            /* 見出しと丸は SP でも横並び。行の折り返しは見出し側で作る */
+            className="group flex w-full flex-row flex-nowrap items-center gap-6 motion-reduce:transition-none md:gap-16"
             aria-label="お問い合わせフォームへ"
           >
             {/*
-              CTA は右の丸ボタンと並ぶため幅が足りず折り返す。
-              図形は「後続の単語」と同じ塊に入れておくと、折り返しても図形だけが行末に
-              取り残されない（改行は図形の前で起きる）。
+              SP は幅が足りないので GET / IN / TOUCH を 1 語ずつ縦に積む（flex-col）。
+              md 以上は従来どおり横並びで、入りきらなければ折り返す。
+              図形は「直前の単語」と同じ塊に入れてあるので、どちらでも
+              GET● / IN● / TOUCH の並びが崩れない（改行は塊の境目でしか起きない）。
             */}
             <div
-              className="flex min-w-0 flex-1 flex-wrap items-baseline text-[clamp(40px,11vw,128px)] leading-none md:text-[128px]"
-              style={{ gap: BRAND_GAP }}
+              className="flex min-w-0 flex-1 flex-col items-start text-[clamp(40px,11vw,128px)] leading-none md:flex-row md:flex-wrap md:items-baseline md:text-[128px]"
+              style={{ columnGap: BRAND_GAP, rowGap: "0.08em" }}
             >
-              <GetInTouchHeadlineWord textClassName={BRAND_TEXT}>GET</GetInTouchHeadlineWord>
               <span className="inline-flex flex-nowrap items-baseline" style={{ gap: BRAND_GAP }}>
-                <InlineMark src={MARK_IMAGES[0]} />
+                <GetInTouchHeadlineWord textClassName={BRAND_TEXT}>GET</GetInTouchHeadlineWord>
+                {/* 文字のせり上がりと同じ 700ms・同じカーブで 90 度傾く */}
+                <InlineMark src={MARK_IMAGES[0]} hoverRotate />
+              </span>
+              <span className="inline-flex flex-nowrap items-baseline" style={{ gap: BRAND_GAP }}>
                 <GetInTouchHeadlineWord textClassName={BRAND_TEXT}>IN</GetInTouchHeadlineWord>
+                <InlineMark src={MARK_IMAGES[1]} hoverRotate />
               </span>
-              <span className="inline-flex flex-nowrap items-baseline" style={{ gap: BRAND_GAP }}>
-                <InlineMark src={MARK_IMAGES[1]} />
-                <GetInTouchHeadlineWord textClassName={BRAND_TEXT}>TOUCH</GetInTouchHeadlineWord>
-              </span>
+              <GetInTouchHeadlineWord textClassName={BRAND_TEXT}>TOUCH</GetInTouchHeadlineWord>
             </div>
-            <span className="flex size-[min(240px,72vw)] shrink-0 items-center justify-center rounded-full border border-black text-[#333] transition-colors duration-200 ease-out group-hover:bg-[#333] group-hover:text-white motion-reduce:transition-none md:size-[240px]">
-              <CtaArrow />
+            {/* 横に見出しが並ぶので、SP では丸を文字幅を奪わない大きさに抑える */}
+            <span className="flex size-[min(112px,30vw)] shrink-0 items-center justify-center rounded-full border border-black transition-colors duration-200 ease-out group-hover:bg-[#333] motion-reduce:transition-none md:size-[240px]">
+              {/* 大きな丸の中の小さなカラーの丸。丸の大きさに追従させるため % 指定 */}
+              <span
+                className="block shrink-0 rounded-full"
+                style={{
+                  width: CTA_DOT_RATIO,
+                  aspectRatio: "1 / 1",
+                  backgroundColor: BRAND_COLORS.green,
+                }}
+                aria-hidden="true"
+              />
             </span>
           </Link>
         </div>

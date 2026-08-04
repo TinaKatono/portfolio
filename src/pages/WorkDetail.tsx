@@ -6,6 +6,8 @@ import {
   type ReactNode,
 } from "react";
 import { Navigate, useParams } from "react-router-dom";
+import { BRAND_TEXT_WRAP } from "../components/brand";
+import { RoleList } from "../components/RoleList";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -64,7 +66,8 @@ export default function WorkDetail() {
             <OverviewSticky>
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col gap-2.5">
-                  <h1 className="font-sans text-[40px] leading-none text-[#333]">{detail.title}</h1>
+                  {/* トップの見出しと同じ太ゴシック。長いタイトルは折り返すので nowrap は付けない版を使う */}
+                  <h1 className={`text-[40px] ${BRAND_TEXT_WRAP}`}>{detail.title}</h1>
                   <p className="max-w-xl font-jp text-[16px] font-medium leading-[1.8] tracking-[0.08em] text-[#333]">
                     {detail.titleJa}
                   </p>
@@ -72,9 +75,11 @@ export default function WorkDetail() {
 
                 <div className="flex flex-col gap-2.5">
                   <h2 className="font-sans text-[16px] leading-none text-[#333]">ROLE</h2>
-                  <p className="w-fit max-w-full bg-white font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black">
-                    {detail.roles.join(", ")}
-                  </p>
+                  {/* WORK 一覧のホバーツールチップと同じ見た目（1 項目 1 行＋色付きの丸） */}
+                  <RoleList
+                    roles={detail.roles}
+                    className="w-fit max-w-full font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-2.5">
