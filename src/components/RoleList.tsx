@@ -1,12 +1,46 @@
 import { BRAND_COLORS } from "./brand";
 
-/** 各項目の頭に置く丸に順番に当てる色。項目数が色数を超えたら先頭に戻る */
+/**
+ * 役割ごとに固定の色。**同じ役割はどの案件でも同じ色**になるように、並び順ではなく
+ * 内容で引く（以前は並び順で振っていたので、案件ごとに同じ役割の色がぶれていた）。
+ *
+ * 使える色は 4 色なので系統でまとめてある:
+ * ピンク = UI・ビジュアル / 青 = UX・体験設計 / 緑 = 情報設計・言葉 / 黄 = 実装・進行。
+ *
+ * 現在の案件では、この割り当てだと 1 案件の中で同じ色が隣り合わない。
+ * 役割を追加するときは、同じ案件に並ぶ他の役割と色がぶつからないか見ること。
+ */
+const ROLE_COLORS: Record<string, string> = {
+  "UI Design": BRAND_COLORS.pink,
+  "UX Design": BRAND_COLORS.blue,
+  "Information Architecture": BRAND_COLORS.green,
+  Writing: BRAND_COLORS.green,
+  Planning: BRAND_COLORS.yellow,
+  "Frontend Dev(Cursor)": BRAND_COLORS.yellow,
+  "Full-stack Dev(Claude Code)": BRAND_COLORS.yellow,
+  "No-code Dev(Studio)": BRAND_COLORS.yellow,
+};
+
 const DOT_COLORS = [
   BRAND_COLORS.pink,
   BRAND_COLORS.blue,
   BRAND_COLORS.green,
   BRAND_COLORS.yellow,
 ];
+
+/**
+ * 表に無い役割でも案件をまたいで同じ色になるよう、文字列から決める。
+ * 色の系統は揃わないので、**継続して使う役割は ROLE_COLORS に足すこと**。
+ */
+function roleColor(role: string): string {
+  const fixed = ROLE_COLORS[role];
+  if (fixed) return fixed;
+  let hash = 0;
+  for (let i = 0; i < role.length; i += 1) {
+    hash = (hash * 31 + role.charCodeAt(i)) % 100003;
+  }
+  return DOT_COLORS[hash % DOT_COLORS.length];
+}
 
 /**
  * 丸のサイズ（文字サイズ基準）。
@@ -39,7 +73,7 @@ export function RoleList({
             style={{
               width: DOT_SIZE,
               height: DOT_SIZE,
-              backgroundColor: DOT_COLORS[i % DOT_COLORS.length],
+              backgroundColor: roleColor(role),
             }}
             aria-hidden="true"
           />
