@@ -702,7 +702,7 @@ function WorkBelowStatementMarquee({
  * スクロール誘導の矢印の幅（高さは絵柄の比率で追従する）。
  * md 以上で大きくするのは、静止時のロゴが 160px あって 44px では負けてしまうため。
  */
-const SCROLL_HINT_WIDTH_CLASS = "w-11 md:w-16";
+const SCROLL_HINT_WIDTH_CLASS = "w-6 md:w-8";
 /**
  * 2 枚目を上に詰める量。fv_5.svg は正方形の viewBox の下寄りに絵柄があり、
  * 上に幅の約 3 割の余白を持っているため、素直に縦に並べると離れて見える。
