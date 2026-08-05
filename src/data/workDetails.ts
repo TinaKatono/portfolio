@@ -96,6 +96,7 @@ export const workDetails: Record<string, WorkDetail> = {
     yearDuration: "2024/03 - 2024/09",
     tools: ["Figma", "Cursor"],
     galleryImages: [saikaiGallery1, saikaiGallery2, saikaiGallery3],
+    siteUrl: "https://www.saikaimatsunaga.com/",
     sections: [
       {
         ja: "長崎県西海市を中心に、砂防工事や道路舗装などの公共事業を担う建設会社様のコーポレートサイトリニューアルに参画し、トーン＆マナーの整理から画面設計、ライティングや実装・公開まで一貫して担当しました。写真とタイポグラフィのバランス、ストーリーとして読める構成を重視し、静的ページ中心ながらも没入感のある体験になるよう調整しています。",
