@@ -48,8 +48,9 @@ export const workDetails: Record<string, WorkDetail> = {
     title: "Brand Website for a Creative Atelier",
     titleJa: "ファッションアトリエのブランドサイト制作",
     roles: ["UI Design", "UX Design", "Writing", "Frontend Dev(Cursor)"],
-    // TODO: 実際の制作期間に差し替え（ヒアリング開始〜納品で約2週間）
-    yearDuration: "2026/07 - 2026/08",
+    // ヒアリング開始から納品まで約 2 週間で、5 月中に完結した案件。
+    // 他案件は範囲表記だが、ここは単月にしておく方が短納期であることが伝わる。
+    yearDuration: "2026/05",
     tools: ["Figma", "Next.js", "Cursor"],
     galleryImages: [sachiGallery1, sachiGallery2, sachiGallery3],
     siteUrl: "https://www.sachiaw.com/",
