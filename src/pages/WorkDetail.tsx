@@ -6,7 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { BRAND_TEXT_WRAP } from "../components/brand";
+import { BRAND_TEXT_WRAP, InlineMark, MARK_IMAGES } from "../components/brand";
 import { RoleList } from "../components/RoleList";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
 import { SiteFooter } from "../components/SiteFooter";
@@ -95,6 +95,23 @@ export default function WorkDetail() {
                     {detail.tools.join(", ")}
                   </p>
                 </div>
+
+                {/*
+                  公開中サイトへのリンク（siteUrl があるときだけ）。
+                  外部サイトなので rel に noreferrer を含める。noopener の効果も兼ねるうえ、
+                  リンク先の解析にこのポートフォリオの URL が残らない（限定公開の運用と揃える）。
+                */}
+                {detail.siteUrl ? (
+                  <a
+                    href={detail.siteUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group inline-flex w-fit items-center gap-2 border-b border-[#333] pb-1.5 font-sans text-[14px] leading-none tracking-[0.08em] text-[#333] no-underline outline-none transition-opacity duration-200 ease-out hover:opacity-60 focus-visible:ring-2 focus-visible:ring-[#333] motion-reduce:transition-none"
+                  >
+                    VISIT SITE
+                    <InlineMark src={MARK_IMAGES[1]} hoverRotate />
+                  </a>
+                ) : null}
               </div>
             </OverviewSticky>
           </aside>

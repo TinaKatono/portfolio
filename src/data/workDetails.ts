@@ -29,6 +29,15 @@ export type WorkDetail = {
   sections: WorkDetailSection[];
   /** 詳細右カラムのビジュアル（上から順。sections[i] の上に対応、余りはテキストブロックの下に続く） */
   galleryImages?: string[];
+  /**
+   * 公開中サイトへのリンク（詳細ページに VISIT SITE ボタンが出る）。
+   *
+   * **設定するのは「公開が明示的に問題ない案件」だけ。** 管理画面主体・NDA・
+   * 未公開の案件には付けない（未指定ならボタン自体が出ない）。
+   * リンク先が別デザインへ改修されると実績として成立しなくなるので、
+   * 案件を足したときや久しぶりに見直したときは生きているか確認すること。
+   */
+  siteUrl?: string;
 };
 
 /**
@@ -43,14 +52,19 @@ export const workDetails: Record<string, WorkDetail> = {
     yearDuration: "2026/07 - 2026/08",
     tools: ["Figma", "Next.js", "Cursor"],
     galleryImages: [sachiGallery1, sachiGallery2, sachiGallery3],
+    siteUrl: "https://www.sachiaw.com/",
     sections: [
       {
-        ja: "仲介会社を介したファッションブランドのアトリエサイト新規制作を、ヒアリングからデザイン・ライティング・実装・素材選定・本番反映（FTP）まで一人で担当しました。ヒアリング開始から納品までおよそ2週間という短納期だったため、Figmaでワイヤーと簡易のデザインサンプルを固めた後は、デザインと実装を並行で進めながら実画面でご確認いただく進め方に切り替え、限られた時間の中でも認識のずれを最小化しました。",
-        en: "I single-handedly built this new atelier website for a fashion brand, brokered through an agency, owning the entire process—from the initial hearing to design, copywriting, implementation, asset selection, and production deployment via FTP. With roughly two weeks from the first hearing to delivery, I locked the wireframes and light design samples in Figma, then shifted to progressing design and implementation in parallel and reviewing on the live screens, minimizing misalignment within the tight schedule.",
+        ja: "仲介会社を介してご依頼いただいた、ファッションアトリエのブランドサイト新規制作です。ヒアリングからデザイン、コピーライティング、実装、素材選定、公開作業までを一人で担当しました。\n\nヒアリング開始から納品までおよそ2週間という短い期間だったため、Figmaではワイヤーフレームと簡易のデザインサンプルまでを固め、その段階で実装に着手。以降はデザインと実装を並行させ、静的なカンプではなく実画面でご確認いただく進め方に切り替えました。カンプの往復を減らし、限られた時間を体験の質そのものに充てることを優先した判断です。",
+        en: "A new brand website for a fashion atelier, commissioned through an agency. I owned the entire process on my own—from the initial hearing to design, copywriting, implementation, asset selection, and launch.\n\nWith roughly two weeks from the first hearing to delivery, I locked only the wireframes and light design samples in Figma before moving into implementation. From there I ran design and build in parallel, reviewing on live screens rather than static mockups. Cutting down the round trips on comps let me spend the limited time on the quality of the experience itself.",
       },
       {
-        ja: "サイトのテーマである「Beyond the Surface（表層を超えて）」を軸に、装飾ではなく構造と思想から立ち上げる世界観を、写真・タイポグラフィ・余白のトーンで表現しました。クライアント提供の写真以外のビジュアルや文言はこちらで選定・執筆し、ブランドが積み重ねてきた三十年の蓄積が静かに伝わる密度のある構成を目指しています。実装はCursorを中心に、細部はハンドコーディングで詰め、本番反映まで一貫して担当。短期集中の進行ながら、最終的にクライアントからは「想像していたよりかなりクオリティが高い」とのご評価をいただきました。",
-        en: "Anchored on the site's theme, \"Beyond the Surface,\" I expressed a worldview built from structure and philosophy rather than ornament—through the tone of photography, typography, and negative space. Every visual and line of copy beyond the client-supplied photography was sourced and written on my side, aiming for a quiet, dense composition that conveys the brand's thirty years of accumulated craft. I implemented primarily in Cursor, refined the details by hand-coding, and saw the work through to production. Despite the intensive, short-run schedule, the client's final feedback was that the quality was \"far higher than they had imagined.\"",
+        ja: "想定読者は、50代以上の落ち着いた審美眼を持つ女性層です。ファッションを趣味として深く愛する方から、自身の表現やブランドづくりに踏み出そうとする方まで、いずれも「上質さ」に対する目が厳しい層だと捉え、ラグジュアリーでありながら気負わせない、アトリエの空気感を軸にトーンを設計しました。\n\n書体は、欧文の見出しに Antic Didone、和文に Zen Old Mincho を選定しています。Antic Didone は縦画と横画のコントラストが強いディドネ様式のセリフ体で、モード誌のロゴが長く用いてきた系譜にあり、「Beyond the Surface.」のような短い言葉に品格と緊張感を与えます。和文には骨格に古典の面持ちを残すオールド明朝を合わせ、字間と行間をゆるやかに開くことで、読ませる文章にも余白の効いた静けさを持たせました。装飾を足すのではなく、書体と余白で格をつくることを意図しています。",
+        en: "The intended audience is women aged fifty and above with a settled, discerning eye—from those who love fashion deeply as a lifelong interest to those stepping into building an expression or a brand of their own. Assuming a readership with high standards for quality, I built the tone around the atmosphere of an atelier: luxurious, yet never intimidating.\n\nFor type, I chose Antic Didone for the Latin headings and Zen Old Mincho for the Japanese. Antic Didone is a Didone serif with sharp thick-to-thin contrast, part of the lineage long used by fashion magazine mastheads, lending poise and tension to a phrase as short as \"Beyond the Surface.\" For Japanese, an old-style Mincho with classical bones is paired with generous letter- and line-spacing, so that even longer passages keep a quiet, well-spaced calm. The intent was to build a sense of formality through typeface and negative space rather than added ornament.",
+      },
+      {
+        ja: "「Beyond the Surface.（表層を超えて）」をはじめとするコピーは、ブランドの思想である「構造から、思想から、すべてをデザインする」という考え方を一語で受け止められる言葉を探すところから設計しました。案出しには生成AIを併用し、ブランドの温度に合うものを選び取ったうえで、語感と字数を整えています。クライアント提供の写真以外のビジュアルもこちらで選定し、素材・光・余白のトーンをサイト全体で揃えました。\n\n実装はCursorを中心に進め、タイポグラフィの詰めや余白の微調整といった精度が要る部分は手作業でコーディングしています。短期集中の進行でしたが、最終的にクライアントからは「想像していたよりかなりクオリティが高い」とのお言葉をいただきました。",
+        en: "The copy, including \"Beyond the Surface.\", started from the search for words that could hold the brand's own philosophy—designing everything from structure and from thought—in a single line. I used generative AI to widen the pool of candidates, then selected what matched the brand's temperature and tuned the wording and length. Every visual beyond the client-supplied photography was also sourced on my side, aligning material, light, and negative space across the whole site.\n\nImplementation ran primarily in Cursor, with the parts that demand precision—typographic tightening, fine adjustments to spacing—hand-coded. Despite the intensive schedule, the client's closing feedback was that the quality was \"far higher than they had imagined.\"",
       },
     ],
   },
@@ -120,7 +134,7 @@ export const workDetails: Record<string, WorkDetail> = {
     galleryImages: [recprGallery1],
     sections: [
       {
-        ja: "採用領域のメディアプロダクト（ユーザー向けサイト＋企業向け管理画面）の新規開発に、PM補佐兼UI/UXデザイナーとして参画しました。求人・企業・記事など複数のコンテンツを扱う構造のため、単発の画面作成ではなく、検索/絞り込み・回遊・編集運用まで含めた体験設計と、段階的な拡張を前提にした情報設計が求められるプロジェクトでした。\n開発中は、クライアント検収で出たフィードバックを起点に、要望をそのまま反映するのではなく、「今のフェーズでの最適解」と「後続フェーズで条件が増えたときに破綻しない構造」の両立を重視。たとえば絞り込みUIでは、将来的に条件が増える前提で煩雑化を避けるUIを提案し、PC/スマホそれぞれの見え方や運用上の懸念も踏まえて意思決定まで落とし込みました。\n\nまた、管理画面と運用時に発生する運用ストレス（プレビュー確認のために行き来が必要になる等）に対して、表示ルールや画像の扱いを整理し、運用者が迷わない仕様に調整。またビジュアルデザイン面では、要望が細部まで具体的で意思決定が揺れやすい状況だったため、案の比較軸（ユーザー影響・運用・拡張性・実装負荷）を揃えて合意形成を進め、手戻りしにくい進め方を整えました。\n\n結果として、検収FBを吸収しながらユーザー体験と運用体験の両面で効率の良い仕様に収束させ、リリースに向けた開発を前進させました。\nまた、管理画面と運用時に発生する運用ストレス（プレビュー確認のために行き来が必要になる等）に対して、表示ルールや画像の扱いを整理し、運用者が迷わない仕様に調整。またビジュアルデザイン面では、要望が細部まで具体的で意思決定が揺れやすい状況だったため、案の比較軸（ユーザー影響・運用・拡張性・実装負荷）を揃えて合意形成を進め、手戻りしにくい進め方を整えました。\n結果として、検収FBを吸収しながらユーザー体験と運用体験の両面で効率の良い仕様に収束させ、リリースに向けた開発を前進させました。",
+        ja: "採用領域のメディアプロダクト（ユーザー向けサイト＋企業向け管理画面）の新規開発に、PM補佐兼UI/UXデザイナーとして参画しました。求人・企業・記事など複数のコンテンツを扱う構造のため、単発の画面作成ではなく、検索/絞り込み・回遊・編集運用まで含めた体験設計と、段階的な拡張を前提にした情報設計が求められるプロジェクトでした。\n開発中は、クライアント検収で出たフィードバックを起点に、要望をそのまま反映するのではなく、「今のフェーズでの最適解」と「後続フェーズで条件が増えたときに破綻しない構造」の両立を重視。たとえば絞り込みUIでは、将来的に条件が増える前提で煩雑化を避けるUIを提案し、PC/スマホそれぞれの見え方や運用上の懸念も踏まえて意思決定まで落とし込みました。\n\nまた、管理画面と運用時に発生する運用ストレス（プレビュー確認のために行き来が必要になる等）に対して、表示ルールや画像の扱いを整理し、運用者が迷わない仕様に調整。またビジュアルデザイン面では、要望が細部まで具体的で意思決定が揺れやすい状況だったため、案の比較軸（ユーザー影響・運用・拡張性・実装負荷）を揃えて合意形成を進め、手戻りしにくい進め方を整えました。\n\n結果として、検収FBを吸収しながらユーザー体験と運用体験の両面で効率の良い仕様に収束させ、リリースに向けた開発を前進させました。",
         en:"I joined the development of a new recruitment media platform—encompassing both the user-facing site and the corporate administration dashboard—as a PM Associate and Lead UI/UX Designer. The project involved a complex structure handling various content types, including job listings, company profiles, and articles, requiring an information architecture designed for seamless navigation, advanced filtering, and long-term scalability.\n\nThroughout the development phase, I prioritized balancing immediate solutions with future-proof structures. For example, when designing the filtering UI, I proposed a system that remains intuitive even as additional parameters are added in subsequent phases, carefully aligning the cross-device experience with operational feasibility.\n\nFurthermore, I focused on optimizing the administrative experience by streamlining complex rules for content management and preview workflows to eliminate operational friction. To navigate high-fidelity feedback and evolving requirements from the client, I established a clear evaluation framework based on user impact, scalability, and implementation cost. This structured approach facilitated decisive consensus-building, minimized rework, and successfully advanced the project toward its release by converging user and operational experiences into a highly efficient specification."
       },
       // {
