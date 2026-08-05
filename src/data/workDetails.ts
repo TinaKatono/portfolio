@@ -11,6 +11,10 @@ import campaiGallery4 from "../assets/works/campai/campai_4.webp";
 import saikaiGallery2 from "../assets/works/works_3/works_3_2.webp";
 import saikaiGallery3 from "../assets/works/works_3/works_3_3.webp";
 
+import sachiGallery1 from "../assets/works/sachi-art-work/sachi_1.webp";
+import sachiGallery2 from "../assets/works/sachi-art-work/sachi_2.webp";
+import sachiGallery3 from "../assets/works/sachi-art-work/sachi_3.webp";
+
 export type WorkDetailSection = {
   ja: string;
   en: string;
@@ -31,6 +35,26 @@ export type WorkDetail = {
  * 各案件の詳細。文言・期間・ツールは後から差し替え前提のプレースホルダを含みます。
  */
 export const workDetails: Record<string, WorkDetail> = {
+  "sachi-art-work": {
+    title: "Brand Website for a Creative Atelier",
+    titleJa: "ファッションアトリエのブランドサイト制作",
+    roles: ["UI Design", "UX Design", "Writing", "Frontend Dev(Cursor)"],
+    // TODO: 実際の制作期間に差し替え（ヒアリング開始〜納品で約2週間）
+    yearDuration: "2026/07 - 2026/08",
+    tools: ["Figma", "Next.js", "Cursor"],
+    galleryImages: [sachiGallery1, sachiGallery2, sachiGallery3],
+    sections: [
+      {
+        ja: "仲介会社を介したファッションブランドのアトリエサイト新規制作を、ヒアリングからデザイン・ライティング・実装・素材選定・本番反映（FTP）まで一人で担当しました。ヒアリング開始から納品までおよそ2週間という短納期だったため、Figmaでワイヤーと簡易のデザインサンプルを固めた後は、デザインと実装を並行で進めながら実画面でご確認いただく進め方に切り替え、限られた時間の中でも認識のずれを最小化しました。",
+        en: "I single-handedly built this new atelier website for a fashion brand, brokered through an agency, owning the entire process—from the initial hearing to design, copywriting, implementation, asset selection, and production deployment via FTP. With roughly two weeks from the first hearing to delivery, I locked the wireframes and light design samples in Figma, then shifted to progressing design and implementation in parallel and reviewing on the live screens, minimizing misalignment within the tight schedule.",
+      },
+      {
+        ja: "サイトのテーマである「Beyond the Surface（表層を超えて）」を軸に、装飾ではなく構造と思想から立ち上げる世界観を、写真・タイポグラフィ・余白のトーンで表現しました。クライアント提供の写真以外のビジュアルや文言はこちらで選定・執筆し、ブランドが積み重ねてきた三十年の蓄積が静かに伝わる密度のある構成を目指しています。実装はCursorを中心に、細部はハンドコーディングで詰め、本番反映まで一貫して担当。短期集中の進行ながら、最終的にクライアントからは「想像していたよりかなりクオリティが高い」とのご評価をいただきました。",
+        en: "Anchored on the site's theme, \"Beyond the Surface,\" I expressed a worldview built from structure and philosophy rather than ornament—through the tone of photography, typography, and negative space. Every visual and line of copy beyond the client-supplied photography was sourced and written on my side, aiming for a quiet, dense composition that conveys the brand's thirty years of accumulated craft. I implemented primarily in Cursor, refined the details by hand-coding, and saw the work through to production. Despite the intensive, short-run schedule, the client's final feedback was that the quality was \"far higher than they had imagined.\"",
+      },
+    ],
+  },
+
   "kiviaq-pharmacy": {
     title: "Integrated Medical Supply Chain UX",
     titleJa: "医療サプライチェーンのUX・情報設計",

@@ -1,5 +1,6 @@
 import { workDetails } from "./workDetails";
 
+import sachiImg from "../assets/works/sachi-art-work/sachi_1.webp";
 import kiviaqImg_2 from "../assets/works/kiviaq/kiviaq_2.webp";
 import saikaiImg_1 from "../assets/works/works_3/works_3_1.webp";
 
@@ -17,6 +18,7 @@ export type WorkItem = {
 
 /** 一覧に出す順序とサムネのみ。タイトル・roles は workDetails から同期 */
 const workItemThumbs: { id: string; thumbSrc?: string }[] = [
+  { id: "sachi-art-work", thumbSrc: sachiImg },
   { id: "kiviaq-pharmacy", thumbSrc: kiviaqImg_2 },
   { id: "saikai-matsunaga", thumbSrc: saikaiImg_1 },
   // { id: "fadila-oil", thumbSrc: sample1Img },
