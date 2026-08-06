@@ -15,8 +15,11 @@ const ROLE_COLORS: Record<string, string> = {
   "UX Design": BRAND_COLORS.blue,
   "Information Architecture": BRAND_COLORS.green,
   Writing: BRAND_COLORS.green,
+  "UI Implementation": BRAND_COLORS.pink,
+  "Requirements Definition": BRAND_COLORS.yellow,
   Planning: BRAND_COLORS.yellow,
   "Frontend Dev(Cursor)": BRAND_COLORS.yellow,
+  "Frontend Dev(HTML/CSS/jQuery)": BRAND_COLORS.yellow,
   "Full-stack Dev(Claude Code)": BRAND_COLORS.yellow,
   "No-code Dev(Studio)": BRAND_COLORS.yellow,
 };

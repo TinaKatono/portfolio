@@ -1,6 +1,5 @@
 import kiviaqGallery1 from "../assets/works/kiviaq/kiviaq_1.webp";
 
-import recprGallery1 from "../assets/works/works_2/works_2_1.webp";
 
 import saikaiGallery1 from "../assets/works/works_3/works_3_1.webp";
 
@@ -38,6 +37,14 @@ export type WorkDetail = {
    * 案件を足したときや久しぶりに見直したときは生きているか確認すること。
    */
   siteUrl?: string;
+  /**
+   * 第三者による紹介記事へのリンク（詳細ページに READ INTERVIEW ボタンが出る）。
+   *
+   * 制作実績インタビューなど、**クライアントや所属先が公開している記事**を想定。
+   * 自己申告より強い裏づけになる一方、リンク先で公開されている範囲を超える情報を
+   * 本文に書かないこと（記事側が公開実績の境界になる）。
+   */
+  articleUrl?: string;
 };
 
 /**
@@ -70,22 +77,49 @@ export const workDetails: Record<string, WorkDetail> = {
     ],
   },
 
+  "apparel-ec-frontend": {
+    title: "Frontend Implementation for Apparel E-Commerce",
+    titleJa: "アパレルECサイトのフロントエンド実装",
+    roles: ["UI Implementation", "Frontend Dev(HTML/CSS/jQuery)"],
+    yearDuration: "2023/04 - 2024/05",
+    tools: ["Adobe XD", "Figma", "HTML", "CSS", "JavaScript", "jQuery"],
+    sections: [
+      {
+        ja: "アパレルECの開発・運営を手がける企業との協業案件として、アパレルブランドのECサイトのフロントエンド実装を担当しました。この期間に複数のブランドを順に担当しており、国内の有名アパレルブランドを中心に、海外ブランドのサイトも手がけています。\n\nデザインはブランド側が抱えるデザイン会社が制作したもので、XDやFigmaで渡されたカンプを忠実に実装するのが私の役割でした。フロント部分はほぼ一人で組み上げ、そこから先の自社CMSへの実装はエンジニアが引き継ぐ分業です。",
+        en: "As a collaborative engagement with a firm specializing in the development and operation of apparel e-commerce, I handled frontend implementation for apparel brand online stores. Over this period I took on several brands in sequence—primarily well-known domestic apparel labels, along with a site for an overseas brand.\n\nThe designs themselves came from agencies retained by each brand, handed over as comps in XD or Figma; my role was to reproduce them faithfully in the browser. The frontend was almost entirely mine to assemble, with engineers taking over from there to implement it into the in-house CMS.",
+      },
+      {
+        ja: "AIによるコーディング支援がまだ実務に入っていなかった時期で、HTML・CSS・JavaScript（jQuery）を手で書いて組み上げていました。ブランドごとにデザインの個性が大きく異なるため、メイソンリーレイアウトやパララックス、スクロールに連動した演出など、求められる表現に応じてライブラリを使い分けています。\n\nこの案件で最も鍛えられたのは、実装精度に対する基準です。デザインとの1pxのズレも指摘される環境で、「だいたい合っている」を許さない目線を身につけました。ブランドサイトでは余白やタイポグラフィのわずかな差がそのまま世界観の毀損につながるため、この時期に叩き込まれた精度への感覚は、デザインと実装の両方を担当するようになった現在の仕事の土台になっています。",
+        en: "This predates AI-assisted coding entering practical workflows, so everything was hand-written in HTML, CSS, and JavaScript (jQuery). Each brand carried a distinctly different design character, so I drew on different libraries depending on what a given expression demanded—masonry layouts, parallax, scroll-linked motion, and the like.\n\nWhat this work sharpened most was my standard for implementation accuracy. In an environment where even a single pixel of deviation from the design would be flagged, I acquired an eye that refuses to settle for \"close enough.\" On brand sites, slight differences in spacing or typography degrade the intended world directly—so the sense of precision drilled into me during this period has become the foundation of how I work now that I handle both design and implementation.",
+      },
+    ],
+  },
+
   "kiviaq-pharmacy": {
     title: "Integrated Medical Supply Chain UX",
     titleJa: "医療サプライチェーンのUX・情報設計",
-    roles: ["UI Design", "UX Design", "Information Architecture"],
+    roles: [
+      "UI Design",
+      "UX Design",
+      "Information Architecture",
+      "Requirements Definition",
+    ],
     yearDuration: "2025/07 - 2025/10",
     tools: ["Figma"],
     galleryImages: [kiviaqGallery1,],
     sections: [
       {
-        ja: "薬局DXサービスの新規立ち上げに、PM補佐兼UI/UXデザイナーとして参画しました。患者向けLINEミニアプリ・薬局スタッフ向け管理画面・配送業者向けモバイルアプリの3システムにまたがる複雑な業務フローを対象に、要件定義から画面設計までをリード。特に薬機法等の法的観点や現場運用の制約を深く読み解き、初期の要望を単に形にするだけでなく、データの流動性や例外分岐、そして現場で実際に機能する運用までを見据えたUX設計を徹底しました。\n\nシステム間の矛盾を早期に検知するため、全体の分岐を網羅するシーケンス図を作成し、実装・運用の共通言語として活用。制約が多い中でもUIとして破綻しない構造を追求し、特に管理画面領域では、運用者の判断を妨げない情報設計に注力しました。タイトなスケジュールの中、業界知識を短期で吸収しながら要件精査とプロトタイプ作成を行い、無事納期内リリースを実現できました。",
-        en: "I joined the launch of a new medical product as a PM Associate and Lead UI/UX Designer, overseeing the end-to-end design process for a complex ecosystem spanning three interconnected platforms: a patient-facing LINE Mini-app, a pharmacy administration dashboard, and a courier mobile app. Navigating the stringent requirements of pharmaceutical regulations and real-world operational constraints, I focused on creating a UX that transcends mere visual representation—meticulously addressing data flows, edge-case logic, and feasible on-site workflows. \n\nTo ensure seamless integration across the three systems, I developed comprehensive sequence diagrams that served as a universal language for developers and stakeholders, allowing us to resolve logical conflicts early in the process. Within a high-pressure timeline, I rapidly mastered domain-specific knowledge to bridge the gap between complex requirements and intuitive interface design, ultimately delivering a refined prototype and securing an on-time product launch.",
+        ja: "薬局DXサービスの新規立ち上げに、UI/UXデザイナーとして参画しました。患者向けLINEミニアプリ・薬局スタッフ向け管理画面・配送業者向けモバイルアプリの3システムにまたがる複雑な業務フローを対象に、要件定義から画面設計までをリードし、プロジェクトが動き出してからは仕様調整や関係者間の合意形成といった進行実務も担っています。特に薬機法等の法的観点や現場運用の制約を深く読み解き、初期の要望を単に形にするだけでなく、データの流動性や例外分岐、そして現場で実際に機能する運用までを見据えたUX設計を徹底しました。",
+        en: "I joined the launch of a new pharmacy DX service as a UI/UX designer, leading the process from requirements definition through screen design for a complex ecosystem spanning three interconnected platforms: a patient-facing LINE Mini-app, a pharmacy administration dashboard, and a courier mobile app. Once the project was underway, I also took on the day-to-day work of driving it forward—resolving specifications and building consensus among stakeholders. Navigating the stringent requirements of pharmaceutical regulations and real-world operational constraints, I focused on creating a UX that transcends mere visual representation—meticulously addressing data flows, edge-case logic, and feasible on-site workflows.",
       },
-      // {
-    //     ja: "システム間の矛盾を早期に検知するため、全体の分岐を網羅するシーケンス図を作成し、実装・運用の共通言語として活用。制約が多い中でもUIとして破綻しない構造を追求し、特に管理画面領域では、運用者の判断を妨げない情報設計に注力しました。タイトなスケジュールの中、業界知識を短期で吸収しながら要件精査とプロトタイプ作成を行い、無事納期内リリースを実現できました。",
-    //     en: "To ensure seamless integration across the three systems, I developed comprehensive sequence diagrams that served as a universal language for developers and stakeholders, allowing us to resolve logical conflicts early in the process. Within a high-pressure timeline, I rapidly mastered domain-specific knowledge to bridge the gap between complex requirements and intuitive interface design, ultimately delivering a refined prototype and securing an on-time product launch.",
-    //   },
+      {
+        ja: "3つのシステムが相互に依存する構成のため、片方の仕様変更がもう片方の前提を崩す、ということが頻繁に起こりました。サーバーサイドはエンジニアが担当していましたが、業務フロー全体をもっとも把握しているのが自分だったため、「この要望は何を壊すのか」「技術的にどこまで可能か」をエンジニアと突き合わせながら、実現可否を一つずつ詰めていく役回りを担いました。技術的な判断はエンジニアの知見に依拠し、全体の整合性を保つ視点は自分が持ち続ける、という分担です。\n\nその過程で、システム間の矛盾を早期に検知するために全体の分岐を網羅するシーケンス図を作成し、職種をまたいだ共通言語として運用しました。仕様の議論が「言った言わない」ではなく、図の上のどの分岐の話かに落ちるため、認識のずれが起きた時点で気づける状態をつくれたことが、複雑さに耐えるうえで効いています。",
+        en: "Because the three systems were mutually dependent, a change to one specification would routinely invalidate assumptions in another. A backend engineer owned the server side, but as the person with the fullest picture of the end-to-end operational flow, I took on the work of resolving feasibility item by item—checking with the engineer on what a given request would break and how far it was technically viable. Technical judgment rested on their expertise; holding the consistency of the whole was mine.\n\nOut of that process, I built sequence diagrams covering every branch of the flow to surface contradictions between systems early, and ran them as a shared language across disciplines. Specification discussions could then resolve to \"which branch on the diagram\" rather than competing recollections, which meant misalignments became visible the moment they appeared—the thing that made the complexity manageable.",
+      },
+      {
+        ja: "制約が多い中でもUIとして破綻しない構造を追求し、特に管理画面領域では、運用者の判断を妨げない情報設計に注力しました。タイトなスケジュールの中、業界知識を短期で吸収しながら要件精査とプロトタイプ作成を行い、無事納期内リリースを実現できました。",
+        en: "Throughout, I pursued a structure that would not collapse as an interface despite the density of constraints—particularly in the administrative dashboard, where I focused on an information architecture that stays out of the operator's way at the moment of judgment. Within a high-pressure timeline, I rapidly absorbed domain-specific knowledge while refining requirements and building prototypes, ultimately securing an on-time launch.",
+      },
     ],
   },
 
@@ -133,11 +167,14 @@ export const workDetails: Record<string, WorkDetail> = {
     roles: ["UI Design", "UX Design", "Information Architecture"],
     yearDuration: "2024/06 - 2025/01",
     tools: ["Figma", "FigJam"],
-    galleryImages: [recprGallery1],
+    // メインビジュアルは掲載を取り下げ済み（現行サイトから撤去されており、
+    // クライアント要望で当初案から変わった経緯があるため実績として示さない）。
+    // 差し替え候補は絞り込み UI や管理画面など、本文で触れている領域。
+    siteUrl: "https://recpr.jp/jobOpenings",
     sections: [
       {
-        ja: "採用領域のメディアプロダクト（ユーザー向けサイト＋企業向け管理画面）の新規開発に、PM補佐兼UI/UXデザイナーとして参画しました。求人・企業・記事など複数のコンテンツを扱う構造のため、単発の画面作成ではなく、検索/絞り込み・回遊・編集運用まで含めた体験設計と、段階的な拡張を前提にした情報設計が求められるプロジェクトでした。\n開発中は、クライアント検収で出たフィードバックを起点に、要望をそのまま反映するのではなく、「今のフェーズでの最適解」と「後続フェーズで条件が増えたときに破綻しない構造」の両立を重視。たとえば絞り込みUIでは、将来的に条件が増える前提で煩雑化を避けるUIを提案し、PC/スマホそれぞれの見え方や運用上の懸念も踏まえて意思決定まで落とし込みました。\n\nまた、管理画面と運用時に発生する運用ストレス（プレビュー確認のために行き来が必要になる等）に対して、表示ルールや画像の扱いを整理し、運用者が迷わない仕様に調整。またビジュアルデザイン面では、要望が細部まで具体的で意思決定が揺れやすい状況だったため、案の比較軸（ユーザー影響・運用・拡張性・実装負荷）を揃えて合意形成を進め、手戻りしにくい進め方を整えました。\n\n結果として、検収FBを吸収しながらユーザー体験と運用体験の両面で効率の良い仕様に収束させ、リリースに向けた開発を前進させました。",
-        en:"I joined the development of a new recruitment media platform—encompassing both the user-facing site and the corporate administration dashboard—as a PM Associate and Lead UI/UX Designer. The project involved a complex structure handling various content types, including job listings, company profiles, and articles, requiring an information architecture designed for seamless navigation, advanced filtering, and long-term scalability.\n\nThroughout the development phase, I prioritized balancing immediate solutions with future-proof structures. For example, when designing the filtering UI, I proposed a system that remains intuitive even as additional parameters are added in subsequent phases, carefully aligning the cross-device experience with operational feasibility.\n\nFurthermore, I focused on optimizing the administrative experience by streamlining complex rules for content management and preview workflows to eliminate operational friction. To navigate high-fidelity feedback and evolving requirements from the client, I established a clear evaluation framework based on user impact, scalability, and implementation cost. This structured approach facilitated decisive consensus-building, minimized rework, and successfully advanced the project toward its release by converging user and operational experiences into a highly efficient specification."
+        ja: "採用領域のメディアプロダクト（ユーザー向けサイト＋企業向け管理画面）の新規開発に、UI/UXデザイナーとして参画しました。求人・企業・記事など複数のコンテンツを扱う構造のため、単発の画面作成ではなく、検索/絞り込み・回遊・編集運用まで含めた体験設計と、段階的な拡張を前提にした情報設計が求められるプロジェクトでした。\n開発中は、クライアント検収で出たフィードバックを起点に、要望をそのまま反映するのではなく、「今のフェーズでの最適解」と「後続フェーズで条件が増えたときに破綻しない構造」の両立を重視。たとえば絞り込みUIでは、将来的に条件が増える前提で煩雑化を避けるUIを提案し、PC/スマホそれぞれの見え方や運用上の懸念も踏まえて意思決定まで落とし込みました。\n\nまた、管理画面と運用時に発生する運用ストレス（プレビュー確認のために行き来が必要になる等）に対して、表示ルールや画像の扱いを整理し、運用者が迷わない仕様に調整。またビジュアルデザイン面では、要望が細部まで具体的で意思決定が揺れやすい状況だったため、案の比較軸（ユーザー影響・運用・拡張性・実装負荷）を揃えて合意形成を進め、手戻りしにくい進め方を整えました。\n\n結果として、検収FBを吸収しながらユーザー体験と運用体験の両面で効率の良い仕様に収束させ、リリースに向けた開発を前進させました。",
+        en:"I joined the development of a new recruitment media platform—encompassing both the user-facing site and the corporate administration dashboard—as a UI/UX designer. The project involved a complex structure handling various content types, including job listings, company profiles, and articles, requiring an information architecture designed for seamless navigation, advanced filtering, and long-term scalability.\n\nThroughout the development phase, I prioritized balancing immediate solutions with future-proof structures. For example, when designing the filtering UI, I proposed a system that remains intuitive even as additional parameters are added in subsequent phases, carefully aligning the cross-device experience with operational feasibility.\n\nFurthermore, I focused on optimizing the administrative experience by streamlining complex rules for content management and preview workflows to eliminate operational friction. To navigate high-fidelity feedback and evolving requirements from the client, I established a clear evaluation framework based on user impact, scalability, and implementation cost. This structured approach facilitated decisive consensus-building, minimized rework, and successfully advanced the project toward its release by converging user and operational experiences into a highly efficient specification."
       },
       // {
       //   ja: "コンテンツ量の変動に耐えられるモジュール型レイアウトを提案し、運用チームが更新しやすいガイドラインを簡易版でまとめました。（仮）",

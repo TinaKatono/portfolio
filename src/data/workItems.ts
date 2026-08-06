@@ -4,7 +4,6 @@ import sachiImg from "../assets/works/sachi-art-work/sachi_1.webp";
 import kiviaqImg_2 from "../assets/works/kiviaq/kiviaq_2.webp";
 import saikaiImg_1 from "../assets/works/works_3/works_3_1.webp";
 
-import recprImg from "../assets/works/works_2/works_2_1.webp";
 import campaiImg from "../assets/works/campai/campai_1.webp";
 
 export type WorkItem = {
@@ -22,8 +21,11 @@ const workItemThumbs: { id: string; thumbSrc?: string }[] = [
   { id: "kiviaq-pharmacy", thumbSrc: kiviaqImg_2 },
   { id: "saikai-matsunaga", thumbSrc: saikaiImg_1 },
   // { id: "fadila-oil", thumbSrc: sample1Img },
-  { id: "recpr", thumbSrc: recprImg },
+  // サムネイル未設定（掲載を取り下げたメインビジュアルと同一画像だったため）
+  { id: "recpr" },
   { id: "campai", thumbSrc: campaiImg },
+  // サムネイル未設定（クライアント案件のため掲載可能な画像がない）。一覧ではプレースホルダー枠になる
+  { id: "apparel-ec-frontend" },
   // { id: "task-holdings", thumbSrc: sample1Img },
 ];
 
