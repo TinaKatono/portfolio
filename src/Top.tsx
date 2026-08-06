@@ -869,6 +869,54 @@ function TrioAtRest({
 }
 
 /** 左見出しのみ sticky（SP では追従しない）。外側を sticky で包まない（包むと親高＝本文高になり下まで届かない） */
+/**
+ * ABOUT の本文。**採用担当が最初に読む場所**なので、抽象的な心構えではなく
+ * 「何ができる人か」「なぜそう言えるか」が順に分かる構成にしている。
+ * 段落は \n\n で区切る（whitespace-pre-line で描画）。
+ */
+const ABOUT_JA = `東京を拠点に、UI/UXデザインとフロントエンド実装の両方を担当しているウェブデザイナーです。エンジニア主体の開発会社に所属し、要件を整える段階から画面をつくり、実装して公開するところまでを一人の視点で通すことを得意としています。
+
+キャリアはアパレルECのフロントエンド実装から始まりました。デザインとの1pxのズレも指摘される環境で、細部の精度がそのまま印象を左右することを叩き込まれています。その後、医療DXや採用メディアなど複数のシステムが絡むプロダクトで、要件定義や情報設計を担うようになりました。つくる手前の構造を詰められることと、最後の1pxを詰められること。この両方を持っていることが自分の軸だと考えています。
+
+近年はCursorやClaude Codeを実務に取り入れ、デザインと実装を並行させる進め方も試しています。手を動かす速度が上がったぶん、「何をつくるべきか」を考える時間に充てられるようになりました。表層を整えるだけでなく、その裏側にあるデータや運用まで含めて、破綻しない構造をつくることに関心があります。`;
+
+const ABOUT_EN = `A web designer based in Tokyo, working across both UI/UX design and frontend implementation. At an engineer-driven development company, my strength is carrying a project through a single lens—from shaping the requirements, to designing the screens, to building and shipping them.
+
+My career began in frontend implementation for apparel e-commerce, in an environment where even a single pixel of deviation from the design would be flagged. That taught me how directly the precision of small details shapes an impression. I later moved into requirements definition and information architecture on products spanning multiple interconnected systems, in fields such as healthcare DX and recruitment media. Being able to resolve the structure before anything is built, and to resolve the final pixel—holding both is what I consider my core.
+
+More recently I've brought Cursor and Claude Code into my practice, running design and implementation in parallel. As the making itself gets faster, the time it frees up goes into deciding what should be made. My interest is in building structures that hold—not only the surface, but the data and the operations behind it.`;
+
+/**
+ * スキル一覧。実務で使ったものだけを載せる（増やしすぎると密度が下がる）。
+ * 案件を足したときに使用技術が増えたら、ここも更新すること。
+ */
+const ABOUT_SKILLS = [
+  {
+    label: "DESIGN",
+    items: [
+      "UI Design",
+      "UX Design",
+      "Information Architecture",
+      "Requirements Definition",
+      "Writing",
+    ],
+  },
+  {
+    label: "DEVELOPMENT",
+    items: [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Tailwind CSS",
+      "jQuery",
+    ],
+  },
+  { label: "TOOLS", items: ["Figma", "FigJam", "Adobe XD", "Cursor", "Claude Code"] },
+] as const;
+
 function AboutGrid() {
   // 見出しと本文は横並びなので、片方の交差を両方の起点にする
   const [revealRef, revealed] = useRevealOnce<HTMLDivElement>();
@@ -891,23 +939,39 @@ function AboutGrid() {
       <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-0 md:pb-16 md:col-span-6 md:col-start-7">
         <div className="flex flex-col gap-6 text-[#333]">
           <p
-            className={`w-full font-jp md:text-[16px] text-[14px] font-medium md:leading-[1.8] leading-[2] tracking-[0.08em] ${revealClass(revealed)}`}
+            className={`w-full whitespace-pre-line font-jp md:text-[16px] text-[14px] font-medium md:leading-[1.8] leading-[2] tracking-[0.08em] ${revealClass(revealed)}`}
             style={revealDelay(1, revealed)}
           >
-            東京を拠点にするウェブデザイナーです。エンジニア主体の開発会社で仕事をしながら、ビジュアルを描くことと、その手前の要件を整えること、その両方を自然に行き来するようなプロセスを大切にしています。良いデジタル体験は、見た目だけでなく「どう作られているか」という思慮深い構造から生まれると考えています。プロジェクトを俯瞰して捉え、デザインとその裏側にあるデータを、シンプルで誠実な方法でつなぐプロセスを大切にしています。
+            {ABOUT_JA}
           </p>
           <p
-            className={`w-full font-sans text-[14px] leading-[1.8] md:leading-[1.5] tracking-[0.08em] ${revealClass(revealed)}`}
+            className={`w-full whitespace-pre-line font-sans text-[14px] leading-[1.8] md:leading-[1.5] tracking-[0.08em] ${revealClass(revealed)}`}
             style={revealDelay(2, revealed)}
           >
-            I am a web designer based in Tokyo. Working within an engineer-driven environment, I
-            naturally move between visual craft and organizing the requirements behind it. I
-            believe that a good digital experience comes from a thoughtful structure—not just how
-            it looks, but how it is built. I enjoy looking at a project as a whole, finding a
-            simple and honest way to connect design with the data underneath.
-
+            {ABOUT_EN}
           </p>
         </div>
+
+        {/*
+          スキル一覧。案件を全部読まないと何ができる人か分からない状態を避けるために置いている。
+          見出し＋値の組は案件詳細ページのサイドバー（ROLE / Tools）と同じ体裁に揃えた。
+        */}
+        <dl className="m-0 flex flex-col gap-6">
+          {ABOUT_SKILLS.map((group, i) => (
+            <div
+              key={group.label}
+              className={`flex flex-col gap-2 ${revealClass(revealed)}`}
+              style={revealDelay(3 + i, revealed)}
+            >
+              <dt className="font-sans text-[13px] leading-none tracking-[0.12em] text-[#78909c]">
+                {group.label}
+              </dt>
+              <dd className="m-0 font-sans text-[14px] leading-[1.7] tracking-[0.04em] text-[#333]">
+                {group.items.join(" / ")}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </>
   );
