@@ -13,6 +13,14 @@ import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { hasWorkDetail, workDetails } from "../data/workDetails";
 
+/**
+ * 外部リンクのボタン（VISIT SITE / READ INTERVIEW）の共通スタイル。
+ * 外部サイトなので rel には noreferrer を付ける。noopener の効果を兼ねるうえ、
+ * リンク先の解析にこのポートフォリオの URL が残らない（限定公開の運用と揃う）。
+ */
+const EXTERNAL_LINK_CLASS =
+  "group inline-flex w-fit items-center gap-2 border-b border-[#333] pb-1.5 font-sans text-[14px] leading-none tracking-[0.08em] text-[#333] no-underline outline-none transition-opacity duration-200 ease-out hover:opacity-60 focus-visible:ring-2 focus-visible:ring-[#333] motion-reduce:transition-none";
+
 /** bottom のみの sticky は Flex 内で効かないことが多いので、top を「下端固定」相当に計算する */
 function OverviewSticky({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -106,10 +114,23 @@ export default function WorkDetail() {
                     href={detail.siteUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="group inline-flex w-fit items-center gap-2 border-b border-[#333] pb-1.5 font-sans text-[14px] leading-none tracking-[0.08em] text-[#333] no-underline outline-none transition-opacity duration-200 ease-out hover:opacity-60 focus-visible:ring-2 focus-visible:ring-[#333] motion-reduce:transition-none"
+                    className={EXTERNAL_LINK_CLASS}
                   >
                     VISIT SITE
                     <InlineMark src={MARK_IMAGES[1]} hoverRotate />
+                  </a>
+                ) : null}
+
+                {/* 第三者の紹介記事。図形の色を変えて VISIT SITE と見分けられるようにする */}
+                {detail.articleUrl ? (
+                  <a
+                    href={detail.articleUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={EXTERNAL_LINK_CLASS}
+                  >
+                    READ INTERVIEW
+                    <InlineMark src={MARK_IMAGES[2]} hoverRotate />
                   </a>
                 ) : null}
               </div>
@@ -130,7 +151,14 @@ export default function WorkDetail() {
                     />
                   </div>
                 ) : (
-                  gallery.length !== 1 && (
+                  /*
+                    画像が足りないセクションのプレースホルダー枠。
+                    ただし「画像を用意する予定がある」ケースにだけ出したいので、
+                    1 枚も無い案件（掲載可能な画像がそもそも無い）と、
+                    ちょうど 1 枚だけの案件では出さない。灰色の空枠が並ぶと
+                    未完成に見えてしまうため。
+                  */
+                  gallery.length > 1 && (
                     <div className="aspect-video w-full shrink-0 bg-[#eceff1]" aria-hidden />
                   )
                 )}
