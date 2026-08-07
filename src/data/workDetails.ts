@@ -127,18 +127,23 @@ export const workDetails: Record<string, WorkDetail> = {
     title: "Corporate Website for a Construction Company",
     titleJa: "建設会社のコーポレートサイト作成",
     roles: ["UI Design", "Writing", "Frontend Dev(Cursor)"],
-    yearDuration: "2024/03 - 2024/09",
+    // 実作業は約 2 週間。Sachi と同じく、短納期であることが伝わるよう単月表記にしている。
+    yearDuration: "2026/04",
     tools: ["Figma", "Cursor"],
     galleryImages: [saikaiGallery1, saikaiGallery2, saikaiGallery3],
     siteUrl: "https://www.saikaimatsunaga.com/",
     sections: [
       {
-        ja: "長崎県西海市を中心に、砂防工事や道路舗装などの公共事業を担う建設会社様のコーポレートサイトリニューアルに参画し、トーン＆マナーの整理から画面設計、ライティングや実装・公開まで一貫して担当しました。写真とタイポグラフィのバランス、ストーリーとして読める構成を重視し、静的ページ中心ながらも没入感のある体験になるよう調整しています。",
-        en: "I participated in the corporate website renewal for a general construction company that handles public works, such as erosion control and road paving, primarily in Saikai City, Nagasaki. I was responsible for the entire process—from defining the visual tone and manner to wireframing, copywriting, implementation, and launch. By balancing photography with typography and focusing on a narrative-driven structure, I ensured an immersive user experience despite the site’s static nature.",
+        ja: "長崎県西海市を中心に、砂防工事や道路舗装などの公共事業を担う建設会社様のコーポレートサイトリニューアルです。トーン＆マナーの整理から画面設計、ライティング、実装・公開までを一貫して担当しました。\n\n制作期間はおよそ2週間。加えて、参照できる既存の情報も、使用できる写真素材も限られた状態からのスタートでした。支給されていたのはロゴのみで、それ以外は自分で集めるかつくるかを、その都度判断していく必要がありました。",
+        en: "A corporate website renewal for a construction company handling public works—erosion control, road paving—primarily in Saikai City, Nagasaki. I was responsible for the entire process: defining the tone and manner, screen design, copywriting, implementation, and launch.\n\nThe build ran to roughly two weeks. On top of that, both the existing reference material and the usable photography were scarce. The logo was the only asset provided; everything else was a decision, case by case, about whether to source it or make it.",
       },
       {
-        ja: "クライアント様のご希望が、「採用面を踏まえ、やさしく明るく、親しみの持てる雰囲気に」ということで、起業カラーであるブルーとグリーンを柔らかく調整し、自然豊かな西海市の雰囲気に沿うような雰囲気をご提案しました。実装面ではコンポーネント単位で再利用しやすい構造にしました。",
-        en: "To meet the client’s request for a gentle, bright, and approachable feel to support their recruitment efforts, I softened their corporate blue and green palette to harmonize with the lush, natural environment of Saikai City. On the technical side, I built the site using a component-based architecture to ensure a highly reusable and maintainable structure.",
+        ja: "最大の課題は、「西海市に根ざした企業である」というサイトの中心テーマを、素材がほとんどない状態でどう成立させるかでした。地域性は言葉で主張するより、画面に流れる風景や光の質で伝わる方が強く残ります。しかし西海市の写真素材は流通量そのものが少なく、そのまま使えるものはごくわずかでした。\n\n使用可能な素材を探し集めたうえで、一枚ずつ色味を調整し、サイト全体を通して同じ空気に見えるところまで揃えています。撮り下ろしができない条件下では、写真そのものより「素材同士の統一感」が地域性を支えると考え、そこを設計対象として扱いました。",
+        en: "The central challenge was making the site's core theme—a company rooted in Saikai City—hold up with almost no material to build it from. A sense of place lands more durably through the landscape and quality of light running across the screen than through words claiming it. Yet photography of Saikai City barely circulates, and very little of it was usable as-is.\n\nAfter gathering what could be used, I graded each image individually until the whole site read as a single atmosphere. Where an original shoot isn't possible, what carries a sense of place is less the photography itself than the coherence between images—so I treated that coherence as the thing to design.",
+      },
+      {
+        ja: "配色は、唯一支給されていたロゴのブルーとグリーンを起点にしました。「採用面を踏まえ、やさしく明るく、親しみの持てる雰囲気に」というご要望に対し、企業カラーの彩度と明度を落として自然に近い色域へ寄せ、西海市の環境と地続きに見えるトーンを提案しています。建設業としての実直さは残しつつ、応募者が身構えない温度に収めることを狙いました。\n\n実装はコンポーネント単位で再利用しやすい構造とし、更新時に崩れにくい形にしています。画面デザインについては、クライアント様から高いご評価をいただきました。",
+        en: "The palette started from the blue and green of the logo—the one asset I was given. Against the client's request for something gentle, bright, and approachable in service of recruitment, I lowered the saturation and brightness of the corporate colors toward a more natural range, proposing a tone that reads as continuous with the environment of Saikai City. The aim was to keep the straightforwardness proper to construction work while landing on a warmth that doesn't put applicants on guard.\n\nImplementation used a component-based structure, reusable and resistant to breaking when content is updated. The client's response to the screen design was highly positive.",
       },
     ],
   },
