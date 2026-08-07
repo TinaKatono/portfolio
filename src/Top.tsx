@@ -887,8 +887,12 @@ My career began in frontend implementation for apparel e-commerce, in an environ
 More recently I've brought Cursor and Claude Code into my practice, running design and implementation in parallel. As the making itself gets faster, the time it frees up goes into deciding what should be made. My interest is in building structures that hold—not only the surface, but the data and the operations behind it.`;
 
 /**
- * スキル一覧。実務で使ったものだけを載せる（増やしすぎると密度が下がる）。
- * 案件を足したときに使用技術が増えたら、ここも更新すること。
+ * スキル一覧。
+ *
+ * **書けるものと、AI 支援で構築できるものを必ず分けること。**
+ * 面接では 1 行ずつ「これはどの程度できますか」と聞かれる前提で、
+ * 手で書けないものを CODING に混ぜない（聞かれた瞬間に全体の信頼が落ちる）。
+ * 案件を足して使用技術が増えたら、ここも同じ基準で更新する。
  */
 const ABOUT_SKILLS = [
   {
@@ -901,20 +905,14 @@ const ABOUT_SKILLS = [
       "Writing",
     ],
   },
+  /** 手で書けるもの。実務で 1px 単位の再現を求められてきた領域 */
+  { label: "CODING", items: ["HTML", "CSS", "jQuery"] },
+  /** 自分では書かないが、AI 支援で構築・調整して公開まで持っていけるもの */
   {
-    label: "DEVELOPMENT",
-    items: [
-      "HTML",
-      "CSS",
-      "JavaScript",
-      "TypeScript",
-      "React",
-      "Next.js",
-      "Tailwind CSS",
-      "jQuery",
-    ],
+    label: "AI-ASSISTED BUILD",
+    items: ["Next.js / React 製サイトの構築（Cursor・Claude Code）"],
   },
-  { label: "TOOLS", items: ["Figma", "FigJam", "Adobe XD", "Cursor", "Claude Code"] },
+  { label: "TOOLS", items: ["Figma", "FigJam", "Studio", "Cursor", "Claude Code"] },
 ] as const;
 
 function AboutGrid() {
