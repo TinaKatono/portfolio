@@ -1,18 +1,19 @@
-import kiviaqGallery1 from "../assets/works/kiviaq/kiviaq_1.webp";
+import work3Gallery1 from "../assets/works/work_3/work_3_1.webp";
 
 
-import saikaiGallery1 from "../assets/works/works_3/works_3_1.webp";
+import work4Gallery1 from "../assets/works/work_4/work_4_1.webp";
 
-import campaiGallery1 from "../assets/works/campai/campai_1.webp";
-import campaiGallery2 from "../assets/works/campai/campai_2.webp";
-import campaiGallery3 from "../assets/works/campai/campai_3.webp";
-import campaiGallery4 from "../assets/works/campai/campai_4.webp";
-import saikaiGallery2 from "../assets/works/works_3/works_3_2.webp";
-import saikaiGallery3 from "../assets/works/works_3/works_3_3.webp";
+import work2Gallery5 from "../assets/works/work_2/work_2_5.webp";
+import work2Gallery1 from "../assets/works/work_2/work_2_1.webp";
+import work2Gallery2 from "../assets/works/work_2/work_2_2.webp";
+import work2Gallery7 from "../assets/works/work_2/work_2_7.webp";
+import work2Gallery8 from "../assets/works/work_2/work_2_8.webp";
+import work4Gallery2 from "../assets/works/work_4/work_4_2.webp";
+import work4Gallery3 from "../assets/works/work_4/work_4_3.webp";
 
-import sachiGallery1 from "../assets/works/sachi-art-work/sachi_1.webp";
-import sachiGallery2 from "../assets/works/sachi-art-work/sachi_2.webp";
-import sachiGallery3 from "../assets/works/sachi-art-work/sachi_3.webp";
+import work1Gallery1 from "../assets/works/work_1/work_1_1.webp";
+import work1Gallery2 from "../assets/works/work_1/work_1_2.webp";
+import work1Gallery3 from "../assets/works/work_1/work_1_3.webp";
 
 export type WorkDetailSection = {
   ja: string;
@@ -51,7 +52,7 @@ export type WorkDetail = {
  * 各案件の詳細。文言・期間・ツールは後から差し替え前提のプレースホルダを含みます。
  */
 export const workDetails: Record<string, WorkDetail> = {
-  "sachi-art-work": {
+  work_1: {
     title: "Brand Website for a Creative Atelier",
     titleJa: "ファッションアトリエのブランドサイト制作",
     roles: ["UI Design", "UX Design", "Writing", "Frontend Dev(Cursor)"],
@@ -59,7 +60,7 @@ export const workDetails: Record<string, WorkDetail> = {
     // 他案件は範囲表記だが、ここは単月にしておく方が短納期であることが伝わる。
     yearDuration: "2026/05",
     tools: ["Figma", "Next.js", "Cursor"],
-    galleryImages: [sachiGallery1, sachiGallery2, sachiGallery3],
+    galleryImages: [work1Gallery1, work1Gallery2, work1Gallery3],
     siteUrl: "https://www.sachiaw.com/",
     sections: [
       {
@@ -77,7 +78,7 @@ export const workDetails: Record<string, WorkDetail> = {
     ],
   },
 
-  "apparel-ec-frontend": {
+  work_6: {
     title: "Frontend Implementation for Apparel E-Commerce",
     titleJa: "アパレルECサイトのフロントエンド実装",
     roles: ["UI Implementation", "Frontend Dev(HTML/CSS/jQuery)"],
@@ -95,7 +96,7 @@ export const workDetails: Record<string, WorkDetail> = {
     ],
   },
 
-  "kiviaq-pharmacy": {
+  work_3: {
     title: "Integrated Medical Supply Chain UX",
     titleJa: "医療サプライチェーンのUX・情報設計",
     roles: [
@@ -106,7 +107,7 @@ export const workDetails: Record<string, WorkDetail> = {
     ],
     yearDuration: "2025/07 - 2025/10",
     tools: ["Figma"],
-    galleryImages: [kiviaqGallery1,],
+    galleryImages: [work3Gallery1,],
     sections: [
       {
         ja: "薬局DXサービスの新規立ち上げに、UI/UXデザイナーとして参画しました。患者向けLINEミニアプリ・薬局スタッフ向け管理画面・配送業者向けモバイルアプリの3システムにまたがる複雑な業務フローを対象に、要件定義から画面設計までをリードし、プロジェクトが動き出してからは仕様調整や関係者間の合意形成といった進行実務も担っています。特に薬機法等の法的観点や現場運用の制約を深く読み解き、初期の要望を単に形にするだけでなく、データの流動性や例外分岐、そして現場で実際に機能する運用までを見据えたUX設計を徹底しました。",
@@ -123,14 +124,14 @@ export const workDetails: Record<string, WorkDetail> = {
     ],
   },
 
-  "saikai-matsunaga": {
+  work_4: {
     title: "Corporate Website for a Construction Company",
     titleJa: "建設会社のコーポレートサイト作成",
     roles: ["UI Design", "Writing", "Frontend Dev(Cursor)"],
     // 実作業は約 2 週間。Sachi と同じく、短納期であることが伝わるよう単月表記にしている。
     yearDuration: "2026/04",
     tools: ["Figma", "Cursor"],
-    galleryImages: [saikaiGallery1, saikaiGallery2, saikaiGallery3],
+    galleryImages: [work4Gallery1, work4Gallery2, work4Gallery3],
     siteUrl: "https://www.saikaimatsunaga.com/",
     sections: [
       {
@@ -166,7 +167,7 @@ export const workDetails: Record<string, WorkDetail> = {
   //   ],
   // },
 
-  recpr: {
+  work_5: {
     title: "Recruitment Media & Management System",
     titleJa: "採用メディアと管理システムの開発設計",
     roles: ["UI Design", "UX Design", "Information Architecture"],
@@ -188,13 +189,33 @@ export const workDetails: Record<string, WorkDetail> = {
     ],
   },
 
-  campai: {
+  work_2: {
     title: "Internal Event Management App",
     titleJa: "社内イベント管理アプリ campai の企画・個人開発",
     roles: ["Planning", "UI Design", "UX Design", "Full-stack Dev(Claude Code)"],
     yearDuration: "2026/04 - 2026/05",
     tools: ["Next.js", "Prisma", "SQLite", "Slack Webhook", "Claude Code"],
-    galleryImages: [campaiGallery1, campaiGallery2, campaiGallery3, campaiGallery4],
+    /*
+      並び順は本文と対応させている。
+      1 枚目 = ロゴのキーカード（一覧のサムネイルと同じ絵）→ 導入のセクション、
+      2〜3 枚目 = 参加者側のスマホ画面（出欠回答・カレンダー・アンケート・
+      プロフィール設定）→ 食の制限や出欠回答を扱うセクション、
+      4 枚目以降 = 管理ダッシュボードなどの管理側。
+      本文の下にも続く。
+      イベント作成画面（work_2_3.webp）は絵として弱いため外している。ファイル自体は
+      assets に残してあるので、必要になれば import を戻すだけでよい。
+
+      参加者側の画面を先に置くのは、絵として強く、製品の性格が一目で伝わるため。
+      スマホ画面は横並びに合成してある。単体の縦長スクショだとカラム幅いっぱいに
+      引き伸ばされ、UI が不自然に大きく見えてしまうため。
+    */
+    galleryImages: [
+      work2Gallery5,
+      work2Gallery7,
+      work2Gallery8,
+      work2Gallery1,
+      work2Gallery2,
+    ],
     sections: [
       {
         ja: "社内の飲み会・歓送迎会の出欠管理を Slack のやりとりから置き換える社内向け Web アプリを、企画から実装まで個人で制作しました。きっかけは幹事業務の属人化です。締切前の未回答者への声かけ、食の制限の個別確認、当日の人数把握といった細かな調整がすべて幹事に集中し、本来注力すべき企画や場選びに時間を割けない状態が続いていました。\n\nリマインドの自動化と参加者情報の一元管理によって、幹事が「調整」ではなく「企画」に集中できる状態をつくることを出発点に設計しています。",
