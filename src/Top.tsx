@@ -22,6 +22,7 @@ import {
   MARK_EYES_OVERLAY,
   MARK_IMAGE_EYES,
   MARK_IMAGES,
+  META_LABEL,
   SCROLL_HINT_MARK,
 } from "./components/brand";
 import { RoleList } from "./components/RoleList";
@@ -426,6 +427,9 @@ function HeroTitleBlock({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rowRef = useRef<HTMLDivElement | null>(null);
   const [fitScale, setFitScale] = useState(1);
+  /** 採寸のたびに「素の幅」へ戻すために、現在の縮尺を ref でも持つ */
+  const fitScaleRef = useRef(1);
+  fitScaleRef.current = fitScale;
   const lastCharRef = useRef<HTMLSpanElement | null>(null);
   const introDoneRef = useRef(false);
 
@@ -461,6 +465,19 @@ function HeroTitleBlock({
     };
   }, [reduceMotion, onTitleIntroComplete, katono.length, katonoBaseMs]);
 
+  /**
+   * 行が画面幅に収まる縮尺を求める。
+   *
+   * 注意が 2 つある。
+   *
+   * 1. **採寸値は「今の縮尺で描かれた幅」なので、そのまま比を取ると正しくない。**
+   *    現在の縮尺で割って素の幅に戻してから比を出す。こうしないと、一度縮んだ行が
+   *    「収まっている」と判定されて 1 に戻り、また溢れて縮む、という往復になる。
+   * 2. **webfont の到着後に測り直す必要がある。** 初回の採寸は代替フォントの字幅で
+   *    行われるため、本来の書体に置き換わった時点で縮尺がずれる。ずれたままだと、
+   *    スクロールで shrink が変わるまで小さいまま表示される（実機で「最初だけ
+   *    ロゴが小さい」という形で出ていた）。
+   */
   useLayoutEffect(() => {
     const measure = () => {
       const wrap = containerRef.current;
@@ -470,23 +487,39 @@ function HeroTitleBlock({
       const pl = parseFloat(cs.paddingLeft) || 0;
       const pr = parseFloat(cs.paddingRight) || 0;
       const maxW = wrap.clientWidth - pl - pr;
-      const w = row.scrollWidth;
-      if (maxW <= 0 || w <= 0) {
+      const current = fitScaleRef.current || 1;
+      const naturalW = row.scrollWidth / current;
+      if (maxW <= 0 || naturalW <= 0) {
         setFitScale(1);
         return;
       }
-      setFitScale(w > maxW ? maxW / w : 1);
+      const next = Math.min(1, maxW / naturalW);
+      // 誤差レベルの差で再レンダリングを起こさない
+      if (Math.abs(next - current) > 0.001) setFitScale(next);
     };
     measure();
+
+    let canceled = false;
+    // 書体が差し替わったら測り直す（初回は代替フォントの字幅で測っているため）
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(() => {
+        if (!canceled) measure();
+      });
+    }
+
     const wrap = containerRef.current;
     if (typeof ResizeObserver === "undefined" || !wrap) {
       window.addEventListener("resize", measure);
-      return () => window.removeEventListener("resize", measure);
+      return () => {
+        canceled = true;
+        window.removeEventListener("resize", measure);
+      };
     }
     const ro = new ResizeObserver(measure);
     ro.observe(wrap);
     window.addEventListener("resize", measure);
     return () => {
+      canceled = true;
       ro.disconnect();
       window.removeEventListener("resize", measure);
     };
@@ -961,7 +994,7 @@ function AboutGrid() {
               className={`flex flex-col gap-2 ${revealClass(revealed)}`}
               style={revealDelay(3 + i, revealed)}
             >
-              <dt className="font-sans text-[13px] leading-none tracking-[0.12em] text-[#78909c]">
+              <dt className={META_LABEL}>
                 {group.label}
               </dt>
               <dd className="m-0 font-sans text-[14px] leading-[1.7] tracking-[0.04em] text-[#333]">
