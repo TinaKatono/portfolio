@@ -37,12 +37,19 @@ export default {
           "0%": { opacity: "0", transform: "translateY(6px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        /** ヒーロー名：ぼかし→くっきり（一文字ずつ delay で連続再生） */
+        /**
+         * ヒーロー名：ぼかし→くっきり（一文字ずつ delay で連続再生）。
+         *
+         * 移動量は「わずかに浮く」程度では明滅に見えるので、0.26em ほど動かして
+         * 動きとして読ませる。ぼかしは 6px。強くすると輪郭が滲んで、
+         * 重なって走る文字どうしがちらついて見える。
+         * **0% の translateY を変えたら InlineMark の nudgeY の注記も直すこと。**
+         */
         heroCharIn: {
           "0%": {
             opacity: "0",
-            filter: "blur(10px)",
-            transform: "translateY(0.12em)",
+            filter: "blur(6px)",
+            transform: "translateY(0.26em)",
           },
           "100%": {
             opacity: "1",
@@ -77,8 +84,17 @@ export default {
           "workRoleTipIn 0.48s cubic-bezier(0.34, 1.25, 0.64, 1) both",
         "work-role-text-in":
           "workRoleTextIn 0.32s ease-out 0.06s both",
+        /**
+         * 1 文字ぶんの再生時間。**Top.tsx の HERO_INTRO_DURATION_MS と一致させること**
+         * （入場完了のフォールバック時刻の計算に使っている）。
+         *
+         * 文字の間隔（52ms）より十分に長くして、常に 10 文字前後が同時に動いている
+         * 状態を作る。こうすると 1 文字ずつ「点いて消える」のではなく、ひと続きの
+         * 波として流れる。カーブは easeOutCubic 相当。以前の (0.2,0.85,0.25,1) は
+         * 時間の 2 割で 85% 進む極端な前詰めで、文字ごとに弾ける印象になっていた。
+         */
         "hero-char-in":
-          "heroCharIn 0.52s cubic-bezier(0.2, 0.85, 0.25, 1) both",
+          "heroCharIn 0.76s cubic-bezier(0.33, 1, 0.68, 1) both",
         "scroll-hint-bounce":
           "scrollHintBounce 1.35s ease-in-out infinite",
         /** 1 周 22 秒。等速で、目で追わなくても気にならない速さ */

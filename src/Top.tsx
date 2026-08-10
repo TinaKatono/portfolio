@@ -89,9 +89,18 @@ function smootherstep(t: number) {
   return c * c * c * (c * (c * 6 - 15) + 10);
 }
 
-/** セクション間の重なり量（ヒーロー←ABOUT、ABOUT←WORK で共通。1 箇所で調整） */
+/**
+ * ヒーローに ABOUT を重ねる量（負の margin-top として効く）。
+ *
+ * **ここが「キャッチが揃ってから ABOUT が現れるまでの間」を決めている。**
+ * 重なりが大きいほど ABOUT が早く上がってくる。1 画面ぶん（100svh）だと
+ * キャッチが定位置に揃う progress 0.7 の直後（実測で 49px 後）に ABOUT が
+ * 顔を出してしまい、揃った状態を見る間がない。
+ * 60svh まで縮めて、揃ったキャッチが単体で見える区間を約 0.45 画面ぶん作っている。
+ * さらに間を取りたければこの値を小さく、詰めたければ大きくする。
+ */
 const overlapStyle = {
-  ["--section-overlap" as string]: "min(100svh, 56rem)",
+  ["--section-overlap" as string]: "min(60svh, 50rem)",
 } as CSSProperties;
 
 /** 右コピー完了 ≒ 2 行が定位置に揃ったタイミング（phases の右行終端と一致させること） */
@@ -99,9 +108,24 @@ const P_TRIO_DONE = 0.7;
 /** 0〜1 でヒーロー見出しが大→小＆上へ。終端は P_TRIO_DONE より手前に置く */
 const P_TITLE_SHRINK_END = 0.48;
 
-/** ファーストビュー：名前の一文字ずつ出現（delay の間隔・語間） */
-const HERO_INTRO_CHAR_STAGGER_MS = 68;
-const HERO_INTRO_WORD_GAP_MS = 180;
+/**
+ * ファーストビュー：名前の一文字ずつ出現。
+ *
+ * **語間を基本の間隔から大きく離さないこと。** 以前は間隔 68ms に対して語間が
+ * 180ms（2.6 倍）あり、TINA と図形まで等間隔で進んだ拍が KATONO の直前で一度
+ * 止まるため、なめらかさが崩れて「つっかかる」ように見えていた。
+ *
+ * 語間は「図形の次に KATONO が来るまでの間隔」なので、**基本の間隔と同じ値で
+ * 完全な等間隔**になる。少しだけ大きくして息継ぎを作るが、1.4 倍を超えると
+ * また段差として知覚される。
+ */
+const HERO_INTRO_CHAR_STAGGER_MS = 52;
+const HERO_INTRO_WORD_GAP_MS = 70;
+/**
+ * 1 文字ぶんの再生時間。**tailwind.config.js の hero-char-in と一致させること。**
+ * 入場完了を検知しそこねた場合のフォールバック時刻の計算に使う。
+ */
+const HERO_INTRO_DURATION_MS = 760;
 /** ヒーロー内でこれ以上スクロールしたら scroll 誘導を消す（ヒーロー先頭からの距離） */
 const HERO_SCROLL_HINT_MAX_OFFSET = 480;
 /**
@@ -456,8 +480,16 @@ function HeroTitleBlock({
       onTitleIntroComplete?.();
     };
     el.addEventListener("animationend", finish, { once: true });
+    /*
+      最後の文字の animationend を取りそこねた場合の保険。
+      「最後の文字の開始 + 再生時間」より後に置く必要があるので、再生時間そのものに
+      余裕を足して求める（固定値にすると再生時間を伸ばしたとき先に発火してしまう）。
+    */
     const fallbackMs =
-      katonoBaseMs + (katono.length - 1) * HERO_INTRO_CHAR_STAGGER_MS + 700;
+      katonoBaseMs +
+      (katono.length - 1) * HERO_INTRO_CHAR_STAGGER_MS +
+      HERO_INTRO_DURATION_MS +
+      200;
     const t = window.setTimeout(finish, fallbackMs);
     return () => {
       clearTimeout(t);
@@ -596,8 +628,8 @@ function HeroTitleBlock({
           {/*
             ベースライン補正は既定値（InlineMark の 0.14em）のままでよい。包み要素を
             inline-flex にした時点で他の見出しと揃っている。
-            注意: 入場アニメ heroCharIn の 0% は translateY(0.12em) なので、アニメが
-            止まった状態で位置を測ると 0.12em 低く見える。補正値を足し引きする前に
+            注意: 入場アニメ heroCharIn の 0% は translateY(0.26em) なので、アニメが
+            止まった状態で位置を測るとそのぶん低く見える。補正値を足し引きする前に
             アニメを finish() させてから測ること。
           */}
           <InlineMark src={MARK_IMAGES[1]} spin />
@@ -1013,6 +1045,21 @@ export default function Top() {
   const [progress, setProgress] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const [heroBox, setHeroBox] = useState({ top: 0, h: 0 });
+  /**
+   * ABOUT の上端（ドキュメント座標）。ヒーローの静止レイヤーを「ABOUT が覆いきる
+   * まで」出しておくために使う。重なり量（--section-overlap）を JS 側に複製したく
+   * ないので、実際の位置を測って判断する。
+   *
+   * **offsetTop は使えない。** ABOUT は position:relative な入れ子（重なり用の
+   * ラッパー）の中にあるため、offsetTop はその中での相対値（= 0）になる。
+   * ドキュメント座標が要るので rect + scrollY で求める。
+   */
+  const aboutTopRef = useRef<HTMLElement | null>(null);
+  const [aboutTop, setAboutTop] = useState(0);
+  const measureAboutTop = (el: HTMLElement | null) => {
+    if (!el) return;
+    setAboutTop(Math.round(el.getBoundingClientRect().top + window.scrollY));
+  };
   const [vh, setVh] = useState(() =>
     typeof window !== "undefined" ? window.innerHeight : 800,
   );
@@ -1064,6 +1111,7 @@ export default function Top() {
     const el = heroScrollRef.current;
     if (!el) return;
     setHeroBox({ top: el.offsetTop, h: el.offsetHeight });
+    measureAboutTop(aboutTopRef.current);
   };
 
   useLayoutEffect(() => {
@@ -1085,6 +1133,7 @@ export default function Top() {
         setProgress(clamp(p, 0, 1));
         setHeroBox({ top, h });
       }
+      measureAboutTop(aboutTopRef.current);
     };
     const onResize = () => {
       measureHero();
@@ -1135,8 +1184,16 @@ export default function Top() {
     heroBox.h > 0 && scrollY >= heroBox.top + heroBox.h - vh - 1;
   /** ヒーロー外では常に縮小状態を維持（ヘッダー複製は使わない） */
   const persistentTitleShrink = scrolledPastHero ? 1 : titleShrink;
-  /** 3要素が揃ったあと〜ヒーロー用スクロールが終わるまで、画面奥に固定（その上を ABOUT が流れる） */
-  const showFixedHeroLayer = progress >= P_TRIO_DONE && !scrolledPastHero;
+  /**
+   * 3要素が揃ったあと、ABOUT が画面を覆いきるまで画面奥に固定する（その上を ABOUT が流れる）。
+   *
+   * **終了条件をヒーロー節の末尾にしないこと。** 以前は scrolledPastHero を使っていたが、
+   * それが成立するのは「重なり量が 1 画面ぶん以上」のときだけで、重なりを縮めると
+   * ABOUT が覆いきる前にヒーローが消えて背景だけの区間ができる。
+   * ABOUT の上端が画面上端に達した時点＝覆いきった時点で落とす。
+   */
+  const aboutCoveredViewport = aboutTop > 0 && scrollY >= aboutTop;
+  const showFixedHeroLayer = progress >= P_TRIO_DONE && !aboutCoveredViewport;
   const showAnimatedSticky = progress < P_TRIO_DONE;
 
   const showHeroScrollHint = useMemo(() => {
@@ -1217,6 +1274,7 @@ export default function Top() {
       >
         <section
           id="about"
+          ref={aboutTopRef}
           className="relative z-[1] w-full shrink-0 border-t border-[#b0bec5] bg-[#f5f7f8]"
           aria-label="About"
         >
@@ -1242,9 +1300,13 @@ export default function Top() {
                 className={`flex flex-nowrap items-baseline pb-2 text-[40px] leading-none ${revealClass(workReveal)}`}
                 style={{ gap: BRAND_GAP, ...revealDelay(0, workReveal) }}
               >
-                <span className={BRAND_TEXT}>RECENT</span>
-                <InlineMark src={MARK_IMAGES[3]} />
+                {/*
+                  「RECENT」は時期を、「SELECTED」は品質を約束してしまうので、
+                  どちらも避けて中立な INDEX にしている（掲載は最新でも網羅でもない）。
+                */}
                 <span className={BRAND_TEXT}>WORK</span>
+                <InlineMark src={MARK_IMAGES[3]} />
+                <span className={BRAND_TEXT}>INDEX</span>
               </div>
             </div>
             <div className="col-span-12 min-w-0 md:col-span-6 md:col-start-7">
