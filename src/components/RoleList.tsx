@@ -63,14 +63,20 @@ const DOT_SIZE = "0.72em";
 export function RoleList({
   roles,
   className = "",
+  itemClassName = "",
 }: {
   roles: readonly string[];
   className?: string;
+  /**
+   * 1 項目（1 行）ごとに当てるクラス。地色を敷きたいときはここに渡す。
+   * ul 側に敷くと項目をまたいだ 1 枚の面になってしまい、行ごとに独立しない。
+   */
+  itemClassName?: string;
 }) {
   return (
-    <ul className={`m-0 flex list-none flex-col gap-1.5 p-0 ${className}`}>
+    <ul className={`m-0 flex list-none flex-col gap-1 p-0 ${className}`}>
       {roles.map((role, i) => (
-        <li key={`${i}-${role}`} className="flex items-baseline gap-2">
+        <li key={`${i}-${role}`} className={`flex w-fit items-baseline gap-2 ${itemClassName}`}>
           <span
             className="inline-block shrink-0 rounded-full"
             style={{

@@ -6,7 +6,13 @@ import {
   type ReactNode,
 } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { BRAND_TEXT_WRAP, InlineMark, MARK_IMAGES } from "../components/brand";
+import {
+  BRAND_TEXT_WRAP,
+  InlineMark,
+  MARK_IMAGES,
+  META_LABEL,
+  META_VALUE,
+} from "../components/brand";
 import { RoleList } from "../components/RoleList";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
 import { SiteFooter } from "../components/SiteFooter";
@@ -19,7 +25,7 @@ import { hasWorkDetail, workDetails } from "../data/workDetails";
  * リンク先の解析にこのポートフォリオの URL が残らない（限定公開の運用と揃う）。
  */
 const EXTERNAL_LINK_CLASS =
-  "group inline-flex w-fit items-center gap-2 border-b border-[#333] pb-1.5 font-sans text-[14px] leading-none tracking-[0.08em] text-[#333] no-underline outline-none transition-opacity duration-200 ease-out hover:opacity-60 focus-visible:ring-2 focus-visible:ring-[#333] motion-reduce:transition-none";
+  "group inline-flex w-fit items-center gap-2 border-b border-[#333] pb-1.5 font-sans text-[14px] leading-none tracking-[0.12em] text-[#333] no-underline outline-none transition-opacity duration-200 ease-out hover:opacity-60 focus-visible:ring-2 focus-visible:ring-[#333] motion-reduce:transition-none";
 
 /** bottom のみの sticky は Flex 内で効かないことが多いので、top を「下端固定」相当に計算する */
 function OverviewSticky({ children }: { children: ReactNode }) {
@@ -81,26 +87,31 @@ export default function WorkDetail() {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                  <h2 className="font-sans text-[16px] leading-none text-[#333]">ROLE</h2>
-                  {/* WORK 一覧のホバーツールチップと同じ見た目（1 項目 1 行＋色付きの丸） */}
+                <div className="flex flex-col gap-2">
+                  <h2 className={META_LABEL}>ROLE</h2>
+                  {/*
+                    WORK 一覧のホバーツールチップと同じ見た目（1 項目 1 行＋色付きの丸）。
+                    地色は ul ではなく項目ごとに敷く（ul に敷くと 1 枚の面になる）。
+                  */}
                   <RoleList
                     roles={detail.roles}
-                    className="w-fit max-w-full font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black"
+                    className="font-sans text-[13px] leading-[1.6] tracking-[0.04em] text-[#333]"
+                    itemClassName="bg-white"
                   />
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                  <h2 className="font-sans text-[16px] leading-none text-[#333]">YEAR / DURATION</h2>
-                  <p className="w-fit max-w-full bg-white font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black">
-                    {detail.yearDuration}
+                <div className="flex flex-col gap-2">
+                  <h2 className={META_LABEL}>YEAR / DURATION</h2>
+                  {/* 地色を行ごとに切りたいので、span（inline）に載せる */}
+                  <p>
+                    <span className={META_VALUE}>{detail.yearDuration}</span>
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                  <h2 className="font-sans text-[16px] leading-none text-[#333]">Tools</h2>
-                  <p className="w-fit max-w-full bg-white font-sans text-[13px] leading-[1.5] tracking-[0.04em] text-black">
-                    {detail.tools.join(", ")}
+                <div className="flex flex-col gap-2">
+                  <h2 className={META_LABEL}>TOOLS</h2>
+                  <p>
+                    <span className={META_VALUE}>{detail.tools.join(", ")}</span>
                   </p>
                 </div>
 
