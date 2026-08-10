@@ -5,6 +5,7 @@ import work3Img from "../assets/works/work_3/work_3_2.webp";
 import work4Img from "../assets/works/work_4/work_4_1.webp";
 
 import work2Img from "../assets/works/work_2/work_2_5.webp";
+import work5Img from "../assets/works/work_5/work_5_2.webp";
 import work6Img from "../assets/works/work_6/work_6_1.webp";
 
 export type WorkItem = {
@@ -36,8 +37,7 @@ const workItemThumbs: { id: string; thumbSrc?: string }[] = [
   { id: "work_2", thumbSrc: work2Img },
   { id: "work_3", thumbSrc: work3Img },
   { id: "work_4", thumbSrc: work4Img },
-  // サムネイル未設定（掲載を取り下げたメインビジュアルと同一画像だったため）
-  { id: "work_5" },
+  { id: "work_5", thumbSrc: work5Img },
   // 実サイトは掲載できないので、案件を一語で示すキーカードを用意した
   { id: "work_6", thumbSrc: work6Img },
 ];

@@ -11,6 +11,8 @@ import work2Gallery8 from "../assets/works/work_2/work_2_8.webp";
 import work4Gallery2 from "../assets/works/work_4/work_4_2.webp";
 import work4Gallery3 from "../assets/works/work_4/work_4_3.webp";
 
+import work5Gallery2 from "../assets/works/work_5/work_5_2.webp";
+
 import work1Gallery1 from "../assets/works/work_1/work_1_1.webp";
 import work1Gallery2 from "../assets/works/work_1/work_1_2.webp";
 import work1Gallery3 from "../assets/works/work_1/work_1_3.webp";
@@ -173,9 +175,10 @@ export const workDetails: Record<string, WorkDetail> = {
     roles: ["UI Design", "UX Design", "Information Architecture"],
     yearDuration: "2024/06 - 2025/01",
     tools: ["Figma", "FigJam"],
-    // メインビジュアルは掲載を取り下げ済み（現行サイトから撤去されており、
+    // 当初のメインビジュアルは掲載を取り下げ済み（現行サイトから撤去されており、
     // クライアント要望で当初案から変わった経緯があるため実績として示さない）。
-    // 差し替え候補は絞り込み UI や管理画面など、本文で触れている領域。
+    // 代わりに公開中のトップ画面をモックに載せた 1 枚を使う。
+    galleryImages: [work5Gallery2],
     siteUrl: "https://recpr.jp/jobOpenings",
     sections: [
       {
