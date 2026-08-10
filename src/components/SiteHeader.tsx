@@ -54,9 +54,10 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
         {word("ABOUT")}
         {word("ME")}
       </Link>
+      {/* セクション見出しと同じ語にする（以前は RECENT WORKS で単複も割れていた） */}
       <Link to="/#work" className={navLinkClass} onClick={onNavigate}>
-        {word("RECENT")}
-        {word("WORKS")}
+        {word("WORK")}
+        {word("INDEX")}
       </Link>
       <Link to="/contact" className={navLinkClass} onClick={onNavigate}>
         {word("GET IN")}
