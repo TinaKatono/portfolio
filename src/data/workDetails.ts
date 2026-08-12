@@ -61,12 +61,14 @@ export const workDetails: Record<string, WorkDetail> = {
     // ヒアリング開始から納品まで約 2 週間で、5 月中に完結した案件。
     // 他案件は範囲表記だが、ここは単月にしておく方が短納期であることが伝わる。
     yearDuration: "2026/05",
-    tools: ["Figma", "Next.js", "Cursor"],
+    // 技術構成（Next.js など）は本文で触れる。ここに並べると「その言語を書ける」と
+    // 読まれるため、Tools には自分が操作した道具だけを載せる。
+    tools: ["Figma", "Photoshop", "Cursor"],
     galleryImages: [work1Gallery1, work1Gallery2, work1Gallery3],
     siteUrl: "https://www.sachiaw.com/",
     sections: [
       {
-        ja: "仲介会社を介してご依頼いただいた、ファッションアトリエのブランドサイト新規制作です。ヒアリングからデザイン、コピーライティング、実装、素材選定、公開作業までを一人で担当しました。\n\nヒアリング開始から納品までおよそ2週間という短い期間だったため、Figmaではワイヤーフレームと簡易のデザインサンプルまでを固め、その段階で実装に着手。以降はデザインと実装を並行させ、静的なカンプではなく実画面でご確認いただく進め方に切り替えました。カンプの往復を減らし、限られた時間を体験の質そのものに充てることを優先した判断です。",
+        ja: "仲介会社を介してご依頼いただいた、ファッションアトリエのブランドサイト新規制作案件です。ヒアリングからデザイン、コピーライティング、実装、素材選定、公開作業までを一人で担当しました。\n\nヒアリング開始から納品までおよそ2週間という短い期間だったため、Figmaではワイヤーフレームと簡易のデザインサンプルまでを固め、その段階で実装に着手。以降はデザインと実装を並行させ、静的なカンプではなく実画面でご確認いただく進め方に切り替えました。カンプの往復を減らし、限られた時間を体験の質そのものに充てることを優先した判断です。",
         en: "A new brand website for a fashion atelier, commissioned through an agency. I owned the entire process on my own—from the initial hearing to design, copywriting, implementation, asset selection, and launch.\n\nWith roughly two weeks from the first hearing to delivery, I locked only the wireframes and light design samples in Figma before moving into implementation. From there I ran design and build in parallel, reviewing on live screens rather than static mockups. Cutting down the round trips on comps let me spend the limited time on the quality of the experience itself.",
       },
       {
@@ -74,8 +76,8 @@ export const workDetails: Record<string, WorkDetail> = {
         en: "The intended audience is women aged fifty and above with a settled, discerning eye—from those who love fashion deeply as a lifelong interest to those stepping into building an expression or a brand of their own. Assuming a readership with high standards for quality, I built the tone around the atmosphere of an atelier: luxurious, yet never intimidating.\n\nFor type, I chose Antic Didone for the Latin headings and Zen Old Mincho for the Japanese. Antic Didone is a Didone serif with sharp thick-to-thin contrast, part of the lineage long used by fashion magazine mastheads, lending poise and tension to a phrase as short as \"Beyond the Surface.\" For Japanese, an old-style Mincho with classical bones is paired with generous letter- and line-spacing, so that even longer passages keep a quiet, well-spaced calm. The intent was to build a sense of formality through typeface and negative space rather than added ornament.",
       },
       {
-        ja: "「Beyond the Surface.（表層を超えて）」をはじめとするコピーは、ブランドの思想である「構造から、思想から、すべてをデザインする」という考え方を一語で受け止められる言葉を探すところから設計しました。案出しには生成AIを併用し、ブランドの温度に合うものを選び取ったうえで、語感と字数を整えています。クライアント提供の写真以外のビジュアルもこちらで選定し、素材・光・余白のトーンをサイト全体で揃えました。\n\n実装はCursorを中心に進め、タイポグラフィの詰めや余白の微調整といった精度が要る部分は手作業でコーディングしています。短期集中の進行でしたが、最終的にクライアントからは「想像していたよりかなりクオリティが高い」とのお言葉をいただきました。",
-        en: "The copy, including \"Beyond the Surface.\", started from the search for words that could hold the brand's own philosophy—designing everything from structure and from thought—in a single line. I used generative AI to widen the pool of candidates, then selected what matched the brand's temperature and tuned the wording and length. Every visual beyond the client-supplied photography was also sourced on my side, aligning material, light, and negative space across the whole site.\n\nImplementation ran primarily in Cursor, with the parts that demand precision—typographic tightening, fine adjustments to spacing—hand-coded. Despite the intensive schedule, the client's closing feedback was that the quality was \"far higher than they had imagined.\"",
+        ja: "「Beyond the Surface.（表層を超えて）」をはじめとするコピーは、ブランドの思想である「構造から、思想から、すべてをデザインする」という考え方を一語で受け止められる言葉を探すところから設計しました。案出しには生成AIを併用し、ブランドの温度に合うものを選び取ったうえで、語感と字数を整えています。クライアント提供の写真以外のビジュアルもこちらで選定し、素材・光・余白のトーンをサイト全体で揃えました。\n\n構成にはNext.jsを採用し、実装はCursorを中心に進めました。タイポグラフィの詰めや余白の微調整といった精度が要る部分は手作業でコーディングしています。短期集中の進行でしたが、最終的にクライアントからは「想像していたよりかなりクオリティが高い」とのお言葉をいただきました。",
+        en: "The copy, including \"Beyond the Surface.\", started from the search for words that could hold the brand's own philosophy—designing everything from structure and from thought—in a single line. I used generative AI to widen the pool of candidates, then selected what matched the brand's temperature and tuned the wording and length. Every visual beyond the client-supplied photography was also sourced on my side, aligning material, light, and negative space across the whole site.\n\nThe site is built on Next.js, with implementation running primarily in Cursor and the parts that demand precision—typographic tightening, fine adjustments to spacing—hand-coded. Despite the intensive schedule, the client's closing feedback was that the quality was \"far higher than they had imagined.\"",
       },
     ],
   },
@@ -132,12 +134,12 @@ export const workDetails: Record<string, WorkDetail> = {
     roles: ["UI Design", "Writing", "Frontend Dev(Cursor)"],
     // 実作業は約 2 週間。Sachi と同じく、短納期であることが伝わるよう単月表記にしている。
     yearDuration: "2026/04",
-    tools: ["Figma", "Cursor"],
+    tools: ["Figma", "Photoshop", "Cursor"],
     galleryImages: [work4Gallery1, work4Gallery2, work4Gallery3],
     siteUrl: "https://www.saikaimatsunaga.com/",
     sections: [
       {
-        ja: "長崎県西海市を中心に、砂防工事や道路舗装などの公共事業を担う建設会社様のコーポレートサイトリニューアルです。トーン＆マナーの整理から画面設計、ライティング、実装・公開までを一貫して担当しました。\n\n制作期間はおよそ2週間。加えて、参照できる既存の情報も、使用できる写真素材も限られた状態からのスタートでした。支給されていたのはロゴのみで、それ以外は自分で集めるかつくるかを、その都度判断していく必要がありました。",
+        ja: "長崎県西海市で砂防工事や道路舗装などの公共事業を担う建設会社様の、コーポレートサイトリニューアル案件です。トーン＆マナーの整理から画面設計、ライティング、実装・公開までを一貫して担当しました。\n\n制作期間はおよそ2週間。加えて、参照できる既存の情報も、使用できる写真素材も限られた状態からのスタートでした。支給されていたのはロゴのみで、それ以外は自分で集めるかつくるかを、その都度判断していく必要がありました。",
         en: "A corporate website renewal for a construction company handling public works—erosion control, road paving—primarily in Saikai City, Nagasaki. I was responsible for the entire process: defining the tone and manner, screen design, copywriting, implementation, and launch.\n\nThe build ran to roughly two weeks. On top of that, both the existing reference material and the usable photography were scarce. The logo was the only asset provided; everything else was a decision, case by case, about whether to source it or make it.",
       },
       {
@@ -197,7 +199,8 @@ export const workDetails: Record<string, WorkDetail> = {
     titleJa: "社内イベント管理アプリ campai の企画・個人開発",
     roles: ["Planning", "UI Design", "UX Design", "Full-stack Dev(Claude Code)"],
     yearDuration: "2026/04 - 2026/05",
-    tools: ["Next.js", "Prisma", "SQLite", "Slack Webhook", "Claude Code"],
+    // 構成（Next.js / Prisma / SQLite）は本文に記載。Tools は操作した道具のみ。
+    tools: ["Figma", "Claude Code"],
     /*
       並び順は本文と対応させている。
       1 枚目 = ロゴのキーカード（一覧のサムネイルと同じ絵）→ 導入のセクション、
@@ -221,8 +224,8 @@ export const workDetails: Record<string, WorkDetail> = {
     ],
     sections: [
       {
-        ja: "社内の飲み会・歓送迎会の出欠管理を Slack のやりとりから置き換える社内向け Web アプリを、企画から実装まで個人で制作しました。きっかけは幹事業務の属人化です。締切前の未回答者への声かけ、食の制限の個別確認、当日の人数把握といった細かな調整がすべて幹事に集中し、本来注力すべき企画や場選びに時間を割けない状態が続いていました。\n\nリマインドの自動化と参加者情報の一元管理によって、幹事が「調整」ではなく「企画」に集中できる状態をつくることを出発点に設計しています。\n\nテーマカラーは、飲み会の定番であるビールの黄金色から連想したイエロー。業務ツールらしい硬さを避け、開いた瞬間に集まりのわくわくを感じてもらう意図があります。お酒が得意でない人も、こういう場が少し苦手な人も、みんなでゆるっと乾杯を楽しめますように、という思いをこの色にのせています。",
-        en: "I planned and built this internal web app on my own, end to end, to replace the Slack-based workflow for managing attendance at company parties and welcome/farewell gatherings. The trigger was how much of the work fell on a single organizer: chasing unanswered RSVPs before the deadline, confirming dietary restrictions one person at a time, and tracking head counts on the day. This coordination overhead consistently crowded out the work that actually matters—planning the event and choosing the venue.\n\nI designed the product around one goal: automate the reminders and centralize participant information so that the organizer can spend their time planning rather than chasing logistics.\n\nThe theme color is a yellow that grew out of the golden hue of beer—the drink that comes to mind first at any gathering. Over the stiffness of a typical business tool, I wanted the fun of getting together to come through the moment the app opens. And a quiet wish rides along in that color, too: that everyone—those who don't really drink, or find these occasions a little much—can just kick back and enjoy the same table.",
+        ja: "社内の飲み会・歓送迎会の出欠管理を Slack のやりとりから置き換える社内向け Web アプリを、企画から実装まで個人で制作しました。きっかけは幹事業務の属人化です。締切前の未回答者への声かけ、食の制限の個別確認、当日の人数把握といった細かな調整がすべて幹事に集中し、本来注力すべき企画や場選びに時間を割けない状態が続いていました。\n\nリマインドの自動化と参加者情報の一元管理によって、幹事が「調整」ではなく「企画」に集中できる状態をつくることを出発点に設計しています。構成は Next.js と Prisma、データベースは SQLite。実装は Claude Code を用いて進めました。\n\nテーマカラーは、飲み会の定番であるビールの黄金色から連想したイエロー。業務ツールらしい硬さを避け、開いた瞬間に集まりのわくわくを感じてもらう意図があります。お酒が得意でない人も、こういう場が少し苦手な人も、みんなでゆるっと乾杯を楽しめますように、という思いをこの色にのせています。",
+        en: "I planned and built this internal web app on my own, end to end, to replace the Slack-based workflow for managing attendance at company parties and welcome/farewell gatherings. The trigger was how much of the work fell on a single organizer: chasing unanswered RSVPs before the deadline, confirming dietary restrictions one person at a time, and tracking head counts on the day. This coordination overhead consistently crowded out the work that actually matters—planning the event and choosing the venue.\n\nI designed the product around one goal: automate the reminders and centralize participant information so that the organizer can spend their time planning rather than chasing logistics. It runs on Next.js with Prisma and SQLite, built using Claude Code.\n\nThe theme color is a yellow that grew out of the golden hue of beer—the drink that comes to mind first at any gathering. Over the stiffness of a typical business tool, I wanted the fun of getting together to come through the moment the app opens. And a quiet wish rides along in that color, too: that everyone—those who don't really drink, or find these occasions a little much—can just kick back and enjoy the same table.",
       },
       {
         ja: "設計上もっとも重視したのは、外国籍社員の増加にともなって多様化した食の制限への対応です。ハラール・ビーガン・アレルギーなどを社員ごとのプロフィールとして登録し、幹事が一覧で把握できるようにしました。情報が共有されないまま会場やコースが決まると、参加しづらさを感じる社員が生まれてしまう。これを運用ではなく仕組みで防ぐことを狙っています。あわせて食の好き嫌いやアルコール耐性、店の雰囲気の好みも登録できるようにし、イベント作成画面で統計として表示することで、店選びの判断材料が自然と手元に揃う構成にしました。\n\n出欠回答には締切カウントダウンと自動リマインドを、終了後には5段階評価と自由コメントによるフィードバック収集を実装。アンケートは複数設問と匿名モードに対応させています。「お酒が飲めないけれど言いづらい」「正直あの店は苦手だった」といった声が埋もれるとイベントは形骸化していくため、匿名で本音を出せる経路を意図的に用意しました。通知は Slack Webhook 連携、カレンダー登録は ICS ダウンロード、移動中の確認を見込んで PWA 対応も入れています。",
