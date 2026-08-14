@@ -25,6 +25,8 @@ import {
   META_LABEL,
   SCROLL_HINT_MARK,
 } from "./components/brand";
+import aboutPhoto from "./assets/about/About_1.webp";
+import aboutPhotoHover from "./assets/about/About_2.webp";
 import { RoleList } from "./components/RoleList";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
@@ -939,13 +941,13 @@ function TrioAtRest({
  * 「何ができる人か」「なぜそう言えるか」が順に分かる構成にしている。
  * 段落は \n\n で区切る（whitespace-pre-line で描画）。
  */
-const ABOUT_JA = `東京を拠点に、UI/UXデザインとフロントエンド実装の両方を担当しているウェブデザイナーです。エンジニア主体の開発会社に所属し、要件を整える段階から画面をつくり、実装して公開するところまでを一人の視点で通すことを得意としています。
+const ABOUT_JA = `東京を拠点に、UI/UXデザインを軸に活動しているウェブデザイナーです。エンジニア主体の開発会社に所属し、要件を整える段階から画面をつくるところまでを一続きで考えることを大切にしています。規模によっては、画面の実装や公開まで自分の手で進めることもあります。
 
 キャリアはアパレルECのフロントエンド実装から始まりました。デザインとの1pxのズレも指摘される環境で、細部の精度がそのまま印象を左右することを叩き込まれています。その後、医療DXや採用メディアなど複数のシステムが絡むプロダクトで、要件定義や情報設計を担うようになりました。つくる手前の構造を詰められることと、最後の1pxを詰められること。この両方を持っていることが自分の軸だと考えています。
 
 近年はCursorやClaude Codeを実務に取り入れ、デザインと実装を並行させる進め方も試しています。手を動かす速度が上がったぶん、「何をつくるべきか」を考える時間に充てられるようになりました。表層を整えるだけでなく、その裏側にあるデータや運用まで含めて、破綻しない構造をつくることに関心があります。`;
 
-const ABOUT_EN = `A web designer based in Tokyo, working across both UI/UX design and frontend implementation. At an engineer-driven development company, my strength is carrying a project through a single lens—from shaping the requirements, to designing the screens, to building and shipping them.
+const ABOUT_EN = `A web designer based in Tokyo, working primarily in UI/UX design. At an engineer-driven development company, what I value is thinking through a project as one continuous thread—from shaping the requirements to designing the screens. Depending on the scale, I also take the build and launch into my own hands.
 
 My career began in frontend implementation for apparel e-commerce, in an environment where even a single pixel of deviation from the design would be flagged. That taught me how directly the precision of small details shapes an impression. I later moved into requirements definition and information architecture on products spanning multiple interconnected systems, in fields such as healthcare DX and recruitment media. Being able to resolve the structure before anything is built, and to resolve the final pixel—holding both is what I consider my core.
 
@@ -980,6 +982,19 @@ const ABOUT_SKILLS = [
   { label: "TOOLS", items: ["Figma", "FigJam", "Studio", "Cursor", "Claude Code"] },
 ] as const;
 
+/**
+ * 写真の右に添えるプロフィール。スキル一覧と同じ「ラベル＋値」の体裁に揃える。
+ * 事実を並べる場所なので、盛らずに短く。
+ */
+const ABOUT_PROFILE = [
+  // ロゴの TINA KATONO は対外的な表記。ここは本名なので、ひらがなで素のまま置く。
+  { label: "NAME", value: "かとうの ちな" },
+  { label: "BORN", value: "1995/1/15" },
+  { label: "FROM", value: "愛知県出身　東京都在住" },
+  // TODO: 趣味は本人にしか書けないので要記入。空文字のあいだは行ごと出さない。
+  { label: "INTERESTS", value: "" },
+] as const;
+
 function AboutGrid() {
   // 見出しと本文は横並びなので、片方の交差を両方の起点にする
   const [revealRef, revealed] = useRevealOnce<HTMLDivElement>();
@@ -1000,16 +1015,60 @@ function AboutGrid() {
         </div>
       </div>
       <div className="col-span-12 flex min-w-0 flex-col gap-10 pb-0 md:pb-16 md:col-span-6 md:col-start-7">
+        {/*
+          写真とプロフィール。狭い画面では縦積み、sm 以上で横並び。
+          写真は縦長なので幅で比率を決め、プロフィール側は残りを使う。
+        */}
+        <div
+          className={`flex flex-col gap-6 sm:flex-row sm:items-end sm:gap-8 ${revealClass(revealed)}`}
+          style={revealDelay(1, revealed)}
+        >
+          {/*
+            ホバー（とキーボードフォーカス）で 2 枚目に入れ替える。
+            2 枚を重ねて opacity で切り替えるので、切り替わる瞬間に高さが動かない。
+            1 枚目を通常フローに置いて枠の高さを決め、2 枚目を absolute で重ねる。
+            触覚デバイスにはホバーがないため、これは「見つけた人だけの仕掛け」の扱い。
+            情報は載せない（読めなくて困るものを入れないこと）。
+          */}
+          <div className="group relative w-full shrink-0 overflow-hidden rounded-[24px] border-[1px] border-[#b0bec5] sm:w-[46%]">
+            <img
+              src={aboutPhoto}
+              alt=""
+              className="block w-full object-cover transition-opacity duration-500 ease-out group-hover:opacity-0 group-focus-within:opacity-0 motion-reduce:transition-none"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              src={aboutPhotoHover}
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <dl className="m-0 flex min-w-0 flex-1 flex-col gap-4">
+            {ABOUT_PROFILE.filter((row) => row.value).map((row) => (
+              <div key={row.label} className="flex flex-col gap-1.5">
+                <dt className={META_LABEL}>{row.label}</dt>
+                <dd className="m-0 font-sans text-[14px] leading-[1.7] tracking-[0.04em] text-[#333]">
+                  {row.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
         <div className="flex flex-col gap-6 text-[#333]">
           <p
             className={`w-full whitespace-pre-line font-jp md:text-[16px] text-[14px] font-medium md:leading-[1.8] leading-[2] tracking-[0.08em] ${revealClass(revealed)}`}
-            style={revealDelay(1, revealed)}
+            style={revealDelay(2, revealed)}
           >
             {ABOUT_JA}
           </p>
           <p
             className={`w-full whitespace-pre-line font-sans text-[14px] leading-[1.8] md:leading-[1.5] tracking-[0.08em] ${revealClass(revealed)}`}
-            style={revealDelay(2, revealed)}
+            style={revealDelay(3, revealed)}
           >
             {ABOUT_EN}
           </p>
@@ -1024,7 +1083,7 @@ function AboutGrid() {
             <div
               key={group.label}
               className={`flex flex-col gap-2 ${revealClass(revealed)}`}
-              style={revealDelay(3 + i, revealed)}
+              style={revealDelay(4 + i, revealed)}
             >
               <dt className={META_LABEL}>
                 {group.label}
