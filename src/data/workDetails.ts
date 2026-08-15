@@ -85,7 +85,7 @@ export const workDetails: Record<string, WorkDetail> = {
   work_6: {
     title: "Frontend Implementation for Apparel E-Commerce",
     titleJa: "アパレルECサイトのフロントエンド実装",
-    roles: ["UI実装", "フロントエンド実装（HTML / CSS / jQuery）"],
+    roles: ["UI実装", "インタラクション実装"],
     yearDuration: "2023/04 - 2024/05",
     tools: ["Adobe XD", "Figma", "HTML", "CSS", "JavaScript", "jQuery"],
     sections: [

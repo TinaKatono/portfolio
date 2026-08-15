@@ -19,7 +19,7 @@ const ROLE_COLORS: Record<string, string> = {
   要件定義: BRAND_COLORS.yellow,
   企画: BRAND_COLORS.yellow,
   "フロントエンド実装（Cursor）": BRAND_COLORS.yellow,
-  "フロントエンド実装（HTML / CSS / jQuery）": BRAND_COLORS.yellow,
+  インタラクション実装: BRAND_COLORS.yellow,
   "フルスタック開発（Claude Code）": BRAND_COLORS.yellow,
   // 掲載停止中の案件（workDetails でコメントアウト）。復活させたときに色が崩れないよう残す
   "ノーコード実装（Studio）": BRAND_COLORS.yellow,
