@@ -2,21 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
+/*
+  scroll-behavior: smooth をここで全体に掛けないこと。
+  ブラウザの「戻る」による位置復元まで滑らかスクロールになり、案件ページから
+  戻るたびに画面最上部から前回位置まで延々と流れていく（実測で 0 → 4689px を
+  アニメーションしていた）。滑らかにしたいのはフッターの「先頭へ戻る」と
+  ハッシュ遷移だけなので、それぞれの呼び出し側で behavior: "smooth" を指定する。
+*/
 
 body {
   margin: 0;
   min-height: 100vh;
   color: #333;
-  background: #fff;
+  /*
+    各ページと同じ地色にしておく。白のままだと、ページ切り替えでページ全体を
+    透明にしたときに下から白が抜けて、一瞬だけ画面が白く飛ぶ。
+  */
+  background: #f5f7f8;
 }
 
 /* WORK 直下マルqueeの横スクロールは Top.tsx 側で rAF により黒／白を同一 transform で駆動 */

@@ -13,15 +13,18 @@ export function SiteFooter({ className }: SiteFooterProps) {
   /**
    * トップページで押したときは遷移先が同じなので何も起きない。
    * クリックできる見た目である以上は反応を返したいので、ページ先頭へスクロールさせる。
-   * スムーススクロールは index.css の `html { scroll-behavior: smooth }` が担当し、
-   * prefers-reduced-motion では同ファイルで auto に落ちるため、ここでの分岐は不要。
+   * 滑らかさはここで指定する。html 全体に scroll-behavior: smooth を掛けると、
+   * ブラウザの戻る操作による位置復元まで滑らかになってしまうため
+   * （毎回、最上部から前回位置まで流れて見える）。
+   * prefers-reduced-motion のときは即座に移動する。
    */
   const onLogoClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (pathname !== "/") return;
     // 修飾キー付き（別タブで開く等）はブラウザの既定動作に任せる
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
-    window.scrollTo({ top: 0, left: 0 });
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, left: 0, behavior: reduce ? "auto" : "smooth" });
   };
 
   return (
