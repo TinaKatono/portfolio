@@ -11,17 +11,18 @@ import { BRAND_COLORS } from "./brand";
  * 役割を追加するときは、同じ案件に並ぶ他の役割と色がぶつからないか見ること。
  */
 const ROLE_COLORS: Record<string, string> = {
-  "UI Design": BRAND_COLORS.pink,
-  "UX Design": BRAND_COLORS.blue,
-  "Information Architecture": BRAND_COLORS.green,
-  Writing: BRAND_COLORS.green,
-  "UI Implementation": BRAND_COLORS.pink,
-  "Requirements Definition": BRAND_COLORS.yellow,
-  Planning: BRAND_COLORS.yellow,
-  "Frontend Dev(Cursor)": BRAND_COLORS.yellow,
-  "Frontend Dev(HTML/CSS/jQuery)": BRAND_COLORS.yellow,
-  "Full-stack Dev(Claude Code)": BRAND_COLORS.yellow,
-  "No-code Dev(Studio)": BRAND_COLORS.yellow,
+  UIデザイン: BRAND_COLORS.pink,
+  UXデザイン: BRAND_COLORS.blue,
+  情報設計: BRAND_COLORS.green,
+  ライティング: BRAND_COLORS.green,
+  UI実装: BRAND_COLORS.pink,
+  要件定義: BRAND_COLORS.yellow,
+  企画: BRAND_COLORS.yellow,
+  "フロントエンド実装（Cursor）": BRAND_COLORS.yellow,
+  "フロントエンド実装（HTML / CSS / jQuery）": BRAND_COLORS.yellow,
+  "フルスタック開発（Claude Code）": BRAND_COLORS.yellow,
+  // 掲載停止中の案件（workDetails でコメントアウト）。復活させたときに色が崩れないよう残す
+  "ノーコード実装（Studio）": BRAND_COLORS.yellow,
 };
 
 const DOT_COLORS = [

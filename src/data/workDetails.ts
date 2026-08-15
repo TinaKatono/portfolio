@@ -57,7 +57,7 @@ export const workDetails: Record<string, WorkDetail> = {
   work_1: {
     title: "Brand Website for a Creative Atelier",
     titleJa: "ファッションアトリエのブランドサイト制作",
-    roles: ["UI Design", "UX Design", "Writing", "Frontend Dev(Cursor)"],
+    roles: ["UIデザイン", "UXデザイン", "ライティング", "フロントエンド実装（Cursor）"],
     // ヒアリング開始から納品まで約 2 週間で、5 月中に完結した案件。
     // 他案件は範囲表記だが、ここは単月にしておく方が短納期であることが伝わる。
     yearDuration: "2026/05",
@@ -85,7 +85,7 @@ export const workDetails: Record<string, WorkDetail> = {
   work_6: {
     title: "Frontend Implementation for Apparel E-Commerce",
     titleJa: "アパレルECサイトのフロントエンド実装",
-    roles: ["UI Implementation", "Frontend Dev(HTML/CSS/jQuery)"],
+    roles: ["UI実装", "フロントエンド実装（HTML / CSS / jQuery）"],
     yearDuration: "2023/04 - 2024/05",
     tools: ["Adobe XD", "Figma", "HTML", "CSS", "JavaScript", "jQuery"],
     sections: [
@@ -104,10 +104,10 @@ export const workDetails: Record<string, WorkDetail> = {
     title: "Integrated Medical Supply Chain UX",
     titleJa: "医療サプライチェーンのUX・情報設計",
     roles: [
-      "UI Design",
-      "UX Design",
-      "Information Architecture",
-      "Requirements Definition",
+      "UIデザイン",
+      "UXデザイン",
+      "情報設計",
+      "要件定義",
     ],
     yearDuration: "2025/07 - 2025/10",
     tools: ["Figma"],
@@ -131,7 +131,7 @@ export const workDetails: Record<string, WorkDetail> = {
   work_4: {
     title: "Corporate Website for a Construction Company",
     titleJa: "建設会社のコーポレートサイト作成",
-    roles: ["UI Design", "Writing", "Frontend Dev(Cursor)"],
+    roles: ["UIデザイン", "ライティング", "フロントエンド実装（Cursor）"],
     // 実作業は約 2 週間。Sachi と同じく、短納期であることが伝わるよう単月表記にしている。
     yearDuration: "2026/04",
     tools: ["Figma", "Photoshop", "Cursor"],
@@ -156,7 +156,7 @@ export const workDetails: Record<string, WorkDetail> = {
   // "fadila-oil": {
   //   title: "FADILA OIL",
   //   titleJa: "ファディラ オイル（仮）",
-  //   roles: ["UI Design", "UX Design", "Frontend Dev(Cursor)"],
+  //   roles: ["UIデザイン", "UXデザイン", "フロントエンド実装（Cursor）"],
   //   yearDuration: "2023/11 - 2024/04",
   //   tools: ["Figma", "Cursor", "Notion"],
   //   sections: [
@@ -174,7 +174,7 @@ export const workDetails: Record<string, WorkDetail> = {
   work_5: {
     title: "Recruitment Media & Management System",
     titleJa: "採用メディアと管理システムの開発設計",
-    roles: ["UI Design", "UX Design", "Information Architecture"],
+    roles: ["UIデザイン", "UXデザイン", "情報設計"],
     yearDuration: "2024/06 - 2025/01",
     tools: ["Figma", "FigJam"],
     // 当初のメインビジュアルは掲載を取り下げ済み（現行サイトから撤去されており、
@@ -197,7 +197,7 @@ export const workDetails: Record<string, WorkDetail> = {
   work_2: {
     title: "Internal Event Management App",
     titleJa: "社内イベント管理アプリ campai の企画・個人開発",
-    roles: ["Planning", "UI Design", "UX Design", "Full-stack Dev(Claude Code)"],
+    roles: ["企画", "UIデザイン", "UXデザイン", "フルスタック開発（Claude Code）"],
     yearDuration: "2026/04 - 2026/05",
     // 構成（Next.js / Prisma / SQLite）は本文に記載。Tools は操作した道具のみ。
     tools: ["Figma", "Claude Code"],
@@ -241,7 +241,7 @@ export const workDetails: Record<string, WorkDetail> = {
   // "task-holdings": {
   //   title: "TASK HOLDINGS",
   //   titleJa: "タスクホールディングス（仮）",
-  //   roles: ["UX Design", "No-code Dev(Studio)"],
+  //   roles: ["UXデザイン", "ノーコード実装（Studio）"],
   //   yearDuration: "2025/02 - 2025/05",
   //   tools: ["Figma", "Studio"],
   //   sections: [

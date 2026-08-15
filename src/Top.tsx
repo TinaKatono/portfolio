@@ -985,11 +985,11 @@ const ABOUT_SKILLS = [
   {
     label: "DESIGN",
     items: [
-      "UI Design",
-      "UX Design",
-      "Information Architecture",
-      "Requirements Definition",
-      "Writing",
+      "UIデザイン",
+      "UXデザイン",
+      "情報設計",
+      "要件定義",
+      "ライティング",
     ],
   },
   /** 手で書けるもの。実務で 1px 単位の再現を求められてきた領域 */
@@ -1095,7 +1095,7 @@ function AboutGrid() {
 
         {/*
           スキル一覧。案件を全部読まないと何ができる人か分からない状態を避けるために置いている。
-          見出し＋値の組は案件詳細ページのサイドバー（ROLE / Tools）と同じ体裁に揃えた。
+          見出し＋値の組は案件詳細ページのサイドバー（ROLE / TOOLS）と同じ体裁に揃えた。
         */}
         <dl className="m-0 flex flex-col gap-6">
           {ABOUT_SKILLS.map((group, i) => (
