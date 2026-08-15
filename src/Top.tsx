@@ -194,6 +194,14 @@ const FV_LINES = [
 const SPINNING_MARK = MARK_IMAGES[1];
 
 /**
+ * ヒーロー名の入場アニメを再生済みかどうか。**コンポーネントの外に置くのが要点。**
+ * 案件ページから戻ると <Top> は作り直されるため、ref や state だと毎回初期化されて
+ * アニメが再生されてしまう。モジュール変数なら同じページを開いているあいだ保持され、
+ * リロードや新しいタブでは初期化される。
+ */
+let heroIntroPlayed = false;
+
+/**
  * 一度だけ「画面に入った」ことを検知する。ABOUT / WORK の出現アニメーションの起点。
  * IntersectionObserver は交差の *変化* しか通知しないため、初期表示ですでに
  * 見えている場合を先に拾っておく（リロード位置によっては永久に出てこなくなる）。
@@ -463,22 +471,34 @@ function HeroTitleBlock({
   const katono = "KATONO";
   const katonoBaseMs = tina.length * HERO_INTRO_CHAR_STAGGER_MS + HERO_INTRO_WORD_GAP_MS;
 
+  /**
+   * 入場アニメを再生するかどうか。
+   * 案件ページから戻るたびに <Top> は作り直されるので、コンポーネント内の ref だけでは
+   * 毎回再生されてしまう（見るたびに待たされてうるさい）。モジュール変数で覚えておき、
+   * 同じページを開いているあいだは 2 回目以降を出さない。
+   * リロードや新しいタブでは初期化されるので、初回訪問の見せ場は残る。
+   */
+  const playIntro = !reduceMotion && !heroIntroPlayed;
+
   useEffect(() => {
     if (introDoneRef.current) return;
-    if (reduceMotion) {
+    if (!playIntro) {
       introDoneRef.current = true;
+      heroIntroPlayed = true;
       onTitleIntroComplete?.();
       return;
     }
     const el = lastCharRef.current;
     if (!el) {
       introDoneRef.current = true;
+      heroIntroPlayed = true;
       onTitleIntroComplete?.();
       return;
     }
     const finish = () => {
       if (introDoneRef.current) return;
       introDoneRef.current = true;
+      heroIntroPlayed = true;
       onTitleIntroComplete?.();
     };
     el.addEventListener("animationend", finish, { once: true });
@@ -497,7 +517,7 @@ function HeroTitleBlock({
       clearTimeout(t);
       el.removeEventListener("animationend", finish);
     };
-  }, [reduceMotion, onTitleIntroComplete, katono.length, katonoBaseMs]);
+  }, [playIntro, onTitleIntroComplete, katono.length, katonoBaseMs]);
 
   /**
    * 行が画面幅に収まる縮尺を求める。
@@ -559,9 +579,9 @@ function HeroTitleBlock({
     };
   }, [fontPx, shrink, mdUp]);
 
-  const charClass = reduceMotion
-    ? "inline-block"
-    : "inline-block animate-hero-char-in motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:blur-none";
+  const charClass = playIntro
+    ? "inline-block animate-hero-char-in motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:blur-none"
+    : "inline-block";
   /**
    * 図形を包む span は inline-block にしない。inline-block だと中のテキスト用ストラットの分だけ
    * span のベースラインがずれ、図形が文字より 0.37em ほど下がってしまう。
@@ -991,8 +1011,7 @@ const ABOUT_PROFILE = [
   { label: "NAME", value: "かとうの ちな" },
   { label: "BORN", value: "1995/1/15" },
   { label: "FROM", value: "愛知県出身　東京都在住" },
-  // TODO: 趣味は本人にしか書けないので要記入。空文字のあいだは行ごと出さない。
-  { label: "INTERESTS", value: "" },
+  { label: "INTERESTS", value: "動物、お笑い、編み物" },
 ] as const;
 
 function AboutGrid() {
