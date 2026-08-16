@@ -25,6 +25,7 @@ import {
   META_LABEL,
   SCROLL_HINT_MARK,
 } from "./components/brand";
+import { ChipList } from "./components/ChipList";
 import aboutPhoto from "./assets/about/About_1.webp";
 import aboutPhotoHover from "./assets/about/About_2.webp";
 import { RoleList } from "./components/RoleList";
@@ -1006,13 +1007,21 @@ const ABOUT_SKILLS = [
  * 写真の右に添えるプロフィール。スキル一覧と同じ「ラベル＋値」の体裁に揃える。
  * 事実を並べる場所なので、盛らずに短く。
  */
-const ABOUT_PROFILE = [
+type AboutProfileRow = {
+  label: string;
+  /** 単一の値。行全体に白地を敷く */
+  value?: string;
+  /** 複数の語。スキル一覧と同じく語ごとに白地を敷く */
+  items?: readonly string[];
+};
+
+const ABOUT_PROFILE: readonly AboutProfileRow[] = [
   // ロゴの TINA KATONO は対外的な表記。ここは本名なので、ひらがなで素のまま置く。
   { label: "NAME", value: "かとうの ちな" },
   { label: "BORN", value: "1995/1/15" },
   { label: "FROM", value: "愛知県出身　東京都在住" },
-  { label: "INTERESTS", value: "動物、お笑い、編み物" },
-] as const;
+  { label: "INTERESTS", items: ["動物", "お笑い", "編み物"] },
+];
 
 function AboutGrid() {
   // 見出しと本文は横並びなので、片方の交差を両方の起点にする
@@ -1067,14 +1076,27 @@ function AboutGrid() {
             />
           </div>
           <dl className="m-0 flex min-w-0 flex-1 flex-col gap-4">
-            {ABOUT_PROFILE.filter((row) => row.value).map((row) => (
-              <div key={row.label} className="flex gap-3 items-center">
-                <dt className={META_LABEL}>{row.label}</dt>
-                <dd className="m-0 font-sans text-[14px] leading-[1.6] tracking-[0.04em] text-[#333] bg-white w-fit">
-                  {row.value}
-                </dd>
-              </div>
-            ))}
+            {ABOUT_PROFILE.filter((row) => row.value || row.items?.length).map(
+              (row) => (
+                <div key={row.label} className="flex gap-3 items-center">
+                  <dt className={META_LABEL}>{row.label}</dt>
+                  {/* 複数の語を持つ行だけ、語ごとに白地を敷く（スキル一覧と同じ体裁） */}
+                  {row.items ? (
+                    /* dt に対応する dd を必ず置く（ChipList は span を返すので裸にしない） */
+                    <dd className="m-0">
+                      <ChipList
+                        items={row.items}
+                        className="font-sans text-[14px] leading-[1.6] tracking-[0.04em] text-[#333]"
+                      />
+                    </dd>
+                  ) : (
+                    <dd className="m-0 w-fit bg-white font-sans text-[14px] leading-[1.6] tracking-[0.04em] text-[#333]">
+                      {row.value}
+                    </dd>
+                  )}
+                </div>
+              )
+            )}
           </dl>
         </div>
 
@@ -1107,21 +1129,11 @@ function AboutGrid() {
               <dt className={META_LABEL}>
                 {group.label}
               </dt>
-              {/*
-                白地は「UIデザイン / UXデザイン」全体ではなく語ごとに敷く。
-                区切りまで白くすると 1 本の帯になって、いくつ挙げているのかが
-                読み取りにくい。案件詳細の MEMBERS の担当も同じ敷き方にしてある。
-                折り返しても行ごとに面を切るため box-decoration-clone を付ける。
-              */}
-              <dd className="m-0 font-sans text-[14px] leading-[1.7] tracking-[0.04em] text-[#333] [overflow-wrap:anywhere]">
-                {group.items.map((item, n) => (
-                  <span key={item}>
-                    <span className="box-decoration-clone break-keep bg-white">
-                      {item}
-                    </span>
-                    {n < group.items.length - 1 ? " / " : null}
-                  </span>
-                ))}
+              <dd className="m-0">
+                <ChipList
+                  items={group.items}
+                  className="font-sans text-[14px] leading-[1.7] tracking-[0.04em] text-[#333]"
+                />
               </dd>
             </div>
           ))}
