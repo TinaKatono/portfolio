@@ -1,5 +1,11 @@
 import { FormEvent, useState } from "react";
-import { BRAND_GAP, BRAND_TEXT, InlineMark, MARK_IMAGES } from "../components/brand";
+import {
+  BRAND_GAP,
+  BRAND_TEXT,
+  InlineMark,
+  MARK_IMAGES,
+  META_LABEL,
+} from "../components/brand";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
@@ -65,7 +71,7 @@ export default function Contact() {
 
           <form onSubmit={onSubmit} className="flex flex-col gap-8" noValidate>
             <div className="flex flex-col gap-2.5">
-              <label htmlFor="contact-name" className="font-sans text-[16px] leading-none text-[#333]">
+              <label htmlFor="contact-name" className={META_LABEL}>
                 NAME
               </label>
               <input
@@ -76,13 +82,13 @@ export default function Contact() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full border border-[#b0bec5] bg-white px-4 py-3 font-sans text-[14px] leading-[1.5] tracking-[0.04em] text-[#333] outline-none transition-[box-shadow] placeholder:text-[#90a4ae] focus-visible:ring-2 focus-visible:ring-[#333]/20"
+                className="w-full border border-[#b0bec5] bg-white rounded-[8px] px-4 py-3 font-sans text-[14px] leading-[1.5] tracking-[0.04em] text-[#333] outline-none transition-[box-shadow] placeholder:text-[#90a4ae] focus-visible:ring-2 focus-visible:ring-[#333]/20"
                 placeholder="Your name"
               />
             </div>
 
             <div className="flex flex-col gap-2.5">
-              <label htmlFor="contact-email" className="font-sans text-[16px] leading-none text-[#333]">
+              <label htmlFor="contact-email" className={META_LABEL}>
                 EMAIL
               </label>
               <input
@@ -93,13 +99,13 @@ export default function Contact() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-[#b0bec5] bg-white px-4 py-3 font-sans text-[14px] leading-[1.5] tracking-[0.04em] text-[#333] outline-none transition-[box-shadow] placeholder:text-[#90a4ae] focus-visible:ring-2 focus-visible:ring-[#333]/20"
+                className="w-full border border-[#b0bec5] bg-white rounded-[8px] px-4 py-3 font-sans text-[14px] leading-[1.5] tracking-[0.04em] text-[#333] outline-none transition-[box-shadow] placeholder:text-[#90a4ae] focus-visible:ring-2 focus-visible:ring-[#333]/20"
                 placeholder="you@example.com"
               />
             </div>
 
             <div className="flex flex-col gap-2.5">
-              <label htmlFor="contact-message" className="font-sans text-[16px] leading-none text-[#333]">
+              <label htmlFor="contact-message" className={META_LABEL}>
                 MESSAGE
               </label>
               <textarea
@@ -109,12 +115,12 @@ export default function Contact() {
                 rows={8}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="min-h-[12rem] w-full resize-y border border-[#b0bec5] bg-white px-4 py-3 font-jp text-[15px] font-medium leading-[1.8] tracking-[0.06em] text-[#333] outline-none transition-[box-shadow] placeholder:text-[#90a4ae] focus-visible:ring-2 focus-visible:ring-[#333]/20"
+                className="min-h-[12rem] w-full resize-y border border-[#b0bec5] bg-white rounded-[8px] px-4 py-3 font-jp text-[15px] leading-[1.8] tracking-[0.06em] text-[#333] outline-none transition-[box-shadow] placeholder:text-[#90a4ae] focus-visible:ring-2 focus-visible:ring-[#333]/20"
                 placeholder="お問い合わせ内容をご記入ください。"
               />
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 pt-2">
+            <div className="flex flex-wrap items-center gap-6 pt-2 justify-center md:justify-end">
               <button
                 type="submit"
                 className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-black bg-transparent px-12 font-sans text-[14px] font-normal uppercase tracking-[0.12em] text-[#333] transition-colors duration-200 ease-out hover:bg-[#333] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#333] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f5f7f8] motion-reduce:transition-none"
