@@ -88,26 +88,34 @@ export default function WorkDetail() {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <h2 className={META_LABEL}>ROLE</h2>
-                  {/*
-                    WORK 一覧のホバーツールチップと同じ見た目（1 項目 1 行＋色付きの丸）。
-                    地色は ul ではなく項目ごとに敷く（ul に敷くと 1 枚の面になる）。
-                  */}
-                  <RoleList
-                    roles={detail.roles}
-                    className="font-sans text-[13px] leading-[1.6] tracking-[0.04em] text-[#333]"
-                    itemClassName="bg-white"
-                  />
-                </div>
+                {/*
+                  担当は体制と 1 つにまとめてある。両方を別の欄に置くと、体制側の
+                  「私」が何の情報も持たず、担当は ROLE に書いてある、という
+                  重複した見え方になるため。
 
-                {/* 体制図。members を持つ案件だけ出す（枠だけ残さない） */}
+                  **体制が分かっている案件だけ MEMBERS にすること。** members が
+                  無いまま自分の行だけを出すと「一人でやった」と読めてしまうので、
+                  その場合は従来どおり ROLE として担当だけを出す。
+                */}
                 {detail.members?.length ? (
                   <div className="flex flex-col gap-2">
                     <h2 className={META_LABEL}>MEMBERS</h2>
-                    <MemberList members={detail.members} />
+                    <MemberList members={detail.members} roles={detail.roles} />
                   </div>
-                ) : null}
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <h2 className={META_LABEL}>ROLE</h2>
+                    {/*
+                      WORK 一覧のホバーツールチップと同じ見た目（1 項目 1 行＋色付きの丸）。
+                      地色は ul ではなく項目ごとに敷く（ul に敷くと 1 枚の面になる）。
+                    */}
+                    <RoleList
+                      roles={detail.roles}
+                      className="font-sans text-[13px] leading-[1.6] tracking-[0.04em] text-[#333]"
+                      itemClassName="bg-white"
+                    />
+                  </div>
+                )}
 
                 <div className="flex flex-col gap-2">
                   <h2 className={META_LABEL}>YEAR / DURATION</h2>
