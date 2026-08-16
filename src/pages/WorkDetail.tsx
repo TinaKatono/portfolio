@@ -13,6 +13,7 @@ import {
   META_LABEL,
   META_VALUE,
 } from "../components/brand";
+import { ChipList } from "../components/ChipList";
 import { MemberList } from "../components/MemberList";
 import { RoleList } from "../components/RoleList";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
@@ -127,8 +128,16 @@ export default function WorkDetail() {
 
                 <div className="flex flex-col gap-2">
                   <h2 className={META_LABEL}>TOOLS</h2>
+                  {/*
+                    複数の値なので、担当や ABOUT のスキルと同じく語ごとに白地を敷く。
+                    区切りまで白い 1 本の帯にすると、いくつ挙げているのかが読み取れない。
+                    値が 1 つの YEAR / DURATION は従来どおり META_VALUE のままでよい。
+                  */}
                   <p>
-                    <span className={META_VALUE}>{detail.tools.join(", ")}</span>
+                    <ChipList
+                      items={detail.tools}
+                      className="font-sans text-[13px] leading-[1.6] tracking-[0.04em] text-[#333]"
+                    />
                   </p>
                 </div>
 
