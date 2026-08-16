@@ -80,7 +80,7 @@ export const workDetails: Record<string, WorkDetail> = {
     titleJa: "ファッションアトリエのブランドサイト制作",
     roles: ["UIデザイン", "UXデザイン", "ライティング", "フロントエンド実装（Cursor）"],
     // 仲介会社経由の受注だが、制作は最初から最後まで自分ひとり
-    members: [{ label: "私", self: true }],
+    members: [{ label: "(私)", self: true }],
     // ヒアリング開始から納品まで約 2 週間で、5 月中に完結した案件。
     // 他案件は範囲表記だが、ここは単月にしておく方が短納期であることが伝わる。
     yearDuration: "2026/05",
@@ -113,7 +113,7 @@ export const workDetails: Record<string, WorkDetail> = {
     members: [
       { label: "デザイナー" },
       { label: "エンジニア" },
-      { label: "私", self: true },
+      { label: "(私)", self: true },
     ],
     yearDuration: "2023/04 - 2024/05",
     tools: ["Adobe XD", "Figma", "HTML", "CSS", "JavaScript", "jQuery"],
@@ -144,7 +144,7 @@ export const workDetails: Record<string, WorkDetail> = {
       { label: "PM" },
       { label: "サーバーサイド", count: 3 },
       { label: "フロントエンド", count: 3 },
-      { label: "私", self: true },
+      { label: "(私)", self: true },
     ],
     yearDuration: "2025/07 - 2025/10",
     tools: ["Figma"],
@@ -169,7 +169,7 @@ export const workDetails: Record<string, WorkDetail> = {
     title: "Corporate Website for a Construction Company",
     titleJa: "建設会社のコーポレートサイト作成",
     roles: ["UIデザイン", "ライティング", "フロントエンド実装（Cursor）"],
-    members: [{ label: "私", self: true }],
+    members: [{ label: "(私)", self: true }],
     // 実作業は約 2 週間。Sachi と同じく、短納期であることが伝わるよう単月表記にしている。
     yearDuration: "2026/04",
     tools: ["Figma", "Photoshop", "Cursor"],
@@ -218,7 +218,7 @@ export const workDetails: Record<string, WorkDetail> = {
       { label: "PM" },
       { label: "サーバーサイド", count: 2 },
       { label: "フロントエンド" },
-      { label: "私", self: true },
+      { label: "(私)", self: true },
     ],
     yearDuration: "2024/06 - 2025/01",
     tools: ["Figma", "FigJam"],
@@ -245,7 +245,7 @@ export const workDetails: Record<string, WorkDetail> = {
     // サイドバーの幅で「Claude / Code」と行またぎで割れる。
     titleJa: "社内イベント管理アプリ campai の企画・Claude\u00A0Code での個人開発",
     roles: ["企画", "UIデザイン", "UXデザイン", "フルスタック開発（Claude Code）"],
-    members: [{ label: "私", self: true }],
+    members: [{ label: "(私)", self: true }],
     yearDuration: "2026/04 - 2026/05",
     // 構成（Next.js / Prisma / SQLite）は本文に記載。Tools は操作した道具のみ。
     tools: ["Figma", "Claude Code"],

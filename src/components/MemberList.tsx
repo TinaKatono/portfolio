@@ -2,13 +2,23 @@ import { MARK_IMAGE_BLUE_EYES } from "./brand";
 import type { WorkMember } from "../data/workDetails";
 
 /**
- * 印の直径。1 行目の文字の高さ（13px × 1.6 ≒ 21px）とほぼ同じにしてあり、
- * 行の中で印だけが目立たない。役割名の方を読ませたいので、印は控えめでよい。
+ * 自分の印の直径。1 行目の文字の高さ（13px × 1.6 ≒ 21px）とほぼ同じ。
  */
-const AVATAR_SIZE = "1.25rem";
+const SELF_SIZE = "1.25rem";
 
-/** 印の中心を 1 行目の文字の中心に合わせるための微調整 */
-const AVATAR_NUDGE_Y = "0.05rem";
+/**
+ * 他のメンバーの丸の直径。自分の印より一回り小さくして、
+ * 並んだときに自分の行が沈まないようにしている。
+ */
+const OTHER_SIZE = "1rem";
+
+/**
+ * 印を置く枠。**幅と高さを固定するのが要点。**
+ * 自分と他のメンバーで印の寸法が違うので、枠なしで並べると
+ * 行ごとに役割名の開始位置がずれる。高さは 1 行目の文字の高さに合わせてあり、
+ * 中央寄せにしておけば寸法を変えても縦位置の微調整が要らない。
+ */
+const AVATAR_BOX = "flex h-[1.3rem] w-5 shrink-0 items-center justify-center";
 
 /**
  * 案件の体制と、そのなかでの自分の担当。**ROLE 欄と統合したもの。**
@@ -41,29 +51,21 @@ export function MemberList({
     <ul className="m-0 flex w-fit max-w-full list-none flex-col gap-3 rounded-[16px] mt-4">
       {members.map((member, i) => (
         <li key={`${member.label}-${i}`} className="flex items-start gap-3">
-          {member.self ? (
-            <img
-              src={MARK_IMAGE_BLUE_EYES}
-              alt=""
-              aria-hidden="true"
-              className="block shrink-0 object-contain"
-              style={{
-                width: AVATAR_SIZE,
-                height: AVATAR_SIZE,
-                marginTop: AVATAR_NUDGE_Y,
-              }}
-            />
-          ) : (
-            <span
-              aria-hidden="true"
-              className="block shrink-0 rounded-full bg-[#b0bec5]"
-              style={{
-                width: AVATAR_SIZE,
-                height: AVATAR_SIZE,
-                marginTop: AVATAR_NUDGE_Y,
-              }}
-            />
-          )}
+          <span className={AVATAR_BOX} aria-hidden="true">
+            {member.self ? (
+              <img
+                src={MARK_IMAGE_BLUE_EYES}
+                alt=""
+                className="block object-contain"
+                style={{ width: SELF_SIZE, height: SELF_SIZE }}
+              />
+            ) : (
+              <span
+                className="block rounded-full bg-[#b0bec5]"
+                style={{ width: OTHER_SIZE, height: OTHER_SIZE }}
+              />
+            )}
+          </span>
 
           {/*
             overflow-wrap:anywhere を親に置くのが要点。break-keep だけだと、

@@ -1068,9 +1068,9 @@ function AboutGrid() {
           </div>
           <dl className="m-0 flex min-w-0 flex-1 flex-col gap-4">
             {ABOUT_PROFILE.filter((row) => row.value).map((row) => (
-              <div key={row.label} className="flex flex-col gap-1.5">
+              <div key={row.label} className="flex gap-3 items-center">
                 <dt className={META_LABEL}>{row.label}</dt>
-                <dd className="m-0 font-sans text-[14px] leading-[1.7] tracking-[0.04em] text-[#333]">
+                <dd className="m-0 font-sans text-[14px] leading-[1.6] tracking-[0.04em] text-[#333] bg-white w-fit">
                   {row.value}
                 </dd>
               </div>
@@ -1107,8 +1107,21 @@ function AboutGrid() {
               <dt className={META_LABEL}>
                 {group.label}
               </dt>
-              <dd className="m-0 font-sans text-[14px] leading-[1.7] tracking-[0.04em] text-[#333]">
-                {group.items.join(" / ")}
+              {/*
+                白地は「UIデザイン / UXデザイン」全体ではなく語ごとに敷く。
+                区切りまで白くすると 1 本の帯になって、いくつ挙げているのかが
+                読み取りにくい。案件詳細の MEMBERS の担当も同じ敷き方にしてある。
+                折り返しても行ごとに面を切るため box-decoration-clone を付ける。
+              */}
+              <dd className="m-0 font-sans text-[14px] leading-[1.7] tracking-[0.04em] text-[#333] [overflow-wrap:anywhere]">
+                {group.items.map((item, n) => (
+                  <span key={item}>
+                    <span className="box-decoration-clone break-keep bg-white">
+                      {item}
+                    </span>
+                    {n < group.items.length - 1 ? " / " : null}
+                  </span>
+                ))}
               </dd>
             </div>
           ))}
