@@ -93,13 +93,13 @@ export default function WorkDetail() {
                   「私」が何の情報も持たず、担当は ROLE に書いてある、という
                   重複した見え方になるため。
 
-                  **体制が分かっている案件だけ MEMBERS にすること。** members が
+                  **体制が分かっている案件だけ TEAM にすること。** members が
                   無いまま自分の行だけを出すと「一人でやった」と読めてしまうので、
                   その場合は従来どおり ROLE として担当だけを出す。
                 */}
                 {detail.members?.length ? (
                   <div className="flex flex-col gap-2">
-                    <h2 className={META_LABEL}>MEMBERS</h2>
+                    <h2 className={META_LABEL}>TEAM</h2>
                     <MemberList members={detail.members} roles={detail.roles} />
                   </div>
                 ) : (

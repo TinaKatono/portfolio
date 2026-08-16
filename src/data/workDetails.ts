@@ -41,9 +41,9 @@ export type WorkDetail = {
   titleJa: string;
   roles: string[];
   /**
-   * 案件の体制（詳細ページの MEMBERS）。**自分を最後に置く。**
+   * 案件の体制（詳細ページの TEAM）。**自分を最後に置く。**
    *
-   * 未指定なら MEMBERS の枠ごと出ない。分かる案件にだけ書くこと
+   * 未指定なら TEAM の枠ごと出ない。分かる案件にだけ書くこと
    * （曖昧なまま埋めると、面接で人数や分担を聞かれたときに答えられなくなる）。
    */
   members?: WorkMember[];
