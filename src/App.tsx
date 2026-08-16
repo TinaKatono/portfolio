@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -29,6 +29,12 @@ function prefersReducedMotion(): boolean {
 
 /** 退場にかける時間。長いとページ送りがもたつくので短く保つ */
 const PAGE_LEAVE_MS = 260;
+/**
+ * 戻ったときにスクロール位置の復元を諦めるまでの時間。
+ * ページの高さが画像の読み込みで伸びきるのを待つため、1 フレームでは足りない。
+ */
+const SCROLL_RESTORE_MS = 800;
+
 /** 退場で下へ沈める量 */
 const PAGE_LEAVE_SHIFT = "26px";
 
@@ -48,6 +54,30 @@ function AnimatedRoutes() {
   const navigationType = useNavigationType();
   const [displayed, setDisplayed] = useState<Location>(location);
   const [leaving, setLeaving] = useState(false);
+  /**
+   * 履歴のエントリごとのスクロール位置。戻る・進むで元の位置に返すために持つ。
+   * リロードすると失われるので、その直後の「戻る」だけは先頭に着く（ブラウザ任せに
+   * 戻しても、下記の理由で正しい位置には復元されないため、そこは割り切っている）。
+   */
+  const scrollPositions = useRef(new Map<string, number>());
+
+  /*
+    ブラウザ任せのスクロール復元を切る。**退場アニメを入れている以上これが要る。**
+
+    ルートの差し替えを PAGE_LEAVE_MS だけ遅らせているため、ブラウザが復元を試みる
+    時点では、まだ前のページ（案件詳細）が表示されている。復元先はそのページの高さで
+    頭打ちになり、あとから背の高い TOP が出てきても位置は戻らない。
+    実測では TOP の 5247px へ戻るはずが、詳細ページの高さ（2093px）に引っかかって
+    1183px で止まっていた。
+  */
+  useEffect(() => {
+    if (!("scrollRestoration" in window.history)) return;
+    const previous = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+    return () => {
+      window.history.scrollRestoration = previous;
+    };
+  }, []);
 
   useEffect(() => {
     // ハッシュだけの変更（/#about など）はページ送りではないので、そのまま反映する
@@ -55,6 +85,12 @@ function AnimatedRoutes() {
       setDisplayed(location);
       return;
     }
+    /*
+      ここではまだ前のページが表示されたままなので、いま読める位置が「離れる前の位置」。
+      差し替えたあとに読んでも、新しいページの位置になっていて手遅れになる。
+    */
+    scrollPositions.current.set(displayed.key, window.scrollY);
+
     if (prefersReducedMotion()) {
       setDisplayed(location);
       return;
@@ -70,15 +106,41 @@ function AnimatedRoutes() {
   /*
     スクロール位置の調整は「URL が変わったとき」ではなく「新しいページを描いたとき」に行う。
     URL の変化で動かすと、まだ画面に残っている退場中のページが先頭へ跳ねてしまう。
-
-    戻る・進む（POP）では位置を触らない。ここで先頭へ戻すと、そのあとブラウザ自身の
-    復元が走って「一番上から前回位置まで滑っていく」動きになり、毎回それを見せられる。
   */
   useLayoutEffect(() => {
-    if (navigationType === "POP") return;
-    window.scrollTo(0, 0);
+    if (navigationType !== "POP") {
+      // ハッシュ付きの遷移は下の効果に任せる（先頭へ戻すと目的の位置から一度離れる）
+      if (!displayed.hash) window.scrollTo(0, 0);
+      return;
+    }
+
+    const target = scrollPositions.current.get(displayed.key);
+    if (target === undefined) return;
+
+    /*
+      すぐに戻せるとは限らない。画像の読み込みでページの高さは描画後も伸びるため、
+      その時点の高さで位置が頭打ちになる。**戻したい位置まで届く高さになるのを待つ。**
+      毎フレーム scrollTo を撃ち続けると、その間の利用者の操作を奪ってしまうので、
+      位置を触るのは高さが足りたとき（か、諦めたとき）の一度だけにする。
+    */
+    let canceled = false;
+    const startedAt = performance.now();
+    const step = () => {
+      if (canceled) return;
+      const reachable =
+        document.documentElement.scrollHeight - window.innerHeight;
+      if (reachable >= target || performance.now() - startedAt > SCROLL_RESTORE_MS) {
+        window.scrollTo(0, target);
+        return;
+      }
+      window.requestAnimationFrame(step);
+    };
+    step();
+    return () => {
+      canceled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayed.pathname]);
+  }, [displayed.key]);
 
   useLayoutEffect(() => {
     if (navigationType === "POP") return;
