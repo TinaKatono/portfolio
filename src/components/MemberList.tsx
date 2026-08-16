@@ -2,16 +2,13 @@ import { MARK_IMAGE_BLUE_EYES } from "./brand";
 import type { WorkMember } from "../data/workDetails";
 
 /**
- * 印の直径。行に並べるので、丸だけが浮かないよう文字より一回り大きい程度に留める。
+ * 印の直径。1 行目の文字の高さ（13px × 1.6 ≒ 21px）とほぼ同じにしてあり、
+ * 行の中で印だけが目立たない。役割名の方を読ませたいので、印は控えめでよい。
  */
-const AVATAR_SIZE = "1.75rem";
+const AVATAR_SIZE = "1.25rem";
 
-/**
- * 印を 1 行目の文字の高さの中心に合わせるための下げ幅。
- * 印（28px）は行の高さ（13px × 1.6 ≒ 21px）より大きいので、
- * items-start のままだと印の上端が文字の上端に揃って重心がずれる。
- */
-const AVATAR_NUDGE_Y = "-0.2rem";
+/** 印の中心を 1 行目の文字の中心に合わせるための微調整 */
+const AVATAR_NUDGE_Y = "0.05rem";
 
 /**
  * 案件の体制と、そのなかでの自分の担当。**ROLE 欄と統合したもの。**
@@ -37,11 +34,11 @@ export function MemberList({
 }) {
   return (
     /*
-      白地は内容の幅にとどめる（w-fit）。幅いっぱいに広げると、一人だけの案件で
-      カードの右側が大きく空いて未完成に見える。サイドバーの他の値も
-      文字幅ぴったりの白地なので、そちらとも揃う。
+      白地はカードとしてまとめて敷かず、担当の語ごとに敷いている（下の bg-white）。
+      サイドバーの他の値も文字幅ぴったりの白地なので、そちらと揃う。
+      カードにすると、一人だけの案件で右側が大きく空いて未完成に見えた。
     */
-    <ul className="m-0 flex w-fit max-w-full list-none flex-col gap-3 rounded-[16px] bg-white px-4 py-4">
+    <ul className="m-0 flex w-fit max-w-full list-none flex-col gap-3 rounded-[16px] mt-4">
       {members.map((member, i) => (
         <li key={`${member.label}-${i}`} className="flex items-start gap-3">
           {member.self ? (
@@ -68,22 +65,35 @@ export function MemberList({
             />
           )}
 
-          <span className="font-sans text-[13px] leading-[1.6] tracking-[0.04em] text-[#333]">
-            {member.label}
+          {/*
+            overflow-wrap:anywhere を親に置くのが要点。break-keep だけだと、
+            サイドバーが最も狭くなる 768px（タブレット縦）で
+            「フロントエンド実装（Cursor）」が 1 語のまま横にはみ出す。
+          */}
+          <span className="min-w-0 font-sans text-[13px] leading-[1.6] tracking-[0.04em] text-[#333] [overflow-wrap:anywhere]">
+            <span className="break-keep">
+              {member.label}
+              {/* 1 人のときは付けない（「× 1」はノイズにしかならない） */}
+              {member.count && member.count > 1 ? (
+                <span className="text-[#546e7a]">{` × ${member.count}`}</span>
+              ) : null}
+            </span>
             {/*
               自分の行にだけ担当を続ける。全角の空きで区切ると、折り返したときに
               名前と担当が地続きに見えてしまうので、別の要素にして間隔を持たせる。
             */}
             {member.self && roles.length ? (
-              <span className="ml-3 text-[#546e7a]">
+              <span className="ml-3">
                 {/*
-                  役割ごとに nowrap で包み、区切りの空白だけを折り返し位置にする。
-                  1 つの文字列にすると和文はどこでも改行できてしまい、
-                  「ライティング」が「ライティン／グ」のように 1 文字だけ次行に落ちる。
+                  役割ごとに break-keep で包み、区切りの空白を優先的な折り返し位置にする。
+                  素の 1 文字列にすると和文はどこでも改行でき、「ライティング」が
+                  「ライティン／グ」のように 1 文字だけ次行に落ちる。収まりきらない
+                  場合だけ親の overflow-wrap で折れるので、はみ出しはしない。
+                  白地は box-decoration-clone で行ごとに切る（既定だと 1 枚の面になる）。
                 */}
                 {roles.map((role, r) => (
                   <span key={role}>
-                    <span className="whitespace-nowrap">{role}</span>
+                    <span className="box-decoration-clone break-keep bg-white">{role}</span>
                     {r < roles.length - 1 ? " / " : null}
                   </span>
                 ))}

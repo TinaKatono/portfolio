@@ -28,6 +28,11 @@ export type WorkDetailSection = {
  */
 export type WorkMember = {
   label: string;
+  /**
+   * 同じ役割の人数。2 以上のときだけ「× 3」が付く。
+   * 1 人 1 行にすると大きなチームで欄が縦に伸びすぎるため、役割でまとめる。
+   */
+  count?: number;
   self?: boolean;
 };
 
@@ -133,6 +138,14 @@ export const workDetails: Record<string, WorkDetail> = {
       "情報設計",
       "要件定義",
     ],
+    // エンジニアはサーバーサイド・フロントエンドとも途中で 1 名ずつ抜けているが、
+    // 体制図は最大時の人数で書いている。デザイナーは自分ひとり。
+    members: [
+      { label: "PM" },
+      { label: "サーバーサイド", count: 3 },
+      { label: "フロントエンド", count: 3 },
+      { label: "私", self: true },
+    ],
     yearDuration: "2025/07 - 2025/10",
     tools: ["Figma"],
     galleryImages: [work3Gallery1,],
@@ -156,6 +169,7 @@ export const workDetails: Record<string, WorkDetail> = {
     title: "Corporate Website for a Construction Company",
     titleJa: "建設会社のコーポレートサイト作成",
     roles: ["UIデザイン", "ライティング", "フロントエンド実装（Cursor）"],
+    members: [{ label: "私", self: true }],
     // 実作業は約 2 週間。Sachi と同じく、短納期であることが伝わるよう単月表記にしている。
     yearDuration: "2026/04",
     tools: ["Figma", "Photoshop", "Cursor"],
@@ -199,6 +213,13 @@ export const workDetails: Record<string, WorkDetail> = {
     title: "Recruitment Media & Management System",
     titleJa: "採用メディアと管理システムの開発設計",
     roles: ["UIデザイン", "UXデザイン", "情報設計"],
+    // サーバーサイドの人数は記憶ベース。増減が分かったら直す。
+    members: [
+      { label: "PM" },
+      { label: "サーバーサイド", count: 2 },
+      { label: "フロントエンド" },
+      { label: "私", self: true },
+    ],
     yearDuration: "2024/06 - 2025/01",
     tools: ["Figma", "FigJam"],
     // 当初のメインビジュアルは掲載を取り下げ済み（現行サイトから撤去されており、
