@@ -13,6 +13,7 @@ import {
   META_LABEL,
   META_VALUE,
 } from "../components/brand";
+import { MemberList } from "../components/MemberList";
 import { RoleList } from "../components/RoleList";
 import { SiteCenterBrand } from "../components/SiteCenterBrand";
 import { SiteFooter } from "../components/SiteFooter";
@@ -99,6 +100,14 @@ export default function WorkDetail() {
                     itemClassName="bg-white"
                   />
                 </div>
+
+                {/* 体制図。members を持つ案件だけ出す（枠だけ残さない） */}
+                {detail.members?.length ? (
+                  <div className="flex flex-col gap-2">
+                    <h2 className={META_LABEL}>MEMBERS</h2>
+                    <MemberList members={detail.members} />
+                  </div>
+                ) : null}
 
                 <div className="flex flex-col gap-2">
                   <h2 className={META_LABEL}>YEAR / DURATION</h2>

@@ -3,6 +3,7 @@ import mark1 from "../assets/fv/fv_1.svg";
 import mark2 from "../assets/fv/fv_2.svg";
 import mark3 from "../assets/fv/fv_3.svg";
 import mark4 from "../assets/fv/fv_4.svg";
+import mark2Eyes from "../assets/fv/fv_2_eyes.svg";
 import mark4Eyes from "../assets/fv/fv_4_eyes.svg";
 import eyesOverlay from "../assets/fv/eyes_under.svg";
 import scrollHint from "../assets/fv/fv_5.svg";
@@ -20,6 +21,16 @@ export const MARK_IMAGES = [mark1, mark2, mark3, mark4];
  * （小さく並ぶ場所で目玉が入ると、図形としての形が読み取りにくくなるため）。
  */
 export const MARK_IMAGE_EYES = mark4Eyes;
+
+/**
+ * 青いギザギザ丸（MARK_IMAGES[1]）の「目玉あり」版。**本人を指す印として使う。**
+ * ロゴやマルキーで回している青丸と同じ形なので、サイト内で「これが私」と読める。
+ * 体制図（MemberList）で他のメンバーのグレー丸と並べるのが現在の用途。
+ *
+ * 目玉が別素材の MARK_EYES_OVERLAY と違い、こちらは目玉が焼き込んである。
+ * 回さない場所ではこちらの方が扱いが簡単（重ね位置の調整が要らない）。
+ */
+export const MARK_IMAGE_BLUE_EYES = mark2Eyes;
 
 /**
  * 目玉だけの透過画像。他の図形と同じ寸法なので、そのまま重ねれば位置が合う。

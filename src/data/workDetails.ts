@@ -22,10 +22,26 @@ export type WorkDetailSection = {
   en: string;
 };
 
+/**
+ * 体制図の 1 人分。`label` は個人名ではなく役割（リーダー・ライターなど）。
+ * `self` を付けた 1 人だけ青い印になるので、**各案件でちょうど 1 つだけ付ける。**
+ */
+export type WorkMember = {
+  label: string;
+  self?: boolean;
+};
+
 export type WorkDetail = {
   title: string;
   titleJa: string;
   roles: string[];
+  /**
+   * 案件の体制（詳細ページの MEMBERS）。**自分を最後に置く。**
+   *
+   * 未指定なら MEMBERS の枠ごと出ない。分かる案件にだけ書くこと
+   * （曖昧なまま埋めると、面接で人数や分担を聞かれたときに答えられなくなる）。
+   */
+  members?: WorkMember[];
   yearDuration: string;
   tools: string[];
   sections: WorkDetailSection[];
@@ -58,6 +74,8 @@ export const workDetails: Record<string, WorkDetail> = {
     title: "Brand Website for a Creative Atelier",
     titleJa: "ファッションアトリエのブランドサイト制作",
     roles: ["UIデザイン", "UXデザイン", "ライティング", "フロントエンド実装（Cursor）"],
+    // 仲介会社経由の受注だが、制作は最初から最後まで自分ひとり
+    members: [{ label: "私", self: true }],
     // ヒアリング開始から納品まで約 2 週間で、5 月中に完結した案件。
     // 他案件は範囲表記だが、ここは単月にしておく方が短納期であることが伝わる。
     yearDuration: "2026/05",
@@ -86,6 +104,12 @@ export const workDetails: Record<string, WorkDetail> = {
     title: "Frontend Implementation for Apparel E-Commerce",
     titleJa: "アパレルECサイトのフロントエンド実装",
     roles: ["UI実装", "インタラクション実装"],
+    // デザインはブランド側のデザイン会社、CMS への組み込みは先方のエンジニア
+    members: [
+      { label: "デザイナー" },
+      { label: "エンジニア" },
+      { label: "私", self: true },
+    ],
     yearDuration: "2023/04 - 2024/05",
     tools: ["Adobe XD", "Figma", "HTML", "CSS", "JavaScript", "jQuery"],
     sections: [
@@ -200,6 +224,7 @@ export const workDetails: Record<string, WorkDetail> = {
     // サイドバーの幅で「Claude / Code」と行またぎで割れる。
     titleJa: "社内イベント管理アプリ campai の企画・Claude\u00A0Code での個人開発",
     roles: ["企画", "UIデザイン", "UXデザイン", "フルスタック開発（Claude Code）"],
+    members: [{ label: "私", self: true }],
     yearDuration: "2026/04 - 2026/05",
     // 構成（Next.js / Prisma / SQLite）は本文に記載。Tools は操作した道具のみ。
     tools: ["Figma", "Claude Code"],
