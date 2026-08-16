@@ -86,8 +86,8 @@ export const workDetails: Record<string, WorkDetail> = {
     siteUrl: "https://www.sachiaw.com/",
     sections: [
       {
-        ja: "仲介会社を介してご依頼いただいた、ファッションアトリエのブランドサイト新規制作案件です。ヒアリングからデザイン、コピーライティング、実装、素材選定、公開作業までを一人で担当しました。\n\nヒアリング開始から納品までおよそ2週間という短い期間だったため、Figmaではワイヤーフレームと簡易のデザインサンプルまでを固め、その段階で実装に着手。以降はデザインと実装を並行させ、静的なカンプではなく実画面でご確認いただく進め方に切り替えました。カンプの往復を減らし、限られた時間を体験の質そのものに充てることを優先した判断です。",
-        en: "A new brand website for a fashion atelier, commissioned through an agency. I owned the entire process on my own—from the initial hearing to design, copywriting, implementation, asset selection, and launch.\n\nWith roughly two weeks from the first hearing to delivery, I locked only the wireframes and light design samples in Figma before moving into implementation. From there I ran design and build in parallel, reviewing on live screens rather than static mockups. Cutting down the round trips on comps let me spend the limited time on the quality of the experience itself.",
+        ja: "ファッションアトリエのブランドサイト新規制作案件において、ヒアリングからデザイン、コピーライティング、実装、素材選定、公開作業までを一人で担当しました。\n\nヒアリング開始から納品までおよそ2週間という短い期間だったため、Figmaではワイヤーフレームと簡易のデザインサンプルまでを固め、その段階で実装に着手。以降はデザインと実装を並行させ、静的なカンプではなく実画面でご確認いただく進め方に切り替えました。カンプの往復を減らし、限られた時間を体験の質そのものに充てることを優先した判断です。",
+        en: "On a new brand website for a fashion atelier, I owned the entire process on my own—from the initial hearing to design, copywriting, implementation, asset selection, and launch.\n\nWith roughly two weeks from the first hearing to delivery, I locked only the wireframes and light design samples in Figma before moving into implementation. From there I ran design and build in parallel, reviewing on live screens rather than static mockups. Cutting down the round trips on comps let me spend the limited time on the quality of the experience itself.",
       },
       {
         ja: "想定読者は、50代以上の落ち着いた審美眼を持つ女性層です。ファッションを趣味として深く愛する方から、自身の表現やブランドづくりに踏み出そうとする方まで、いずれも「上質さ」に対する目が厳しい層だと捉え、ラグジュアリーでありながら気負わせない、アトリエの空気感を軸にトーンを設計しました。\n\n書体は、欧文の見出しに Antic Didone、和文に Zen Old Mincho を選定しています。Antic Didone は縦画と横画のコントラストが強いディドネ様式のセリフ体で、モード誌のロゴが長く用いてきた系譜にあり、「Beyond the Surface.」のような短い言葉に品格と緊張感を与えます。和文には骨格に古典の面持ちを残すオールド明朝を合わせ、字間と行間をゆるやかに開くことで、読ませる文章にも余白の効いた静けさを持たせました。装飾を足すのではなく、書体と余白で格をつくることを意図しています。",
@@ -163,8 +163,8 @@ export const workDetails: Record<string, WorkDetail> = {
     siteUrl: "https://www.saikaimatsunaga.com/",
     sections: [
       {
-        ja: "長崎県西海市で砂防工事や道路舗装などの公共事業を担う建設会社様の、コーポレートサイトリニューアル案件です。トーン＆マナーの整理から画面設計、ライティング、実装・公開までを一貫して担当しました。\n\n制作期間はおよそ2週間。加えて、参照できる既存の情報も、使用できる写真素材も限られた状態からのスタートでした。支給されていたのはロゴのみで、それ以外は自分で集めるかつくるかを、その都度判断していく必要がありました。",
-        en: "A corporate website renewal for a construction company handling public works—erosion control, road paving—primarily in Saikai City, Nagasaki. I was responsible for the entire process: defining the tone and manner, screen design, copywriting, implementation, and launch.\n\nThe build ran to roughly two weeks. On top of that, both the existing reference material and the usable photography were scarce. The logo was the only asset provided; everything else was a decision, case by case, about whether to source it or make it.",
+        ja: "長崎県西海市で砂防工事や道路舗装などの公共事業を担う建設会社様のコーポレートサイトリニューアル案件において、トーン＆マナーの整理から画面設計、ライティング、実装・公開までを一貫して担当しました。\n\n制作期間はおよそ2週間。加えて、参照できる既存の情報も、使用できる写真素材も限られた状態からのスタートでした。支給されていたのはロゴのみで、それ以外は自分で集めるかつくるかを、その都度判断していく必要がありました。",
+        en: "On a corporate website renewal for a construction company in Saikai City, Nagasaki—handling public works such as erosion control and road paving—I was responsible for the entire process: defining the tone and manner, screen design, copywriting, implementation, and launch.\n\nThe build ran to roughly two weeks. On top of that, both the existing reference material and the usable photography were scarce. The logo was the only asset provided; everything else was a decision, case by case, about whether to source it or make it.",
       },
       {
         ja: "最大の課題は、「西海市に根ざした企業である」というサイトの中心テーマを、素材がほとんどない状態でどう成立させるかでした。地域性は言葉で主張するより、画面に流れる風景や光の質で伝わる方が強く残ります。しかし西海市の写真素材は流通量そのものが少なく、そのまま使えるものはごくわずかでした。\n\n使用可能な素材を探し集めたうえで、一枚ずつ色味を調整し、サイト全体を通して同じ空気に見えるところまで揃えています。撮り下ろしができない条件下では、写真そのものより「素材同士の統一感」が地域性を支えると考え、そこを設計対象として扱いました。",
