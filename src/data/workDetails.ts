@@ -16,6 +16,7 @@ import work5Gallery2 from "../assets/works/work_5/work_5_2.webp";
 import work1Gallery1 from "../assets/works/work_1/work_1_1.webp";
 import work1Gallery2 from "../assets/works/work_1/work_1_2.webp";
 import work1Gallery3 from "../assets/works/work_1/work_1_3.webp";
+import work1Gallery4 from "../assets/works/work_1/work_1_4.webp";
 
 export type WorkDetailSection = {
   ja: string;
@@ -87,7 +88,9 @@ export const workDetails: Record<string, WorkDetail> = {
     // 技術構成（Next.js など）は本文で触れる。ここに並べると「その言語を書ける」と
     // 読まれるため、Tools には自分が操作した道具だけを載せる。
     tools: ["Figma", "Photoshop", "Cursor"],
-    galleryImages: [work1Gallery1, work1Gallery2, work1Gallery3],
+    // 4 枚目は本文の節数を超えるので、テキストの下にまとめて続く。
+    // CONTACT セクションで、3 節目で触れている和英のコピーが見える 1 枚。
+    galleryImages: [work1Gallery1, work1Gallery2, work1Gallery3, work1Gallery4],
     siteUrl: "https://www.sachiaw.com/",
     sections: [
       {
