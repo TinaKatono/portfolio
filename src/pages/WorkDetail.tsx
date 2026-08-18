@@ -68,8 +68,14 @@ export default function WorkDetail() {
     return <Navigate to="/" replace />;
   }
   const detail = workDetails[id];
-  const gallery = detail.galleryImages ?? [];
-  const galleryAfterSections = gallery.slice(detail.sections.length);
+  /*
+    1 スロットに複数枚を入れられる（拡大版と並べたいときなど）。
+    data 側で配列にしてあるぶんは、その節の同じ位置に続けて並ぶ。
+  */
+  const gallery = (detail.galleryImages ?? []).map((slot) =>
+    Array.isArray(slot) ? slot : [slot]
+  );
+  const galleryAfterSections = gallery.slice(detail.sections.length).flat();
 
   return (
     <div className="relative mx-auto flex min-h-screen w-full flex-col items-start bg-[#f5f7f8]">
@@ -177,16 +183,21 @@ export default function WorkDetail() {
           <div className="col-span-12 flex min-w-0 flex-col gap-10 md:col-span-6 md:col-start-7">
             {detail.sections.map((section, i) => (
               <div key={i} className="flex flex-col gap-6">
-                {gallery[i] ? (
-                  <div className="w-full shrink-0 overflow-hidden bg-[#eceff1]">
-                    <img
-                      src={gallery[i]}
-                      alt=""
-                      className="block w-full object-cover"
-                      loading={i === 0 ? "eager" : "lazy"}
-                      decoding="async"
-                    />
-                  </div>
+                {gallery[i]?.length ? (
+                  gallery[i].map((src, k) => (
+                    <div
+                      key={src}
+                      className="w-full shrink-0 overflow-hidden bg-[#eceff1]"
+                    >
+                      <img
+                        src={src}
+                        alt=""
+                        className="block w-full object-cover"
+                        loading={i === 0 && k === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                      />
+                    </div>
+                  ))
                 ) : (
                   /*
                     画像が足りないセクションのプレースホルダー枠。
