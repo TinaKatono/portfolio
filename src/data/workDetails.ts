@@ -1,4 +1,7 @@
 import work3Gallery1 from "../assets/works/work_3/work_3_1.webp";
+import work3Gallery3 from "../assets/works/work_3/work_3_3.webp";
+import work3Gallery4 from "../assets/works/work_3/work_3_4.webp";
+import work3Gallery5 from "../assets/works/work_3/work_3_5.webp";
 
 
 import work4Gallery1 from "../assets/works/work_4/work_4_1.webp";
@@ -162,7 +165,14 @@ export const workDetails: Record<string, WorkDetail> = {
     ],
     yearDuration: "2025/07 - 2025/10",
     tools: ["Figma"],
-    galleryImages: [work3Gallery1,],
+    /*
+      2 枚目以降は要件整理で実際に使った資料。**いずれもぼかし済みで文字は読めない。**
+      図の形と密度だけが伝わればよく、クライアントの業務内容は出さない。
+      並びは本文に対応させてある（2 節目がシーケンス図の話なので俯瞰の 1 枚を置く）。
+      4 枚あるので 3 節すべてに画像が付き、余りの 1 枚が本文の下に続く。
+      **3 枚に減らさないこと。** 節数を超えない枚数だとグレーの空枠が出る。
+    */
+    galleryImages: [work3Gallery1, work3Gallery4, work3Gallery3, work3Gallery5],
     sections: [
       {
         ja: "株式会社Kiviaq の薬局DXサービス「キビヤックファーマシー」の新規立ち上げに、UI/UXデザイナーとして参画しました。患者向けLINEミニアプリ・薬局スタッフ向け管理画面・配送業者向けモバイルアプリの3システムにまたがる複雑な業務フローを対象に、要件定義から画面設計までをリードし、プロジェクトが動き出してからは仕様調整や関係者間の合意形成といった進行実務も担っています。特に薬機法等の法的観点や現場運用の制約を深く読み解き、初期の要望を単に形にするだけでなく、データの流動性や例外分岐、そして現場で実際に機能する運用までを見据えたUX設計を徹底しました。",
