@@ -6,15 +6,15 @@ import work3Gallery5 from "../assets/works/work_3/work_3_5.webp";
 
 import work4Gallery1 from "../assets/works/work_4/work_4_1.webp";
 
-import work2Gallery5 from "../assets/works/work_2/work_2_5.webp";
 import work2Gallery1 from "../assets/works/work_2/work_2_1.webp";
 import work2Gallery2 from "../assets/works/work_2/work_2_2.webp";
-import work2Gallery7 from "../assets/works/work_2/work_2_7.webp";
-import work2Gallery8 from "../assets/works/work_2/work_2_8.webp";
+import work2Gallery4 from "../assets/works/work_2/work_2_4.webp";
+import work2Gallery5 from "../assets/works/work_2/work_2_5.webp";
+import work2Gallery6 from "../assets/works/work_2/work_2_6.webp";
 import work4Gallery2 from "../assets/works/work_4/work_4_2.webp";
 import work4Gallery3 from "../assets/works/work_4/work_4_3.webp";
 
-import work5Gallery2 from "../assets/works/work_5/work_5_2.webp";
+import work5Gallery1 from "../assets/works/work_5/work_5_1.webp";
 
 import work1Gallery1 from "../assets/works/work_1/work_1_1.webp";
 import work1Gallery2 from "../assets/works/work_1/work_1_2.webp";
@@ -249,7 +249,7 @@ export const workDetails: Record<string, WorkDetail> = {
     // 当初のメインビジュアルは掲載を取り下げ済み（現行サイトから撤去されており、
     // クライアント要望で当初案から変わった経緯があるため実績として示さない）。
     // 代わりに公開中のトップ画面をモックに載せた 1 枚を使う。
-    galleryImages: [work5Gallery2],
+    galleryImages: [work5Gallery1],
     siteUrl: "https://recpr.jp/jobOpenings",
     sections: [
       {
@@ -288,9 +288,9 @@ export const workDetails: Record<string, WorkDetail> = {
       引き伸ばされ、UI が不自然に大きく見えてしまうため。
     */
     galleryImages: [
+      work2Gallery4,
       work2Gallery5,
-      work2Gallery7,
-      work2Gallery8,
+      work2Gallery6,
       work2Gallery1,
       work2Gallery2,
     ],

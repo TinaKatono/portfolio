@@ -4,8 +4,8 @@ import work1Img from "../assets/works/work_1/work_1_1.webp";
 import work3Img from "../assets/works/work_3/work_3_2.webp";
 import work4Img from "../assets/works/work_4/work_4_1.webp";
 
-import work2Img from "../assets/works/work_2/work_2_5.webp";
-import work5Img from "../assets/works/work_5/work_5_2.webp";
+import work2Img from "../assets/works/work_2/work_2_4.webp";
+import work5Img from "../assets/works/work_5/work_5_1.webp";
 import work6Img from "../assets/works/work_6/work_6_1.webp";
 
 export type WorkItem = {
