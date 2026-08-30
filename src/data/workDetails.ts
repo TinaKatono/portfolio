@@ -169,7 +169,7 @@ export const workDetails: Record<string, WorkDetail> = {
       { label: "フロントエンド", count: 3 },
       { label: "(私)", self: true },
     ],
-    yearDuration: "2025/07 - 2025/10",
+    yearDuration: "2025/07 - 2025/11",
     tools: ["Figma"],
     /*
       2 枚目以降は要件整理で実際に使った資料。**いずれもぼかし済みで文字は読めない。**
